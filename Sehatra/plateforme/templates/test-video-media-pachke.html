@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.fluidplayer.com/v3/current/fluidplayer.min.js"></script>
+    <style lang="css">
+        #fluid-player-e2e-case {
+            width: 90%;
+        }
+    </style>
+</head>
+
+<body>
+
+<video id='hls-video'>
+    <source src='https://d2zkb3h5mm4x46.cloudfront.net/out/v1/b391255ce34e44039d50d9e83f973588/index.m3u8' type='application/x-mpegURL'/>
+</video>
+
+<script>
+fluidPlayer(
+    'hls-video',
+                                    {
+                                        layoutControls: {
+                                            fillToContainer: true, logo: {
+                imageUrl: 'https://sehatra.com/static/images/sehatra-72x72.png', // Default null
+                clickUrl: 'https://www.landingpage.com/welcome', // Default null
+                opacity: 0.6, // Default 1
+                imageMargin: '10px', // Default '2px'
+            }
+                                        }
+                                    }
+);
+</script>
+</body>
+</html>

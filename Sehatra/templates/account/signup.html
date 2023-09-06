@@ -1,0 +1,36 @@
+{% extends "base-login.html" %}
+{% load crispy_forms_tags %}
+{% load socialaccount %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block content %}
+
+
+<h4>{% trans "Sign Up" %}</h4>
+
+<div class="row" style="margin-bottom: 20px">
+    <div class="col-lg-12">
+        <a href="{% provider_login_url 'google' %}" > <button class="btn btn-info" style="margin: 10px;">Se connecter avec <i class="fa fa-google"></i>oogle</button></a>
+    </div>
+{#    <div class="col-lg-6">#}
+{#        <a href="{% provider_login_url 'facebook' %}" style="margin: 10px;"> <button class="btn btn-info" style="margin: 10px;">Se connecter avec <i class="fa fa-facebook"></i>acebook</button></a>#}
+{#    </div>#}
+</div>
+
+<form method="post" action="{% url 'account_signup' %}" id="pms_login" class="login">
+  {% csrf_token %}
+    {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+</br>
+  <button class="btn btn-primary" type="submit" style="margin-top: 10px;">{% trans "Sign Up" %} &raquo;</button>
+</form>
+
+<script>
+  document.getElementById("id_email").innerHTML= "Email*" ;
+</script>
+
+{% endblock %}

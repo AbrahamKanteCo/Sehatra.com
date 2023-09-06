@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+            <div class="wt-bnr-inr overlay-wraper bg-center"  style="background-image:url(/static/images/sehatra-3.png); max-height: 200px; padding-top: 30px; margin-bottom: 30px;">
+            	<div class="overlay-main bg-black opacity-07"></div>
+                <div class="container">
+                    <div class="wt-bnr-inr-entry">
+                    	<div class="banner-title-outer">
+                        	<div class="banner-title-name text-center">
+                        		<a href="#">
+                                    <h2 class="text-white">Formulaire de réclamation</h2>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- BREADCRUMB ROW -->
+                        <!-- BREADCRUMB ROW END -->
+                    </div>
+                </div>
+            </div>
+            <div class="section-head text-center">
+
+<div class="col-md-8 formulaire">
+<form method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Envoyer">
+</form>
+</div>
+            </div>
+
+  <style>
+    @media screen and (min-width: 720px) {
+      .formulaire {
+        width: 50%;
+      }
+    }
+  </style>
+
+{% endblock %}

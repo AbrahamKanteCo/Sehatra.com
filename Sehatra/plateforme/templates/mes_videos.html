@@ -1,0 +1,50 @@
+    {% extends "base.html" %}
+{% block content %}
+
+    <!-- Single-tv-Shows -->
+    <section class="position-relative gen-section-padding-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="pm-inner">
+                        <div class="gen-more-like">
+                            <h5 class="gen-more-title">Vidéos que vous avez acheté</h5>
+                            <div class="row post-loadmore-wrapper">
+                                {% for video in videos %}
+                                <div class="col-xl-3 col-lg-4 col-md-6">
+                                    <div class="gen-carousel-movies-style-3 movie-grid style-3">
+                                        <div class="gen-movie-contain">
+                                            <div class="gen-movie-img">
+                                                <img src="{{ video.photo_de_couverture.url }}" alt="{{ video.titre }}">
+                                                <div class="gen-movie-action">
+                                                    <a href="/video/{{ video.slug }}/" class="gen-button">
+                                                        <i class="fa fa-play"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="gen-info-contain">
+                                                <div class="gen-movie-info">
+                                                    <h3><a href="/video/{{ video.slug }}/">{{ video.titre }}</a></h3>
+                                                </div>
+                                                <div class="gen-movie-meta-holder">
+                                                    <ul>
+                                                        <li>
+                                                            <a href="/artiste/{{ video.artiste.slug }}"><span>{{ video.artiste.nom }}</span></a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Single-tv-Shows -->
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="section banner-page" data-background="images/dummy-img-1920x300.jpg">
+		<div class="content-wrap pos-relative">
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+				<div class="title-page"> {{ object.titre }}</div>
+			</div>
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+                <p>{{ object.description }}</p>
+		  	</div>
+		</div>
+	</div>
+
+    {% if access == True %}
+    <div id="show" class="section">
+		<div class="content-wrap">
+			<div class="container text-center">
+                {% if user.is_authenticated %}
+
+                    {% if object.en_cours %}
+                        <video-js id=vid1 width=600 height=300 class="vjs-default-skin" controls>
+                              <source
+                                 src="http://demo.unified-streaming.com/video/tears-of-steel/tears-of-steel.ism/.m3u8"
+                                 type="application/x-mpegURL">
+                            </video-js>
+                            <script src="video.js"></script>
+                            <script src="videojs-http-streaming.min.js"></script>
+                            <script>
+                            var player = videojs('vid1');
+                            player.play();
+                            </script>
+                    {% elif object.termine %}
+                        <h3>Ce concert est terminé</h3>
+                        <img src="{{  object.photo_de_couverture_large.url }}" style="padding-top: 50px; max-width: 100%">
+                    {% else %}
+                        <h3>Ce concert n'a pas encore commencé</h3>
+                        <img src="{{  object.photo_de_couverture_large.url }}" style="padding-top: 50px; max-width: 100%">
+                    {% endif %}
+
+                {% else %}
+                <a href="/accounts/login"><button style="margin-top: 20px;" class="bnt btn-primary">Se connecter</button></a>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div id="show" class="section">
+    <h4>Désolé, le lien que vous avez utilisé n'est pas associé à votre compte</h4>
+    </div>
+
+    {% endif %}
+
+            <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+<script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+
+    <script>
+            var player = videojs('hls-sehatra');
+            player.play();
+
+            var elem = document.getElementById("hls-sehatra");
+            function openFullscreen() {
+              if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+              } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+              } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+              }
+            }
+    </script>
+
+        <script>
+            setInterval(function(){
+                $.get(
+                    "/check-user/",
+                    {paramOne : 1},
+                    function(data) {
+                       if (!data['user']) {
+                           location.reload();
+                       }
+                    }
+                );
+            }, 300000);
+        </script>
+
+    </body>
+</html>
+
+
+{% endblock %}

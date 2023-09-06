@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div id="show" class="section" style="margin-top: 100px">
+		<div class="content-wrap">
+            <div class="container text-center" style="padding-bottom: 50px;">
+                <img src="{{ video.photo_de_couverture.url }}" style="max-height: 250px">
+            </div>
+            <div class="container text-center" style="width:50%">
+                <form action="verification/" method="GET">
+                    {% csrf_token %}
+                    {{ form }}
+                    <input type="submit" value="Envoyer" style="width:100%">
+                </form>
+{#                <p class="text-center">A cause d'une panne au niveau de l'opérateur, le paiement automatique par MVola est temporairement désactivé. Pour effectuer votre paiement, veuillez envoyer la somme de 20.000 Ar au numéro: 034 09 466 27, nom: KIADY et envoyer votre email en tant que motif. Merci de votre compréhension. </p>#}
+            </div>
+        </div>
+    </div>
+
+    <div class="loader">
+          <div class="loading">
+        </div>
+    </div>
+    <style>
+    .paiement {
+        padding: 20px;
+    }
+
+    .loader {
+  display: none;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.loading {
+  border: 2px solid #ccc;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border-top-color: #1ecd97;
+  border-left-color: #1ecd97;
+  animation: spin 1s infinite ease-in;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+    </style>
+
+{% endblock %}

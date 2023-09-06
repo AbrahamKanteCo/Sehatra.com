@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <style>
+    table, th, td {
+  border: 1px solid black;
+}
+    </style>
+    <!-- breadcrumb -->
+    <div class="gen-breadcrumb" style="background-image: url('images/background/asset-25.jpeg');">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <nav aria-label="breadcrumb">
+                        <div class="gen-breadcrumb-title">
+                            <h1>
+                                Interface d'administration {{ organisateur.nom }}
+                            </h1>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb -->
+
+    <!-- Section-1 Start -->
+    <section class="gen-section-padding-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h5>Nombre de billets vendus jusqu'à présent : {{ nb_billet }}</h5>
+                    <h5>Somme dû: {{ somme }} Ariary</h5>
+                    <table>
+                    <thead>
+                        <th>Date</th>
+                            <th>Compte</th>
+                            <th>Paiement</th>
+                            <th>Vidéo</th>
+                    </thead>
+                        <tbody>
+                            {% for paiement in paiements %}
+                                <tr>
+                                    <td>{{ paiement.date }}</td>
+                                    <td>{{ paiement.billet.user }}</td>
+                                    <td>{{ paiement.mode }}</td>
+                                    <td>{{ paiement.billet.video }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- Section-1 End -->
+
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="section banner-page" data-background="images/dummy-img-1920x300.jpg">
+		<div class="content-wrap pos-relative">
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+				<div class="title-page"> {{ object.titre }}</div>
+			</div>
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+                <p>{{ object.description }}</p>
+		  	</div>
+		</div>
+	</div>
+
+    {% if access == True %}
+    <div id="show" class="section">
+		<div class="content-wrap">
+			<div class="container text-center">
+                {% if user.is_authenticated %}
+
+                    {% if object.en_cours %}
+                            {% if device == "iOS" %}
+                                <script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+                                <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
+                                <script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+                                <video id='hls-sehatra'  class="video-js vjs-default-skin" controls width="500px" height="300px" style="margin-right: auto; margin-left: auto; max-width: 100%">
+                                    <source type="application/x-mpegURL" src="{{ object.lien_video_hls }}">
+                                </video>
+
+                                <script>
+                                        var player = videojs('hls-sehatra');
+                                        player.play();
+
+                                        var elem = document.getElementById("hls-sehatra");
+                                        function openFullscreen() {
+                                          if (elem.requestFullscreen) {
+                                            elem.requestFullscreen();
+                                          } else if (elem.webkitRequestFullscreen) { /* Safari */
+                                            elem.webkitRequestFullscreen();
+                                          } else if (elem.msRequestFullscreen) { /* IE11 */
+                                            elem.msRequestFullscreen();
+                                          }
+                                        }
+                                </script>
+                            {% else %}
+                                <div>
+                                    <video id="videoPlayer" controls style="max-width: 100%"></video>
+                                </div>
+                                <script>
+                                    (function(){
+                                        var url = "{{ object.lien_video_dash }}";
+                                        var player = dashjs.MediaPlayer().create();
+                                        player.initialize(document.querySelector("#videoPlayer"), url, true);
+                                    })();
+                                     var elem = document.getElementById("videoPlayer");
+                                    function openFullscreen() {
+                                      if (elem.requestFullscreen) {
+                                        elem.requestFullscreen();
+                                      } else if (elem.webkitRequestFullscreen) { /* Safari */
+                                        elem.webkitRequestFullscreen();
+                                      } else if (elem.msRequestFullscreen) { /* IE11 */
+                                        elem.msRequestFullscreen();
+                                      }
+                                    }
+                                </script>
+
+                            <button onclick="openFullscreen();" style="margin-top: 20px;" class="bnt btn-primary"> Voir la vidéo en plein écran </button>
+                        {% endif %}
+                    {% elif object.termine %}
+                        <h3>Ce concert est terminé</h3>
+                        <img src="{{  object.photo_de_couverture_large.url }}" style="padding-top: 50px; max-width: 100%">
+                    {% else %}
+                        <h3>Ce concert n'a pas encore commencé</h3>
+                        <img src="{{  object.photo_de_couverture_large.url }}" style="padding-top: 50px; max-width: 100%">
+                    {% endif %}
+
+                {% else %}
+                <a href="/accounts/login"><button style="margin-top: 20px;" class="bnt btn-primary">Se connecter</button></a>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div id="show" class="section">
+    <h4>Désolé, le lien que vous avez utilisé n'est pas associé à votre compte</h4>
+    </div>
+
+    {% endif %}
+
+            <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+<script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+
+    <script>
+            var player = videojs('hls-sehatra');
+            player.play();
+
+            var elem = document.getElementById("hls-sehatra");
+            function openFullscreen() {
+              if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+              } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+              } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+              }
+            }
+    </script>
+
+        <script>
+            setInterval(function(){
+                $.get(
+                    "/check-user/",
+                    {paramOne : 1},
+                    function(data) {
+                       if (!data['user']) {
+                           location.reload();
+                       }
+                    }
+                );
+            }, 300000);
+        </script>
+
+    </body>
+</html>
+
+
+{% endblock %}

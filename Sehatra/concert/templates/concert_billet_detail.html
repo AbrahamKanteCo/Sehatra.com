@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="section banner-page" data-background="images/dummy-img-1920x300.jpg"
+         xmlns="http://www.w3.org/1999/html">
+		<div class="content-wrap pos-relative">
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+				<div class="title-page"> {{ object.titre }}</div>
+			</div>
+			<div class="d-flex justify-content-center bd-highlight mb-3 text-center">
+                <p>{{ object.description }}</p>
+		  	</div>
+		</div>
+	</div>
+
+    <div id="show" class="section">
+		<div class="content-wrap">
+            <div class="container text-center" style="padding-bottom: 50px;">
+                <img src="{{ object.photo_de_couverture_large.url }}" style="max-width: 100%">
+            </div>
+            {% if avec_billet == False %}
+            <div class="container">
+                {% if user.is_authenticated %}
+                <div class="container text-center">
+                    <h2>ACHETEZ VOTRE BILLET</h2>
+                    <span>Prix: {{ object.tarif }}</span>
+                    <p>Si vous avez des difficultés avec les paiements, vous pouvez envoyer directement le paiement au 034 09 466 27 avec votre email ou nom. Nom: KIADY.</p>
+                    <p>Lien Carte bancaire vers MVola: <a href="https://cb2.mvola.mg/transaction/new">Cb2MVola</a></p>
+                </div>
+                <ul style="display: inline; list-style: none">
+{#                    <li style="display: inline-block">#}
+{#                        <a href="/concert/{{ object.slug }}/billet/achat/visa-mastercard-euro">#}
+{#                            <img src="/static/images/visa-mastercard-euro.png">#}
+{#                        </a>#}
+{#                    </li>#}
+                    <li style="display: inline-block">
+                        <a href="/concert/{{ object.slug }}/billet/achat/visa-mastercard-ariary">
+                            <img src="/static/images/visa-mastercard.jpg">
+                        </a>
+                    </li>
+                    <li style="display: inline-block">
+                        <a href="/concert/{{ object.slug }}/billet/achat/mvola">
+                            <img src="/static/images/MVOLA.jpg">
+                        </a>
+                    </li>
+                    <li style="display: inline-block">
+                        <a href="/concert/{{ object.slug }}/billet/achat/orange-money">
+                            <img src="/static/images/orange-money.jpg">
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="container text-center">
+                    <p>Après votre paiement, accorder nous 30 minutes pour le valider. Merci</p>
+                </div>
+
+                    {%  else %}
+                <div class="container text-center">
+                <a href="/accounts/login/?next={{request.path}}"><button class="btn btn-danger">Connectez-vous pour acheter votre billet</button></a>
+                </div>
+
+                    {%  endif %}
+            </div>
+            {% else %}
+            <div class="container text-center">
+                <div class="container text-center">
+                    <h2>Félicitations !!</h2>
+                </div>
+                <p>Vous avez déjà votre billet pour ce concert.</p>
+                <p>Billet numéro: {{ billet.slug }}</p>
+                <p>N'hesitez pas à tester votre appareil et votre connexion internet en regardant les vidéos déjà disponible sur Sehatra.com. En cas de problème <a href="/formulaire-reclamation">veuillez nous contacter </a> </p>
+                </br>
+                <h3>Le Dimanche 16 Mai  à 18h, cliquer sur le bouton ci-dessous</h3>
+                <a href="{{ billet.slug }}/"><button class="btn btn-danger">Voir le spéctacle</button></a>
+            </div>
+            {%  endif %}
+        </div>
+    </div>
+
+            <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+    </body>
+</html>
+
+
+{% endblock %}

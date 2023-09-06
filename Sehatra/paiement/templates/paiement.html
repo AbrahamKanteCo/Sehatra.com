@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+    <div id="show" class="section" style="margin-top: 100px">
+		<div class="content-wrap">
+            <div class="container text-center" style="padding-bottom: 50px;">
+                <img src="{{ video.photo_de_couverture.url }}" style="max-height: 250px">
+            </div>
+            <div class="container text-center">
+                <div class="container text-center">
+                    <h2>ACHETEZ VOTRE BILLET - {{ video.titre }}</h2>
+                    <div class="justify-content-center bd-highlight text-center">
+                        <span>Paiement sécurisé en ariary: {{ video.tarif_ariary }} Ar</span>
+                        <span> / Paiement international sécurisé: {{ video.tarif_dollar }} $ </span>
+                    </div>
+                </div>
+                <ul style="display: inline; list-style: none">
+                    <li class= "paiement">
+                        <a href="#" class="stripeBtn">
+                            <img src="/static/images/visa-mastercard.jpg">
+                        </a>
+                    </li>
+                    <li class= "paiement" style="display: inline-block">
+                        <a href="mvola/">
+                            <img src="/static/images/MVOLA.jpg">
+                        </a>
+                    </li>
+                    <li class= "paiement" style="display: inline-block">
+                        <a href="orange-money/">
+                            <img src="/static/images/orange-money.jpg">
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="loader">
+          <div class="loading">
+        </div>
+    </div>
+    <style>
+    .paiement {
+        padding: 20px;
+    }
+
+    .loader {
+  display: none;
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.loading {
+  border: 2px solid #ccc;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border-top-color: #1ecd97;
+  border-left-color: #1ecd97;
+  animation: spin 1s infinite ease-in;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+    </style>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+
+    function spinner() {
+        document.getElementsByClassName("loader")[0].style.display = "block";
+    }
+
+        fetch("/paiement/stripe/config/")
+        .then((result) => { return result.json(); })
+        .then((data) => {
+            const stripe = Stripe(data.publicKey);
+            document.querySelectorAll('.stripeBtn').forEach(item => {
+            item.addEventListener('click', event => {
+                spinner();
+                fetch("/paiement/stripe/create-checkout-session/?id={{ billet.slug }}")
+                    .then((result) => {
+                        return result.json();
+                    })
+                    .then((data) => {
+                        {#console.log(data);#}
+                        return stripe.redirectToCheckout({sessionId: data.sessionId})
+                    })
+                    .then((res) => {
+                    });
+            })
+        });
+    });
+
+
+    </script>
+
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- breadcrumb -->
+    <div class="gen-breadcrumb">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <nav aria-label="breadcrumb">
+                        <div class="gen-breadcrumb-title">
+                            <h1>
+                                Organisateurs partenaires de SEHATRA
+                            </h1>
+                        </div>
+                        <div class="gen-breadcrumb-container">
+                            <p>
+                Ces organisateurs ont choisi de collaborer aves SEHATRA.COM  pour mettre leur production à la disposition des Malagasy dans le monde entier.
+                            </p>
+                        </div>
+                        <div class="text-center">
+                            <button data-tally-open="npbdLP" data-tally-width="700" data-tally-overlay="1" class="btn btn-primary">Inscrivez votre entreprise</button>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- breadcrumb -->
+
+    <!-- Section-1 Start -->
+    <section class="gen-section-padding-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="row">
+                        {% for object in object_list %}
+                        <div class="col-xl-3 col-lg-4 col-md-6">
+                            <div class="gen-carousel-movies-style-3 movie-grid style-3">
+                                <div class="gen-movie-contain">
+                                    <div class="gen-movie-img">
+                                        <img src="{{ object.photo_de_couverture.url }}" alt="{{ object.nom }}">
+                                        <div class="gen-movie-add">
+                                            <ul class="menu bottomRight">
+                                                <li class="share top">
+                                                    <i class="fa fa-share-alt"></i>
+                                                    <ul class="submenu">
+                                                        <li><a href="#" class="facebook"><i
+                                                                    class="fab fa-facebook-f"></i></a>
+                                                        </li>
+                                                        <li><a href="#" class="facebook"><i
+                                                                    class="fab fa-instagram"></i></a>
+                                                        </li>
+                                                        <li><a href="#" class="facebook"><i
+                                                                    class="fab fa-twitter"></i></a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="gen-movie-action">
+                                            <a href="{{ object.slug }}/" class="gen-button">
+                                                <i class="fa fa-play"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="gen-info-contain">
+                                        <div class="gen-movie-info">
+                                            <h3><a href="{{ object.slug }}/">{{ object.nom }}</a></h3>
+                                        </div>
+                                        <div class="gen-movie-meta-holder">
+                                            <ul>
+                                                <li>
+                                                    <span>Vidéos: {{ object.organisateur_video.all|length }}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Section-1 End -->
+    <script async src="https://tally.so/widgets/embed.js"></script>
+
+{% endblock %}

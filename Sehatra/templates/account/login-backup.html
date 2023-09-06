@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load socialaccount %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+        <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+<div class="col-md-12 align-self-center" style="margin-left: auto; margin-right: auto">
+<h1 style="color: #eee; margin-left: 10px;">{% trans "Sign In" %}</h1>
+
+<div>
+    <a href="{% provider_login_url 'google' %}" > <button class="btn btn-info" style="margin: 10px;">Se connecter avec <i class="fa fa-google"></i>oogle</button></a>
+    <a href="{% provider_login_url 'facebook' %}" style="margin: 10px;"> <button class="btn btn-info" style="margin: 10px;">Se connecter avec <i class="fa fa-facebook"></i>acebook</button></a>
+</div>
+
+<div style="margin-top: 20px; margin-bottom: 20px">
+    <p>Vous n'avez pas encore de compte ? <a href="/accounts/signup/"><button class="btn btn-info">S'inscrire</button></a></p>
+</div>
+
+    <form class="login" method="POST" action="{% url 'account_login' %}" style="margin-left: 15px;">
+  {% csrf_token %}
+    {{ form|crispy }}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+
+  <a class="btn btn-danger" href="{% url 'account_reset_password' %}" style="margin-top: 20px;">{% trans "Forgot Password?" %}</a>
+  <button class="btn btn-primary" type="submit" style="margin-top: 20px;">{% trans "Sign In" %}</button>
+</form>
+
+
+
+  <style>
+    @media screen and (min-width: 720px) {
+      .login input {
+        width: 25%;
+      }
+    }
+  </style>
+</div>
+
+            <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+{% endblock %}

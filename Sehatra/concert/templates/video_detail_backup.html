@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <div class="section banner-page" data-background="images/dummy-img-1920x300.jpg">
+		<div class="content-wrap pos-relative">
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+				<div class="title-page"> {{ object.titre }}</div>
+			</div>
+			<div class="d-flex justify-content-center bd-highlight mb-3">
+                <p>{{ object.description }}</p>
+		  	</div>
+		</div>
+	</div>
+
+    <div id="show" class="section">
+		<div class="content-wrap">
+			<div class="container text-center">
+                {% if user.is_authenticated %}
+                <video id='hls-sehatra'  class="video-js vjs-default-skin" controls width="500px" height="300px" style="margin-right: auto; margin-left: auto">{#                <source type="application/x-mpegURL" src="https://d3ce8bc1ed19a391d61192f0800459f8.egress.mediapackage-vod.us-east-1.amazonaws.com/out/v1/39c7fb12f1e64458b84c9dbff54378c7/87afa08ad48d486380c984eeaa273785/7061ba174fd24af2825803e614802a40/index.m3u8">#}
+                <source type="application/x-mpegURL" src="{{ object.lien_video }}">
+                </video>
+
+                <button onclick="openFullscreen();" style="margin-top: 20px;" class="bnt btn-primary"> Voir la vidéo en plein écran </button>
+                {% else %}
+                <a href="/accounts/login"><button style="margin-top: 20px;" class="bnt btn-primary">Se connecter</button></a>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+            <hr style="border: 0;
+        width: 90%;
+        height: 1px;
+        opacity: .5;
+    background-color: #a8afb1">
+
+<script src="https://vjs.zencdn.net/ie8/ie8-version/videojs-ie8.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.14.1/videojs-contrib-hls.js"></script>
+<script src="https://vjs.zencdn.net/7.2.3/video.js"></script>
+
+    <script>
+            var player = videojs('hls-sehatra');
+            player.play();
+
+            var elem = document.getElementById("hls-sehatra");
+            function openFullscreen() {
+              if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+              } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+              } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+              }
+            }
+    </script>
+
+    <script>
+        setInterval(function(){
+            $.get(
+                "/check-user/",
+                {paramOne : 1},
+                function(data) {
+                   if (!data['user']) {
+                       location.reload();
+                   }
+                }
+            );
+        }, 300000);
+    </script>
+
+    </body>
+</html>
+
+
+{% endblock %}
