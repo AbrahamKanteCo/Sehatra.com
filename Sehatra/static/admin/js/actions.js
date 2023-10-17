@@ -1,1 +1,201 @@
-"use strict";{const a=django.jQuery;let d;a.fn.actions=function(e){var n=a.extend({},a.fn.actions.defaults,e),o=a(this);let s=!1;function c(){a(n.acrossClears).hide(),a(n.acrossQuestions).show(),a(n.allContainer).hide()}function t(){a(n.acrossClears).show(),a(n.acrossQuestions).hide(),a(n.actionContainer).toggleClass(n.selectedClass),a(n.allContainer).show(),a(n.counterContainer).hide()}function i(){a(n.acrossClears).hide(),a(n.acrossQuestions).hide(),a(n.allContainer).hide(),a(n.counterContainer).show()}function l(){i(),a(n.acrossInput).val(0),a(n.actionContainer).removeClass(n.selectedClass)}function r(e){(e?c:i)(),a(o).prop("checked",e).parent().parent().toggleClass(n.selectedClass,e)}function u(){var t=a(o).filter(":checked").length,e=a(".action-counter").data("actionsIcnt");a(n.counterContainer).html(interpolate(ngettext("%(sel)s of %(cnt)s selected","%(sel)s of %(cnt)s selected",t),{sel:t,cnt:e},!0)),a(n.allToggle).prop("checked",function(){let e;return t===o.length?(e=!0,c()):(e=!1,l()),e})}a(n.counterContainer).show(),a(this).filter(":checked").each(function(e){a(this).parent().parent().toggleClass(n.selectedClass),u(),1===a(n.acrossInput).val()&&t()}),a(n.allToggle).show().on("click",function(){r(a(this).prop("checked")),u()}),a("a",n.acrossQuestions).on("click",function(e){e.preventDefault(),a(n.acrossInput).val(1),t()}),a("a",n.acrossClears).on("click",function(e){e.preventDefault(),a(n.allToggle).prop("checked",!1),l(),r(0),u()}),d=null,a(o).on("click",function(e){var t=(e=e||window.event).target||e.srcElement;if(d&&a.data(d)!==a.data(t)&&!0===e.shiftKey){let e=!1;a(d).prop("checked",t.checked).parent().parent().toggleClass(n.selectedClass,t.checked),a(o).each(function(){a.data(this)!==a.data(d)&&a.data(this)!==a.data(t)||(e=!e),e&&a(this).prop("checked",t.checked).parent().parent().toggleClass(n.selectedClass,t.checked)})}a(t).parent().parent().toggleClass(n.selectedClass,t.checked),d=t,u()}),a("form#changelist-form table#result_list tr").on("change","td:gt(0) :input",function(){s=!0}),a('form#changelist-form button[name="index"]').on("click",function(e){if(s)return confirm(gettext("You have unsaved changes on individual editable fields. If you run an action, your unsaved changes will be lost."))}),a('form#changelist-form input[name="_save"]').on("click",function(e){let t=!1;if(a("select option:selected",n.actionContainer).each(function(){a(this).val()&&(t=!0)}),t)return s?confirm(gettext("You have selected an action, but you haven’t saved your changes to individual fields yet. Please click OK to save. You’ll need to re-run the action.")):confirm(gettext("You have selected an action, and you haven’t made any changes on individual fields. You’re probably looking for the Go button rather than the Save button."))})},a.fn.actions.defaults={actionContainer:"div.actions",counterContainer:"span.action-counter",allContainer:"div.actions span.all",acrossInput:"div.actions input.select-across",acrossQuestions:"div.actions span.question",acrossClears:"div.actions span.clear",allToggle:"#action-toggle",selectedClass:"selected"},a(document).ready(function(){const e=a("tr input.action-select");0<e.length&&e.actions()})}
+/*global gettext, interpolate, ngettext*/
+'use strict';
+{
+    function show(selector) {
+        document.querySelectorAll(selector).forEach(function(el) {
+            el.classList.remove('hidden');
+        });
+    }
+
+    function hide(selector) {
+        document.querySelectorAll(selector).forEach(function(el) {
+            el.classList.add('hidden');
+        });
+    }
+
+    function showQuestion(options) {
+        hide(options.acrossClears);
+        show(options.acrossQuestions);
+        hide(options.allContainer);
+    }
+
+    function showClear(options) {
+        show(options.acrossClears);
+        hide(options.acrossQuestions);
+        document.querySelector(options.actionContainer).classList.remove(options.selectedClass);
+        show(options.allContainer);
+        hide(options.counterContainer);
+    }
+
+    function reset(options) {
+        hide(options.acrossClears);
+        hide(options.acrossQuestions);
+        hide(options.allContainer);
+        show(options.counterContainer);
+    }
+
+    function clearAcross(options) {
+        reset(options);
+        const acrossInputs = document.querySelectorAll(options.acrossInput);
+        acrossInputs.forEach(function(acrossInput) {
+            acrossInput.value = 0;
+        });
+        document.querySelector(options.actionContainer).classList.remove(options.selectedClass);
+    }
+
+    function checker(actionCheckboxes, options, checked) {
+        if (checked) {
+            showQuestion(options);
+        } else {
+            reset(options);
+        }
+        actionCheckboxes.forEach(function(el) {
+            el.checked = checked;
+            el.closest('tr').classList.toggle(options.selectedClass, checked);
+        });
+    }
+
+    function updateCounter(actionCheckboxes, options) {
+        const sel = Array.from(actionCheckboxes).filter(function(el) {
+            return el.checked;
+        }).length;
+        const counter = document.querySelector(options.counterContainer);
+        // data-actions-icnt is defined in the generated HTML
+        // and contains the total amount of objects in the queryset
+        const actions_icnt = Number(counter.dataset.actionsIcnt);
+        counter.textContent = interpolate(
+            ngettext('%(sel)s of %(cnt)s selected', '%(sel)s of %(cnt)s selected', sel), {
+                sel: sel,
+                cnt: actions_icnt
+            }, true);
+        const allToggle = document.getElementById(options.allToggleId);
+        allToggle.checked = sel === actionCheckboxes.length;
+        if (allToggle.checked) {
+            showQuestion(options);
+        } else {
+            clearAcross(options);
+        }
+    }
+
+    const defaults = {
+        actionContainer: "div.actions",
+        counterContainer: "span.action-counter",
+        allContainer: "div.actions span.all",
+        acrossInput: "div.actions input.select-across",
+        acrossQuestions: "div.actions span.question",
+        acrossClears: "div.actions span.clear",
+        allToggleId: "action-toggle",
+        selectedClass: "selected"
+    };
+
+    window.Actions = function(actionCheckboxes, options) {
+        options = Object.assign({}, defaults, options);
+        let list_editable_changed = false;
+        let lastChecked = null;
+        let shiftPressed = false;
+
+        document.addEventListener('keydown', (event) => {
+            shiftPressed = event.shiftKey;
+        });
+
+        document.addEventListener('keyup', (event) => {
+            shiftPressed = event.shiftKey;
+        });
+
+        document.getElementById(options.allToggleId).addEventListener('click', function(event) {
+            checker(actionCheckboxes, options, this.checked);
+            updateCounter(actionCheckboxes, options);
+        });
+
+        document.querySelectorAll(options.acrossQuestions + " a").forEach(function(el) {
+            el.addEventListener('click', function(event) {
+                event.preventDefault();
+                const acrossInputs = document.querySelectorAll(options.acrossInput);
+                acrossInputs.forEach(function(acrossInput) {
+                    acrossInput.value = 1;
+                });
+                showClear(options);
+            });
+        });
+
+        document.querySelectorAll(options.acrossClears + " a").forEach(function(el) {
+            el.addEventListener('click', function(event) {
+                event.preventDefault();
+                document.getElementById(options.allToggleId).checked = false;
+                clearAcross(options);
+                checker(actionCheckboxes, options, false);
+                updateCounter(actionCheckboxes, options);
+            });
+        });
+
+        function affectedCheckboxes(target, withModifier) {
+            const multiSelect = (lastChecked && withModifier && lastChecked !== target);
+            if (!multiSelect) {
+                return [target];
+            }
+            const checkboxes = Array.from(actionCheckboxes);
+            const targetIndex = checkboxes.findIndex(el => el === target);
+            const lastCheckedIndex = checkboxes.findIndex(el => el === lastChecked);
+            const startIndex = Math.min(targetIndex, lastCheckedIndex);
+            const endIndex = Math.max(targetIndex, lastCheckedIndex);
+            const filtered = checkboxes.filter((el, index) => (startIndex <= index) && (index <= endIndex));
+            return filtered;
+        };
+
+        Array.from(document.getElementById('result_list').tBodies).forEach(function(el) {
+            el.addEventListener('change', function(event) {
+                const target = event.target;
+                if (target.classList.contains('action-select')) {
+                    const checkboxes = affectedCheckboxes(target, shiftPressed);
+                    checker(checkboxes, options, target.checked);
+                    updateCounter(actionCheckboxes, options);
+                    lastChecked = target;
+                } else {
+                    list_editable_changed = true;
+                }
+            });
+        });
+
+        document.querySelector('#changelist-form button[name=index]').addEventListener('click', function(event) {
+            if (list_editable_changed) {
+                const confirmed = confirm(gettext("You have unsaved changes on individual editable fields. If you run an action, your unsaved changes will be lost."));
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            }
+        });
+
+        const el = document.querySelector('#changelist-form input[name=_save]');
+        // The button does not exist if no fields are editable.
+        if (el) {
+            el.addEventListener('click', function(event) {
+                if (document.querySelector('[name=action]').value) {
+                    const text = list_editable_changed
+                        ? gettext("You have selected an action, but you haven’t saved your changes to individual fields yet. Please click OK to save. You’ll need to re-run the action.")
+                        : gettext("You have selected an action, and you haven’t made any changes on individual fields. You’re probably looking for the Go button rather than the Save button.");
+                    if (!confirm(text)) {
+                        event.preventDefault();
+                    }
+                }
+            });
+        }
+    };
+
+    // Call function fn when the DOM is loaded and ready. If it is already
+    // loaded, call the function now.
+    // http://youmightnotneedjquery.com/#ready
+    function ready(fn) {
+        if (document.readyState !== 'loading') {
+            fn();
+        } else {
+            document.addEventListener('DOMContentLoaded', fn);
+        }
+    }
+
+    ready(function() {
+        const actionsEls = document.querySelectorAll('tr input.action-select');
+        if (actionsEls.length > 0) {
+            Actions(actionsEls);
+        }
+    });
+}

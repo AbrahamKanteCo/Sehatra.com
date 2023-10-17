@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'crispy_forms',
+    'crispy_bootstrap4',
     'django_user_agents',
     'allauth.account',
     'allauth.socialaccount',
@@ -150,7 +151,8 @@ USE_TZ = True
 
 # STATIC_ROOT = 'C:\\Users\\TOLOTRA-MALAGASY\\PycharmProjects\\Sehatra\\static'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR]
+STATIC_ROOT = STATIC_DIR
+# STATICFILES_DIRS = [STATIC_DIR]
 
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'PNG': ".png"}
 
@@ -201,3 +203,5 @@ SOCIALACCOUNT_PROVIDERS = {
         'VERIFIED_EMAIL': False,
         'VERSION': 'v2.4'}
 }
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"

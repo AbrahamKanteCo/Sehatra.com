@@ -1,1 +1,125 @@
-!function(){"use strict";function e(n,o){var t,e=document.createElement("form");for(t in e.method="POST",e.action=n,o){var i=document.createElement("input");i.type="hidden",i.name=t,i.value=o[t],e.appendChild(i)}document.body.appendChild(e),e.submit()}function s(n){"function"==typeof n?n():window.location.href=n}var i=window.allauth=window.allauth||{},n=JSON.parse(document.getElementById("allauth-facebook-settings").innerHTML),c=!1;i.facebook={init:function(n){var o,t,e;this.opts=n,window.fbAsyncInit=function(){FB.init(n.initParams),c=!0,i.facebook.onInit()},o=document,e="facebook-jssdk",o.getElementById(e)||((t=o.createElement("script")).id=e,t.async=!0,t.src=n.sdkUrl,o.getElementsByTagName("head")[0].appendChild(t))},onInit:function(){},login:function(o,n,t,e){var i=this;c?("reauthenticate"!==n&&"rerequest"!==n||(this.opts.loginOptions.auth_type=n),""!==e&&(this.opts.loginOptions.scope=e),FB.login(function(n){n.authResponse?i.onLoginSuccess(n,o,t):n&&n.status&&-1<["not_authorized","unknown"].indexOf(n.status)?i.onLoginCanceled(n):i.onLoginError(n)},i.opts.loginOptions)):s(this.opts.loginUrl+"?next="+encodeURIComponent(o)+"&action="+encodeURIComponent(n)+"&process="+encodeURIComponent(t)+"&scope="+encodeURIComponent(e))},onLoginCanceled:function(){s(this.opts.cancelUrl)},onLoginError:function(){s(this.opts.errorUrl)},onLoginSuccess:function(n,o,t){n={next:o||"",process:t,access_token:n.authResponse.accessToken,expires_in:n.authResponse.expiresIn,csrfmiddlewaretoken:this.opts.csrfToken};e(this.opts.loginByTokenUrl,n)},logout:function(o){var t=this;c&&FB.logout(function(n){t.onLogoutSuccess(n,o)})},onLogoutSuccess:function(n,o){o={next:o||"",csrfmiddlewaretoken:this.opts.csrfToken};e(this.opts.logoutUrl,o)}},i.facebook.init(n)}();
+/* global document, window, FB */
+(function () {
+  'use strict'
+
+  function postForm (action, data) {
+    var f = document.createElement('form')
+    f.method = 'POST'
+    f.action = action
+
+    for (var key in data) {
+      var d = document.createElement('input')
+      d.type = 'hidden'
+      d.name = key
+      d.value = data[key]
+      f.appendChild(d)
+    }
+    document.body.appendChild(f)
+    f.submit()
+  }
+
+  function setLocationHref (url) {
+    if (typeof (url) === 'function') {
+      // Deprecated -- instead, override
+      // allauth.facebook.onLoginError et al directly.
+      url()
+    } else {
+      window.location.href = url
+    }
+  }
+
+  var allauth = window.allauth = window.allauth || {}
+  var fbSettings = JSON.parse(document.getElementById('allauth-facebook-settings').innerHTML)
+  var fbInitialized = false
+
+  allauth.facebook = {
+
+    init: function (opts) {
+      this.opts = opts
+
+      window.fbAsyncInit = function () {
+        FB.init(opts.initParams)
+        fbInitialized = true
+        allauth.facebook.onInit()
+      };
+
+      (function (d) {
+        var js
+        var id = 'facebook-jssdk'
+        if (d.getElementById(id)) { return }
+        js = d.createElement('script'); js.id = id; js.async = true
+        js.src = opts.sdkUrl
+        d.getElementsByTagName('head')[0].appendChild(js)
+      }(document))
+    },
+
+    onInit: function () {
+    },
+
+    login: function (nextUrl, action, process, scope) {
+      var self = this
+      if (!fbInitialized) {
+        var url = this.opts.loginUrl + '?next=' + encodeURIComponent(nextUrl) + '&action=' + encodeURIComponent(action) + '&process=' + encodeURIComponent(process) + '&scope=' + encodeURIComponent(scope)
+        setLocationHref(url)
+        return
+      }
+      if (action === 'reauthenticate' || action === 'rerequest') {
+        this.opts.loginOptions.auth_type = action
+      }
+      if (scope !== '') {
+        this.opts.loginOptions.scope = scope
+      }
+
+      FB.login(function (response) {
+        if (response.authResponse) {
+          self.onLoginSuccess(response, nextUrl, process)
+        } else if (response && response.status && ['not_authorized', 'unknown'].indexOf(response.status) > -1) {
+          self.onLoginCanceled(response)
+        } else {
+          self.onLoginError(response)
+        }
+      }, self.opts.loginOptions)
+    },
+
+    onLoginCanceled: function (/* response */) {
+      setLocationHref(this.opts.cancelUrl)
+    },
+
+    onLoginError: function (/* response */) {
+      setLocationHref(this.opts.errorUrl)
+    },
+
+    onLoginSuccess: function (response, nextUrl, process) {
+      var data = {
+        next: nextUrl || '',
+        process: process,
+        access_token: response.authResponse.accessToken,
+        expires_in: response.authResponse.expiresIn,
+        csrfmiddlewaretoken: this.opts.csrfToken
+      }
+
+      postForm(this.opts.loginByTokenUrl, data)
+    },
+
+    logout: function (nextUrl) {
+      var self = this
+      if (!fbInitialized) {
+        return
+      }
+      FB.logout(function (response) {
+        self.onLogoutSuccess(response, nextUrl)
+      })
+    },
+
+    onLogoutSuccess: function (response, nextUrl) {
+      var data = {
+        next: nextUrl || '',
+        csrfmiddlewaretoken: this.opts.csrfToken
+      }
+
+      postForm(this.opts.logoutUrl, data)
+    }
+  }
+
+  allauth.facebook.init(fbSettings)
+})()
