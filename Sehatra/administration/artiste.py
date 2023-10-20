@@ -255,7 +255,7 @@ def envoi_notification_artiste():
         body = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
         if(ventes>0) :
             send_notification(
-            "http://localhost:8000/ventes_video_artiste",
+            "http://localhost:8000/administration/ventes_video_artiste",
             user.id,
             "Ventes",
             body,

@@ -1012,14 +1012,14 @@ def envoi_notification_administrateur():
     for user in users:
         if(ventes>0) :
             send_notification(
-            "http://localhost:8000/ventes_video",
+            "http://localhost:8000/administration/ventes_video",
             user.id,
             "Ventes",
             body1,
         )
         if(comptes>0) :
             send_notification(
-            "http://localhost:8000/compteutilisateur",
+            "http://localhost:8000/administration/compteutilisateur",
             user.id,
             "Comptes crées",
             body2,
