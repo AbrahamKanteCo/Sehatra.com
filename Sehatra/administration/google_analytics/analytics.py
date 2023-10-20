@@ -94,8 +94,8 @@ def get_credentials():
 
 
 def dataVenteParPays(since, until):
-    since = datetime.datetime.strptime(since, "%Y-%m-%d").date()
-    until = datetime.datetime.strptime(until, "%Y-%m-%d").date()
+    since = since.date()
+    until = until.date()
 
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
@@ -137,6 +137,8 @@ def dataVenteParPays(since, until):
 
 
 def pageStatistique(since,until):
+    since = since.date()
+    until = until.date()
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
 
@@ -144,7 +146,7 @@ def pageStatistique(since,until):
         property='properties/'+AUTH['property_id'],
         dimensions=[Dimension(name="pagePath"), Dimension(name="unifiedScreenName"),Dimension(name="date")],
         metrics=[Metric(name="activeUsers"),Metric(name="screenPageViews"),Metric(name="bounceRate"),Metric(name="averageSessionDuration"),Metric(name="newUsers")],
-        date_ranges=[DateRange(start_date=since, end_date=until)],
+        date_ranges=[DateRange(start_date=str(since), end_date=str(until))],
     )
 
     response = client.run_report(request)

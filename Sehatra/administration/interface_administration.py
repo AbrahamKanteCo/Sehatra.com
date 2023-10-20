@@ -979,6 +979,7 @@ def logout(request,token):
 
 @background(schedule=60)
 def recupererData():
+    print("Récuperation")
     hier = datetime.datetime.now() - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
@@ -988,6 +989,7 @@ def recupererData():
 
 @background(schedule=60)
 def envoi_notification_administrateur():
+    print("Notification admin")
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
@@ -1022,7 +1024,6 @@ def envoi_notification_administrateur():
 
 
 def programmerNotification():
-    print("Notification admin")
     now = datetime.datetime.now()
     midnight = now.replace(hour=16, minute=45, second=0)
     if now > midnight:
@@ -1031,7 +1032,6 @@ def programmerNotification():
     envoi_notification_administrateur(repeat=60*24, repeat_until=None)
 
 def programmerRecuperation():
-    print("Récuperation")
     now = datetime.datetime.now()
     midnight = now.replace(hour=16, minute=50, second=0)
     if now > midnight:

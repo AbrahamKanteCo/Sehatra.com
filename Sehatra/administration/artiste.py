@@ -237,6 +237,7 @@ from django.contrib.auth.models import User
 
 @background(schedule=60)
 def envoi_notification_artiste():
+    print("Notification artiste")
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
@@ -261,7 +262,6 @@ def envoi_notification_artiste():
         )
         
 def programmerNotificationArtiste():
-    print("Notification artiste")
     now = datetime.datetime.now()
     midnight = now.replace(hour=16, minute=55, second=0)
     if now > midnight:
