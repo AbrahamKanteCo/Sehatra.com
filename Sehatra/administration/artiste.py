@@ -8,7 +8,7 @@ from administration.interface_administration import marquer_notification_read, s
 from administration.models import NotificationFCM, PageAnalytics, VenteParPays, Video_facebook
 from paiement.models import Billet, Paiement
 from django.contrib.humanize.templatetags.humanize import intcomma
-from plateforme.models import Video
+from plateforme.models import Artiste, Video
 from django.db.models.functions import TruncMonth
 from django.db.models import Q,Avg
 
@@ -233,6 +233,8 @@ def statistiques_ventes_artiste_json(request, annee):
 
 from background_task import background
 
+from django.contrib.auth.models import User
+
 @background(schedule=60)
 def envoi_notification_artiste():
     aujourd_hui = datetime.date.today()
@@ -240,24 +242,28 @@ def envoi_notification_artiste():
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
 
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
-    paiements = Paiement.objects.filter(
-        valide=True, billet__gratuit=False,billet__video__artiste__user=4,date__range=(debut_journee,fin_journee)
-    ).order_by("-date")
-    somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 40 / 100
-    ventes=paiements.count()
-    body = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
-    if(ventes>0) :
-        send_notification(
-        "http://localhost:8000/ventes_video_artiste",
-        4,
-        "Ventes",
-        body,
-    )
+    artistes = Artiste.objects.filter(user__is_active=True, en_ligne=True)
+    for artiste in artistes:
+        user = artiste.user
+        paiements = Paiement.objects.filter(
+            valide=True, billet__gratuit=False,billet__video__artiste__user=user.id,date__range=(debut_journee,fin_journee)
+        ).order_by("-date")
+        somme = Paiement.calculer_paiement(paiements)
+        revenus = somme * 40 / 100
+        ventes=paiements.count()
+        body = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
+        if(ventes>0) :
+            send_notification(
+            "http://localhost:8000/ventes_video_artiste",
+            user.id,
+            "Ventes",
+            body,
+        )
         
 def programmerNotificationArtiste():
+    print("Notification artiste")
     now = datetime.datetime.now()
-    midnight = now.replace(hour=15, minute=40, second=0)
+    midnight = now.replace(hour=16, minute=55, second=0)
     if now > midnight:
         midnight += datetime.timedelta(days=1)
 
