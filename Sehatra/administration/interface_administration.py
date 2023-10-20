@@ -23,6 +23,7 @@ from .google_analytics.analytics import (
 from .models import (
     NotificationFCM,
     PageAnalytics,
+    VenteParPays,
 )
 from plateforme.models import Association,Action, Live, Organisateur, Artiste, Video
 from paiement.models import  Billet,Paiement
@@ -110,6 +111,13 @@ country_mapping = {
 
 pagination = 10
 
+class DashboardView(View):
+    def get(self, request):
+        if request.user.is_superuser==True or request.user.is_staff== True:
+            return redirect("/administration/dashboard")
+        else:
+            return redirect("/administration/dashboard-artiste")
+
 
 def pages(request):
     debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
@@ -129,7 +137,7 @@ def pages(request):
     taux_rebond_moyen = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Avg('bouncerate'))['bouncerate__avg']
 
     notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
-    context = {"pages": pages, "notifications": notifications,"total_vue":total_vues,"temps_moyen":format(temps_moyen,'.2f'),"total_nouveaux_utilisateurs":total_nouveaux_utilisateurs,"taux_rebond_moyen":format(taux_rebond_moyen,'.2f')}
+    context = {"pages": pages, "notifications": notifications,"total_vue":total_vues if total_vues is not None else 0,"temps_moyen":format(temps_moyen,'.2f') if temps_moyen is not None else 0.0,"total_nouveaux_utilisateurs":total_nouveaux_utilisateurs if total_nouveaux_utilisateurs is not None else 0,"taux_rebond_moyen":format(taux_rebond_moyen,'.2f') if taux_rebond_moyen is not None else 0.0}
 
     return render(request, "pages.html", context)
 
@@ -1129,14 +1137,6 @@ def rechercheassociations(request):
             )[:5],
         }
     return render(request, "associations_crud.html", context)
-
-
-class DashboardView(View):
-    def get(self, request):
-        if request.session.get("utilisateur") == "administrateur":
-            return redirect("/dashboard")
-        else:
-            return redirect("/dashboard-artiste")
 
 
 def switchUser(request, user):

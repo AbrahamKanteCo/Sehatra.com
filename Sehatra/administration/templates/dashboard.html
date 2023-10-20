@@ -33,7 +33,7 @@
                                         <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <a href="{%url 'app:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
+                                                    <a href="{%url 'administration:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
                                                     <div id="revenue">
                                                     <p class="mb-1"> Revenue</p>                                           
                                                     <h2 class="mb-1 font-weight-bold">{{revenue|intcomma}} Ar</h2>
@@ -52,7 +52,7 @@
                                         <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
                                             <div class="card">
                                                 <div class="card-body">
-                                                    <a href="{%url 'app:ventes_video'%}"><svg class=" svg-icon card-custom-icon text-secondary icon-dropshadow-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <a href="{%url 'administration:ventes_video'%}"><svg class=" svg-icon card-custom-icon text-secondary icon-dropshadow-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
                                                             <path d="M18.175,4.142H1.951C1.703,4.142,1.5,4.344,1.5,4.592v10.816c0,0.247,0.203,0.45,0.451,0.45h16.224c0.247,0,0.45-0.203,0.45-0.45V4.592C18.625,4.344,18.422,4.142,18.175,4.142 M4.655,14.957H2.401v-1.803h2.253V14.957zM4.655,12.254H2.401v-1.803h2.253V12.254z M4.655,9.549H2.401V7.747h2.253V9.549z M4.655,6.846H2.401V5.043h2.253V6.846zM14.569,14.957H5.556V5.043h9.013V14.957z M17.724,14.957h-2.253v-1.803h2.253V14.957z M17.724,12.254h-2.253v-1.803h2.253V12.254zM17.724,9.549h-2.253V7.747h2.253V9.549z M17.724,6.846h-2.253V5.043h2.253V6.846z"></path></a>
                                                     </svg>
                                                     <div id="oeuvre_vendu">
@@ -219,7 +219,7 @@
                                                 </div>
                                                 {%endfor%}
                                             </div>
-                                            <a  href="{%url 'app:ventes_video'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                            <a  href="{%url 'administration:ventes_video'%}" class="btn btn-square btn-primary">Voir plus </a>
                                         </div>
                                     </div>
                                 </div>
@@ -283,7 +283,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <a  href="{%url 'app:transactions'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                            <a  href="{%url 'administration:transactions'%}" class="btn btn-square btn-primary">Voir plus </a>
                                         </div>
                                     </div>
                                 </div>
@@ -312,7 +312,7 @@
                                                     </table>
                                                 </div>
                                             </div>
-                                            <a  href="{%url 'app:compteutilisateur'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                            <a  href="{%url 'administration:compteutilisateur'%}" class="btn btn-square btn-primary">Voir plus </a>
                                         </div>
                                     </div>
                                 </div>

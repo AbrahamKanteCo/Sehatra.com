@@ -29,7 +29,7 @@
                             src="{% static 'interface_administration/assets/images/users/profil.png' %}">
                     </div>
                     <div class="user-info text-center">
-                            <h5 class=" mb-1 font-weight-bold">Kiady</h5>
+                            <h5 class=" mb-1 font-weight-bold">{{request.user.username}}</h5>
                     </div>
                 </div>
             </div>
@@ -43,7 +43,7 @@
                 </svg>
             </div>
             <ul class="side-menu">
-                {% if request.session.utilisateur == "administrateur" or not request.session.utilisateur %}
+                {% if request.user.is_superuser or request.user.is_staff %}
                     <li class="slide">
                         <a class="side-menu__item"
                            data-bs-toggle="slide"
@@ -295,7 +295,7 @@
                             <span class="side-menu__label">Vidéos</span>
                         </a>
                     </li>
-                {% elif request.session.utilisateur == "artiste" %}
+                {% else%}
                     <li class="slide">
                         <a class="side-menu__item"
                            data-bs-toggle="slide"

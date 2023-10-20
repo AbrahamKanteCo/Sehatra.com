@@ -79,7 +79,7 @@
                                    <a href="#" id="gen-user-btn"><i class="fa fa-user"></i> {{ user.username|capfirst }}</a>
                                  <i class="fa fa-chevron-down gen-submenu-icon"></i>
                                  <ul class="sub-menu">
-                                    {% if request.user.is_staff %}
+                                    {% if request.user.is_superuser %}
                                              <li class="menu-item menu-item-has-children">
                                                 <a href="/administration/"><i class="fas fa-user-secret"></i>
                                                    Administration </a>
