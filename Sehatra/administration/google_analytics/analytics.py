@@ -85,8 +85,6 @@ def authentification():
 
 AUTH=authentification()
 
-# if __name__ == "__main__":
-#     init() 
 
 
 def get_credentials():

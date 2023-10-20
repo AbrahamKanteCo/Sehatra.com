@@ -456,7 +456,7 @@ def pages_artistes(request):
             date__gte=since,
             billet__video_id=video.id,
         ).order_by("-date")
-        total_ventes+=nb_ventes
+        total_ventes+= len(nb_ventes)
         resultats.append(
             {"titre": video.titre, "total_vues": vues, "ventes": len(nb_ventes)}
         )

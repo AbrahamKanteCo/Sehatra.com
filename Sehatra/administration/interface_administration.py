@@ -19,6 +19,7 @@ from .google_analytics.analytics import (
     demographicsByLanguage,
     demographieParPays,
     getUtilisateurActive,
+    pageStatistique,
 )
 from .models import (
     NotificationFCM,
@@ -327,8 +328,6 @@ def dashboard(request):
     )
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
 
-    # récuperer donnée
-    # dataVenteParPays(since,until)
 
     # chiffre_affaire
     ca_aujourdhui = Paiement.objects.filter(
@@ -931,6 +930,11 @@ def switchUser(request, user):
     response_data = {"message": "Utilisateur enregistré avec succès"}
     return JsonResponse(response_data)
 
+def recupererData(request):
+    debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
+    since = debut_28.strftime("%Y-%m-%d")
+    dataVenteParPays(since,datetime.datetime.now())
+    pageStatistique(since,datetime.datetime.now())
 
 def envoi_notification_administrateur(request):
     aujourd_hui = datetime.date.today()
