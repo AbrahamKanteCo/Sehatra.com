@@ -230,15 +230,18 @@ def statistiques_ventes_artiste_json(request, annee):
 
     return JsonResponse({"statistiques_ventes": donnees_statistiques})
 
-def envoi_notification_artiste(request):
-    id=request.user.id
+
+from background_task import background
+
+@background(schedule=60)
+def envoi_notification_artiste():
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
 
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
     paiements = Paiement.objects.filter(
-        valide=True, billet__gratuit=False,billet__video__artiste__user=id,date__range=(debut_journee,fin_journee)
+        valide=True, billet__gratuit=False,billet__video__artiste__user=4,date__range=(debut_journee,fin_journee)
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
     revenus = somme * 40 / 100
@@ -247,10 +250,20 @@ def envoi_notification_artiste(request):
     if(ventes>0) :
         send_notification(
         "http://localhost:8000/ventes_video_artiste",
-        2,
+        4,
         "Ventes",
         body,
     )
+        
+def programmerNotificationArtiste():
+    now = datetime.datetime.now()
+    midnight = now.replace(hour=15, minute=40, second=0)
+    if now > midnight:
+        midnight += datetime.timedelta(days=1)
+
+    envoi_notification_artiste(repeat=60*24, repeat_until=None)
+
+# programmerNotificationArtiste()
 
 def dashboardartiste(request):
     id=request.user.id

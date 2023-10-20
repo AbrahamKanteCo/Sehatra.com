@@ -5,6 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.humanize.templatetags.humanize import intcomma
+from requests import request
 
 from .facebook.facebookdata import (
     AudienceParAgeEtSexe,
@@ -930,41 +931,7 @@ def switchUser(request, user):
     response_data = {"message": "Utilisateur enregistré avec succès"}
     return JsonResponse(response_data)
 
-def recupererData(request):
-    debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
-    since = debut_28.strftime("%Y-%m-%d")
-    dataVenteParPays(since,datetime.datetime.now())
-    pageStatistique(since,datetime.datetime.now())
-
-def envoi_notification_administrateur(request):
-    aujourd_hui = datetime.date.today()
-    hier = aujourd_hui - datetime.timedelta(days=1)
-    debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
-
-    fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
-    comptes = User.objects.filter(date_joined__range=(debut_journee,fin_journee)).count()
-    paiements = Paiement.objects.filter(
-        valide=True, billet__gratuit=False, date__range=(debut_journee,fin_journee)
-    ).order_by("-date")
-    somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 40 / 100
-    ventes=paiements.count()
-    body1 = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
-    body2 = "Il y a eu "+str(comptes)+" crées hier"
-    if(ventes>0) :
-        send_notification(
-        "http://localhost:8000/ventes_video",
-        2,
-        "Ventes",
-        body1,
-    )
-    if(comptes>0) :
-        send_notification(
-        "http://localhost:8000/compteutilisateur",
-        2,
-        "Comptes crées",
-        body2,
-    )
+from background_task import background
 
 def send_notification(url, user, titre, message):
     firebase_app = firebase_admin.get_app()
@@ -992,6 +959,82 @@ def send_notification(url, user, titre, message):
     else:
         return False
 
+def enregitrerToken(request, token):
+    if request.method == 'GET':
+        token, created = FCMDevice.objects.get_or_create(registration_id=token,user_id=request.user.id)
+        if created:
+            return JsonResponse({'message': 'Token enregistré avec succès.'}, status=201)
+        else:
+            return JsonResponse({'message': 'Token déjà existant.'}, status=200)
+    else:
+        return JsonResponse({'error': 'Mauvaise requête.'}, status=400)
+
+def logout(request,token):
+    device = FCMDevice.objects.filter(user_id=request.user.id,registration_id=token).first()
+    if device:
+        device.delete()
+    return JsonResponse({'message': 'Déconnecté avec succès.'}, status=200)
+
+
+
+@background(schedule=60)
+def recupererData():
+    hier = datetime.datetime.now() - datetime.timedelta(days=1)
+    debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
+    fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
+    dataVenteParPays(debut_journee,fin_journee)
+    pageStatistique(debut_journee,fin_journee)
+
+@background(schedule=60)
+def envoi_notification_administrateur():
+    aujourd_hui = datetime.date.today()
+    hier = aujourd_hui - datetime.timedelta(days=1)
+    debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
+
+    fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
+    comptes = User.objects.filter(date_joined__range=(debut_journee,fin_journee)).count()
+    paiements = Paiement.objects.filter(
+        valide=True, billet__gratuit=False, date__range=(debut_journee,fin_journee)
+    ).order_by("-date")
+    somme = Paiement.calculer_paiement(paiements)
+    revenus = somme * 40 / 100
+    ventes=paiements.count()
+    body1 = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
+    body2 = "Il y a eu "+str(comptes)+" crées hier"
+    if(ventes>0) :
+        send_notification(
+        "http://localhost:8000/ventes_video",
+        3,
+        "Ventes",
+        body1,
+    )
+    if(comptes>0) :
+        send_notification(
+        "http://localhost:8000/compteutilisateur",
+        3,
+        "Comptes crées",
+        body2,
+    )
+
+
+def programmerNotification():
+    now = datetime.datetime.now()
+    midnight = now.replace(hour=15, minute=45, second=0)
+    if now > midnight:
+        midnight += datetime.timedelta(days=1)
+
+    envoi_notification_administrateur(repeat=60*24, repeat_until=None)
+
+def programmerRecuperation():
+    now = datetime.datetime.now()
+    midnight = now.replace(hour=15, minute=42, second=0)
+    if now > midnight:
+        midnight += datetime.timedelta(days=1)
+
+    recupererData(repeat=60*24, repeat_until=None)
+
+# programmerNotification()
+# programmerRecuperation()
 
 class AssociationCreate(generics.CreateAPIView):
     queryset = Association.objects.all()

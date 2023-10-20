@@ -181,7 +181,7 @@
                                                class="dropdown-item text-center user pb-0 font-weight-bold">{{request.user.username}}</a>
                                         <div class="dropdown-divider"></div>
                                     </div>
-                                    <a class="dropdown-item d-flex" href="/accounts/logout/">
+                                    <a class="dropdown-item d-flex" onclick="logout();" href="#">
                                         <svg class="header-icon me-3"
                                              x="1008"
                                              y="1248"
@@ -223,6 +223,20 @@
     
         xmlhttp.open("GET", url);
         xmlhttp.send();
+    }
+    function logout(){
+        var token=localStorage.getItem('token_fcm');
+        fetch(`/administration/logout/` + token, {
+            method: "GET",
+        })
+        .then(response => response.json())
+        .then(data => {
+            window.location.href="/accounts/logout/";
+
+        })
+        .catch(error => {
+              swal("Erreur", error, "error");
+        });
     }
     
 </script>

@@ -1,3 +1,4 @@
+import datetime
 from . import interface_administration,artiste
 from . import data_load
 from django.urls import path
@@ -9,6 +10,9 @@ from django.conf import settings
 app_name = 'administration'
 
 urlpatterns = [
+    #token
+    path('enregistrerToken/<str:token>/',interface_administration.enregitrerToken,name="enregistrerToken"), 
+    path('logout/<str:token>/',interface_administration.logout,name="logout"), 
     #ajout
     path('artistes/ajouter/', interface_administration.ArtisteCreate.as_view(), name='artiste-create'),
     path('associations/ajouter/', interface_administration.AssociationCreate.as_view(), name='association-create'),
@@ -77,8 +81,8 @@ urlpatterns = [
 
     #notification
     path('notifications',interface_administration.notifications,name='notifications'),
-    path('test',interface_administration.envoi_notification_administrateur,name='test'),
-     #artiste
+    path('test',interface_administration.recupererData,name='test'),
+    #artiste
     path('dashboard-artiste', artiste.dashboardartiste, name='dashboard-artiste'),
     path('artiste-video', artiste.artistevideo, name='artiste-video'),
     path('statistique-video-artiste/<int:video>', artiste.statistiquevideoartiste, name='statistique-video-artiste'),
