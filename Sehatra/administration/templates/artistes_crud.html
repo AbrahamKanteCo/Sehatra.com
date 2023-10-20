@@ -370,14 +370,14 @@
                     closeOnEsc: false
                 });
         
-                fetch(`artistes/ajouter/`, {
+                fetch(`/administration/artistes/ajouter/`, {
                     method: "POST",
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
-                    afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
-                    location.reload();
+                    //afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
+                    //location.reload();
                 })
                 .catch(error => {
                     swal("Erreur", error, "error");
@@ -403,7 +403,7 @@
                     closeOnEsc: false
                 });
         
-                fetch(`/artistes/${artisteId}/update/`, {
+                fetch(`/administration/artistes/${artisteId}/update/`, {
                     method: "PUT",
                     body: formData
                 })
@@ -436,7 +436,7 @@
             function detail(id){
             var artisteId = id;
                 
-            fetch(`/artistes/${artisteId}/detail/`, {
+            fetch(`/administration/artistes/${artisteId}/detail/`, {
                 method: "GET",
             })
             .then(response => response.json())
@@ -461,7 +461,7 @@
                 },
                 function(isConfirm){
                     if (isConfirm) {
-                        fetch(`/artistes/${artisteId}/delete/`, {
+                        fetch(`administration/artistes/${artisteId}/delete/`, {
                             method: "DELETE",
                         })
                         .then(response => {
