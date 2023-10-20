@@ -167,7 +167,7 @@ class Action (models.Model):
                                                       size=[1920,1080],
                                                       crop=["middle", "center"],
                                         )
-    association = models.ForeignKey(Association, on_delete=models.CASCADE, related_name="associarion_action")
+    association = models.ForeignKey(Association, on_delete=models.CASCADE, related_name="association_action")
     type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     youtube = models.URLField(null=True, blank=True)
     facebook = models.URLField(null=True, blank=True)

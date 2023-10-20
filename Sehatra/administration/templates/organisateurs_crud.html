@@ -73,7 +73,7 @@
                                                 <div class="main-contacts-list" id="mainContactList">
                                                     {%for organisateur in organisateurs%}
                                                     <div class="main-contact-item" id="partienav{{organisateur.id}}">
-                                                        <div class="main-img-user online"><img alt="" src="/media/assets/images/upload/{{organisateur.photo_de_profil}}" class="avatar avatar-md brround"></div>
+                                                        <div class="main-img-user online"><img alt="" src="/media/{{organisateur.photo_de_profil}}" class="avatar avatar-md brround"></div>
                                                         <div class="main-contact-body">
                                                             <a href="#" onclick="details({{organisateur.id}});"><h6>{{organisateur.nom}}</h6><span class="phone">{{organisateur.user}}</span></a>
                                                         </div>
@@ -90,7 +90,7 @@
                                                 <div class="main-contact-info-header">
                                                     <div class="media">
                                                         <div class="main-img-user brround">
-                                                            <img alt="" src="/media/assets/images/upload/{{details.photo_de_profil}}" class="w-100 h-100 brround">
+                                                            <img alt="" src="/media/{{details.photo_de_profil}}" class="w-100 h-100 brround">
                                                             <a href="javascript:void(0)"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 6h-4.05l-1.83-2H9.88L8.05 6H4v12h16V6zm-8 11c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" opacity=".3"/><path d="M4 20h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2zM4 6h4.05l1.83-2h4.24l1.83 2H20v12H4V6zm8 1c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg></a>
                                                         </div>
                                                         <div class="media-body">
@@ -175,7 +175,7 @@
                                                                     </div>
                                                                     <div>
                                                                         <label>Photo de couverture</label>
-                                                                        <img src="/media/assets/images/upload/{{ details.photo_de_couverture }}" alt="image" class="img-height">
+                                                                        <img src="/media/{{ details.photo_de_couverture }}" alt="image" class="img-height">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -713,7 +713,7 @@
         <div class="main-contact-info-header">
             <div class="media">
                 <div class="main-img-user brround">
-                    <img alt="" src="/media/assets/images/upload/${details.photo_de_profil}" class="w-100 h-100 brround">
+                    <img alt="" src="/media/${details.photo_de_profil}" class="w-100 h-100 brround">
                     <a href="javascript:void(0)"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 18.08V19h.92l9.06-9.06-.92-.92z" opacity=".3"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.20-.45-.29-.71-.29s-.51.10-.70.29l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19z"/></svg></a>
                 </div>
                 <div class="media-body">
@@ -792,7 +792,7 @@
                             </div>
                             <div>
                                 <label>Photo de couverture</label>
-                                <img src="/media/assets/images/upload/${details.photo_de_couverture}" alt="image" class="img-height">
+                                <img src="/media/${details.photo_de_couverture}" alt="image" class="img-height">
                             </div>
                         </div>
                     </div>
@@ -828,7 +828,7 @@
                                 div.id="partienav"+data.organisateurs[i].id;
                                 div.innerHTML = `
                                     <div class="main-img-user online">
-                                        <img alt="photo_de_profil" src="/media/assets/images/upload/${data.organisateurs[i].photo_de_profil}" class="avatar avatar-md brround">
+                                        <img alt="photo_de_profil" src="/media/${data.organisateurs[i].photo_de_profil}" class="avatar avatar-md brround">
                                     </div>
                                     <div class="main-contact-body">
                                         <a href="#"  onclick="details(${data.organisateurs[i].id});"><h6>${data.organisateurs[i].nom}</h6>

@@ -67,7 +67,7 @@
                                 <div class="col-md-12 col-lg-6">
                                     <div class="card ">
                                         <div class="card-header ">
-                                            <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/assets/images/upload/{{association.photo_de_profil}}">
+                                            <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/{{association.photo_de_profil}}">
                                                 {% if association.en_ligne %}
                                                     <span class="avatar-status bg-green"></span>
                                                 {% else %}
@@ -99,7 +99,7 @@
                                                     <div class="text-muted">Slug : <a href="{{association.slug}}">{{association.slug}}</a></div>
                                                     <div class="text-muted">Lien don : <a href="{{association.liendon}}">{{association.lien_don}}</a></div>
                                                 </div>
-                                                <a href="javascript:void(0)" class="card-column br-tr-7 w-50" style="background-image: url('/media/assets/images/upload/{{association.photo_de_couverture}}')"></a>
+                                                <a href="javascript:void(0)" class="card-column br-tr-7 w-50" style="background-image: url('/media/{{association.photo_de_couverture}}')"></a>
                                             </div>
                                         </div>
                                     </div>
