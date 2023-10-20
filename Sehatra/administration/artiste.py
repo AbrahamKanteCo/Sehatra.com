@@ -263,7 +263,7 @@ def envoi_notification_artiste():
         
 def programmerNotificationArtiste():
     now = datetime.datetime.now()
-    midnight = now.replace(hour=16, minute=55, second=0)
+    midnight = now.replace(hour=17, minute=20, second=0)
     if now > midnight:
         midnight += datetime.timedelta(days=1)
 

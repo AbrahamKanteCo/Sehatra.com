@@ -933,15 +933,15 @@ def switchUser(request, user):
 
 from background_task import background
 
-def send_notification(url, user, titre, message):
+def send_notification(url, iduser, titre, message):
     firebase_app = firebase_admin.get_app()
-    device = FCMDevice.objects.filter(user_id=user).first()
+    device = FCMDevice.objects.filter(user_id=iduser).first()
     if device:
         NotificationFCM.objects.create(
             title=titre,
             content=message,
             destination_url=url,
-            user=User.objects.filter(id=user).first(),
+            user_id=iduser,
         )
         message = Message(
             notification=Notification(
@@ -987,6 +987,9 @@ def recupererData():
     pageStatistique(debut_journee,fin_journee)
 
 
+def test(request):
+    print("Zety")
+
 @background(schedule=60)
 def envoi_notification_administrateur():
     print("Notification admin")
@@ -1004,7 +1007,7 @@ def envoi_notification_administrateur():
     body1 = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
     body2 = "Il y a eu "+str(comptes)+" crées hier"
     
-    users = User.objects.filter(is_staff=True, is_superuser=True)
+    users = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
 
     for user in users:
         if(ventes>0) :
@@ -1025,7 +1028,7 @@ def envoi_notification_administrateur():
 
 def programmerNotification():
     now = datetime.datetime.now()
-    midnight = now.replace(hour=16, minute=45, second=0)
+    midnight = now.replace(hour=17, minute=20, second=0)
     if now > midnight:
         midnight += datetime.timedelta(days=1)
 
@@ -1033,7 +1036,7 @@ def programmerNotification():
 
 def programmerRecuperation():
     now = datetime.datetime.now()
-    midnight = now.replace(hour=16, minute=50, second=0)
+    midnight = now.replace(hour=17, minute=20, second=0)
     if now > midnight:
         midnight += datetime.timedelta(days=1)
 
