@@ -20,6 +20,7 @@ urlpatterns = [
     path('administration-sehatra-com/', admin.site.urls),
     # path('', include("concert.urls"), name="concert"),
     path('', include("plateforme.urls"), name="plateforme"),
+    path('administration/', include("administration.urls"), name="administration"),
     path('paiement/', include("paiement.urls"), name="paiement"),
     path('accounts/', include('allauth.urls')),
 

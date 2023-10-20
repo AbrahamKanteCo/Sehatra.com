@@ -1,0 +1,614 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Associations</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <div class="row">
+                                <div class="col mb-4">
+                                    <a class="btn btn-primary"  data-bs-target="#form-association-create" data-bs-toggle="modal" href="javascript:void(0)">
+                                        <i class="fe fe-plus"></i>Nouvelle association
+                                    </a>
+                                </div>
+                                <div class="col col-auto mb-4">
+                                    <div class="mb-3 w-100">
+                                        <form method="GET" action="{% url 'administration:recherche-association' %}">
+                                            {% csrf_token %}
+                                            <div class="input-icon">
+                                            <span class="input-icon-addon">
+                                                    <i class="fe fe-search"></i>
+                                                </span>
+                                                <input id="search-input" type="text" class="form-control" placeholder="Rechercher association" {% if search != "" %} value="{{ search }}" {% endif %} name="search">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-5 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total des associations</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div >
+                                                <p class="text-muted">Total des associations actifs</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_association_actif}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Row-->
+                            <div class="row">
+                                {% for association in associations %}
+                                <div class="col-md-12 col-lg-6">
+                                    <div class="card ">
+                                        <div class="card-header ">
+                                            <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/assets/images/upload/{{association.photo_de_profil}}">
+                                                {% if association.en_ligne %}
+                                                    <span class="avatar-status bg-green"></span>
+                                                {% else %}
+                                                    <span class="avatar-status"></span>
+                                                {% endif %}
+                                            </span>
+                                            <div class="wrapper ms-3">
+                                                <p class="mb-0 mt-1 text-dark font-weight-semibold">Association : {{association.nom}}
+                                                <p><span class="badge bg-light rounded-pill">Utilisateur: {{association.user}}</span></p>
+                                            </div>
+                                            <div class="card-options">
+                                                <a href="javascript:void(0)" class="card-options-collapse me-2" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a>
+                                                <a href="javascript:void(0)" class="card-options-fullscreen me-2" data-bs-toggle="card-fullscreen"><i class="fe fe-maximize"></i></a>
+                                                <a href="javascript:void(0)" class="option-dots" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="javascript:void(0)" onclick="modifierassociation({{association.id}})"><i class="fe fe-trash me-2"></i> Modifier</a>
+                                                        <a class="dropdown-item" href="javascript:void(0)" onclick="supprimerassociation({{association.id}})"><i class="fe fe-trash me-2"></i> Supprimer</a>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="card card-aside">
+                                                <div class="card-body d-flex flex-column">
+                                                    <label class="text-muted">Description :</label>
+                                                    <textarea class="form-control mb-4" placeholder="{{association.description}}" readonly rows="3"></textarea>
+                                                    <div class="text-muted">Site web : <a href="{{association.siteweb}}">{{association.siteweb}}</a></div>
+                                                    <div class="text-muted">Youtube : <a href="{{association.youtube}}">{{association.youtube}}</a></div>
+                                                    <div class="text-muted">Facebook : <a href="{{association.facebook}}">{{association.facebook}}</a></div>
+                                                    <div class="text-muted">Slug : <a href="{{association.slug}}">{{association.slug}}</a></div>
+                                                    <div class="text-muted">Lien don : <a href="{{association.liendon}}">{{association.lien_don}}</a></div>
+                                                </div>
+                                                <a href="javascript:void(0)" class="card-column br-tr-7 w-50" style="background-image: url('/media/assets/images/upload/{{association.photo_de_couverture}}')"></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endfor%}
+                            </div>
+                            <nav aria-label="Pagination">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item {% if not associations.has_previous %}disabled{% endif %}">
+                                        <a class="page-link" href="?page=1" tabindex="-1">
+                                            <i class="fa fa-angle-left"></i>
+                                            <span class="sr-only">Previous</span>
+                                        </a>
+                                    </li>
+                                
+                                    {% for num in associations.paginator.page_range %}
+                                        <li class="page-item {% if num == associations.number %}active{% endif %}">
+                                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                        </li>
+                                    {% endfor %}
+                                
+                                    <li class="page-item {% if not associations.has_next %}disabled{% endif %}">
+                                        <a class="page-link" href="?page={{ associations.paginator.num_pages }}">
+                                            <i class="fa fa-angle-right"></i>
+                                            <span class="sr-only">Next</span>
+                                        </a>
+                                    </li>
+                                </ul>                                                            
+                            </nav>
+                        
+                            <div class="modal fade" role="dialog" tabindex="-1" id="form-association-create">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Ajouter une nouvelle association</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Nom</label>
+                                                                        <input class="form-control" type="text" id="nom" name="nom" placeholder="John Smith">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label> <i class="fe fe-user"></i> User</label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="user" name="user">
+                                                                                <option class="hemant">Choisissez un utilisateur</option>
+                                                                                {% for utilisateur in utilisateurs%}
+                                                                                <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Description</label>
+                                                                        <textarea class="form-control mb-4" placeholder="Description" id="description" name="description" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Youtube</label>
+                                                                        <input class="form-control" type="text" name="youtube" id="youtube" placeholder="Lien Youtube">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Site web</label>
+                                                                        <input class="form-control" type="text" name="siteweb" id="siteweb" placeholder="Site Web">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Facebook</label>
+                                                                        <input class="form-control" type="text" name="facebook" id="facebook" placeholder="Facebook">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Lien don</label>
+                                                                        <input class="form-control" type="text" name="lien_don" id="lien_don" placeholder="Lien Don">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de profil</label>
+                                                                        <input type="file" class="dropify" name="photo_de_profil" id="photo_de_profil" data-height="180" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col mb-3">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de couverture</label>
+                                                                        <input type="file" class="dropify" name="photo_de_couverture" id="photo_de_couverture"  data-height="180" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="en_ligne" name="en_ligne">
+                                                                    <span class="custom-control-label">En ligne</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="add-button" type="submit">Ajouter</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Row -->
+
+                    <!--Modal update-->
+                    <div class="modal fade" role="dialog" tabindex="-1" id="form-association-update">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="py-1">
+                                        {% comment %} <form class="form" novalidate="" method="put"> {% endcomment %}
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Nom</label>
+                                                                <input class="form-control" type="text" name="nom" placeholder="John Smith" id="update-nom">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label> <i class="fe fe-user"></i> User</label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" name="user" id="update-user">
+                                                                        <option class="hemant">Choisissez un utilisateur</option>
+                                                                        {% for utilisateur in utilisateurs%}
+                                                                        <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Description</label>
+                                                                <textarea class="form-control mb-4" placeholder="Description" name="description" id="update-description" rows="3"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Youtube</label>
+                                                                <input class="form-control" type="text" name="youtube" placeholder="Lien Youtube" id="update-youtube">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Site web</label>
+                                                                <input class="form-control" type="text" id="update-siteweb" name="siteweb" placeholder="Site Web">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Facebook</label>
+                                                                <input class="form-control" type="text" id="update-facebook" name="facebook" placeholder="Facebook">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Lien don</label>
+                                                                <input class="form-control" type="text" id="update-liendon" name="lien_don" placeholder="Lien Don">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Slug</label>
+                                                                <input class="form-control" type="text" name="slug" placeholder="Slug" id="update-slug">
+                                                                <input type="hidden" name="artisteid" id="update-association-id">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Photo de profil</label>
+                                                                <img src="" class="img-preview" data-height="180" id="update-photodeprofil-preview" />
+                                                                <input type="file" class="dropify" name="photo_de_profil" data-height="180" id="update-photodeprofil"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col mb-3">
+                                                            <div class="mb-3">
+                                                                    <label>Photo de couverture</label>
+                                                                    <img src="" class="img-preview" data-height="180" id="update-photodecouverture-preview" />
+                                                                    <input type="file" class="dropify" name="photo_de_couverture"  data-height="180" id="update-photodecouverture" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="custom-control custom-checkbox">
+                                                        <label class="custom-control custom-checkbox">
+                                                            <input type="checkbox" class="custom-control-input" name="en_ligne" id="update-enligne">
+                                                            <span class="custom-control-label">En ligne</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" id="update-button" type="submit">Modifier</button>
+                                                </div>
+                                            </div>
+                                        {% comment %} </form> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <!--Fin modal update-->
+                            <!-- End Row-->
+        {% endblock %}
+
+    {% block scripts %}
+    <script>
+        function afficherAlert(title,message){
+            var message =message;
+            var title =title;
+            swal({
+                title: title,
+                text: message,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+        const nomInput = document.getElementById("update-nom");
+        const userSelect = document.getElementById("update-user");
+        const youtubeInput = document.getElementById("update-youtube");
+        const slugInput = document.getElementById("update-slug");
+        const enligneCheckbox = document.getElementById("update-enligne");
+        const photodeprofil = document.getElementById("update-photodeprofil-preview");
+        const photodecouverture = document.getElementById("update-photodecouverture-preview");
+        const photodeprofilInput = document.getElementById("update-photodeprofil");
+        const photodecouvertureInput = document.getElementById("update-photodecouverture");
+        const sitewebInput = document.getElementById("update-siteweb");
+        const liendonInput = document.getElementById("update-liendon");
+        const facebookInput = document.getElementById("update-facebook");
+        const descriptionInput = document.getElementById("update-description");
+
+        document.getElementById("add-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("nom", document.getElementById("nom").value);
+            formData.append("user", document.getElementById("user").value);
+            formData.append("youtube", document.getElementById("youtube").value);
+            formData.append("facebook", document.getElementById("facebook").value);
+            formData.append("siteweb", document.getElementById("siteweb").value);
+            formData.append("description",document.getElementById("description").value);
+            formData.append("lien_don", document.getElementById("lien_don").value);
+            formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+            formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+            formData.append("en_ligne", document.getElementById("en_ligne").checked);
+    
+            const loadingSwal = swal({
+                title: "Ajout",
+                text: "En cours...",
+                icon: "info",
+                buttons: false, 
+                closeOnClickOutside: false, 
+                closeOnEsc: false
+            });
+    
+            fetch(`associations/ajouter/`, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                    afficherAlert("Ajout","Ajout association avec succès !",'success')
+                    location.reload();
+            })
+            .catch(error => {
+                    swal("Erreur", error, "error");
+            });
+        });
+
+        document.getElementById("update-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("nom", nomInput.value);
+            formData.append("user", userSelect.value);
+            formData.append("youtube", youtubeInput.value);
+            formData.append("facebook", facebookInput.value);
+            formData.append("siteweb", sitewebInput.value);
+            formData.append("description", descriptionInput.value);
+            formData.append("lien_don", liendonInput.value);
+            formData.append("photo_de_profil", photodeprofilInput.files[0]);
+            formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+            formData.append("en_ligne", enligneCheckbox.checked);
+            artisteId=document.getElementById('update-association-id').value;
+    
+            const loadingSwal = swal({
+                title: "Update",
+                text: "En cours...",
+                icon: "info",
+                buttons: false, 
+                closeOnClickOutside: false, 
+                closeOnEsc: false
+            });
+    
+            fetch(`/associations/${artisteId}/update/`, {
+                method: "PUT",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                    afficherAlert("Update","Association mis à jour avec succès !",'success')
+                    location.reload();
+            })
+            .catch(error => {
+                    swal("Erreur", error, "error");
+            });
+        });
+        function afficherDetailsArtiste(details) {
+            nomInput.value = details.nom;
+            userSelect.value = details.user;
+            youtubeInput.value = details.youtube;
+            slugInput.value = details.slug;
+            facebookInput.value = details.facebook;
+            descriptionInput.value = details.description;
+            descriptionInput.placeholder = details.description;
+            sitewebInput.value = details.siteweb;
+            liendonInput.value = details.lien_don;
+            enligneCheckbox.checked = details.en_ligne;
+            photodeprofil.src=details.photo_de_profil;
+            photodecouverture.src=details.photo_de_couverture
+
+            for (let i = 0; i < userSelect.options.length; i++) {
+                if (details.user == userSelect.options[i].value ) {
+                    userSelect.options[i].value = details.user.toString();
+                    userSelect.options[i].selected = true;
+                    break;
+                }
+            }
+        }
+        function modifierassociation(id){
+        var artisteId = id;
+            
+        fetch(`/associations/${artisteId}/detail/`, {
+            method: "GET",
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('update-association-id').value=artisteId
+            afficherDetailsArtiste(data)
+            var modal = new bootstrap.Modal(document.getElementById('form-association-update'));
+            modal.show();
+        });
+
+        }
+        function supprimerassociation(id) {
+            var associationid = id;
+        
+            swal({
+                title: "Êtes-vous sûr ?",
+                text: "Voulez-vous vraiment supprimer cette association ?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Supprimer',
+                cancelButtonText: 'Annuler'
+            },
+            function(isConfirm){
+                if (isConfirm) {
+                    fetch(`/associations/${associationid}/delete/`, {
+                        method: "DELETE",
+                    })
+                    .then(response => {
+                        swal("Message", "Association supprimé avec succès", "success");
+                        window.location.href = "/associations";
+                    });
+                } else {
+                    swal("Message", "Suppression annulée", "info");
+                }
+            });
+        }
+        photodeprofilInput.addEventListener("change", function() {
+            const selectedFile = photodeprofilInput.files[0];
+            if (selectedFile) {
+                photodeprofilPreview.src = URL.createObjectURL(selectedFile);
+            }
+        });
+        
+        photodecouvertureInput.addEventListener("change", function() {
+            const selectedFile = photodecouvertureInput.files[0];
+            if (selectedFile) {
+                photodecouverturePreview.src = URL.createObjectURL(selectedFile);
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("search-input");
+            
+            searchInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.querySelector("form").submit();
+                }
+            });
+        });
+    </script>
+<!--Select2 js -->
+<script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+<!-- Timepicker js -->
+<script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+
+<!-- Datepicker js -->
+<script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+
+<!--File-Uploads Js-->
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+
+<!-- File uploads js -->
+<script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+
+<!-- Multiple select js -->
+<script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+
+<!--Sumoselect js-->
+<script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+
+<!--intlTelInput js-->
+<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
+
+<!--jquery transfer js-->
+<script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+
+<!--multi js-->
+    <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+
+<!-- Form Advanced Element -->
+<script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+
+
+ <!-- Sweet alert js -->
+ <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+ <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+ <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Artistes</h4>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!-- Row -->
+                            <div class="row flex-lg-nowrap">
+                                <div class="col-12">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col-12 mb-3">
+                                            <div class="e-panel card">
+                                                <div class="card-body">
+                                                    <div class="e-table">
+                                                        <div class="table-responsive table-lg mt-3">
+                                                            <table class="table table-bordered border-top text-nowrap" id="example1">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="border-bottom-0 w-20">Artistes</th>
+                                                                        <th class="border-bottom-0 w-15">Date d'adhésion</th>
+                                                                        <th class="border-bottom-0 w-30">Performance</th>
+                                                                        <th class="border-bottom-0 w-30">Total Ventes</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for artiste in artistes%}
+                                                                    <tr>
+                                                                       
+                                                                        <td class="align-middle">
+                                                                            <div class="d-flex">
+                                                                                <span class="avatar brround avatar-md d-block" style="background-image: url('/media/assets/images/upload/{{ artiste.photo_de_profil }}')"></span>
+                                                                                <div class="ms-3 mt-1">
+                                                                                    <h6 class="mb-0 font-weight-bold">{{artiste.nom}}</h6>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-nowrap align-middle"><span>{{ artiste.user__date_joined|date:"d F Y, H:i" }}</span></td>
+                                                                        <td class="text-nowrap align-middle">
+                                                                            <div class="float-end">
+                                                                                <h6 class="mb-2 ms-4 font-weight-bold">{{artiste.pourcentage_performance}}%</h6>
+                                                                            </div>
+                                                                            <div class="progress progress-sm mb-0 mt-1">
+                                                                                <div class="progress-bar bg-primary" style="width: {{artiste.pourcentage_performance|floatformat}}%"></div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td>
+                                                                            {{artiste.nombre_ventes}}
+                                                                        </td>
+                                                                    </tr>
+                                                                    {%endfor%}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+        
+        {% endblock %}
+
+    {% block scripts %}
+
+        <!-- Data tables -->
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.bootstrap5.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/responsive.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/datatables.js' %}"></script>
+
+        <!-- Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

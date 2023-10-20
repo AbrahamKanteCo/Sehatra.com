@@ -1,0 +1,212 @@
+{% load static %}
+<!doctype html>
+<html lang="en" dir="ltr">
+	<head>
+
+		<!-- Meta data -->
+        <meta charset="UTF-8">
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+        <meta content="Sehatra.com Artiste" name="description">
+        <meta content="Spruko Technologies Private Limited" name="author">
+		<meta name="keywords" content="admin dashboard, admin dashboard template, admin template, bootstrap 5 django, django, django bootstrap admin, django template, django bootstrap template, django admin, django admin dashboard, django admin dashboard template, django admin panel, django admin template, django dashboard, dashboard template">
+
+        <!-- Title -->
+        <title>Administration Sehatra.com</title>
+
+        <!-- STYLES -->
+        {% include 'components/layouts/styles.html' %}
+        {% block styles %}{% endblock %}
+
+        <!-- Switcher css -->
+        <link href="{% static 'interface_administration/assets/switcher/css/switcher.css'%}" rel="stylesheet">
+        <link href="{% static 'interface_administration/assets/switcher/demo.css'%}" rel="stylesheet">
+
+        <style>
+            .notification-badge {
+                position: absolute;
+                top: 0;
+                right: 0;
+                background-color: red;
+                color: white;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 14px;
+            }            
+
+        </style>
+    </head>
+
+    <body class="main-body app sidebar-mini light-mode ltr">
+
+        <!-- SWITCHER -->
+        {% include 'components/layouts/switcher.html' %}
+        <!-- SWITCHER END-->
+
+        <!---Global-loader-->
+        <div id="global-loader">
+            <img src="{% static 'interface_administration/assets/images/svgs/loader.svg'%}" alt="loader">
+        </div>
+
+        <!-- PAGE -->
+        <div class="page">
+            <div class="page-main">
+
+                    <!-- APP-HEADER -->
+                    {% include 'components/layouts/app-header1.html' %}
+                    <!-- APP-HEADER CLOSED -->
+
+                <!-- MAIN-SIDEBAR -->
+                {% include 'components/layouts/main-sidebar.html' %}
+                <!-- MAIN-SIDEBAR CLOSED -->
+
+               <!-- app-content start-->
+                <div class="app-content main-content">
+                    <div class="side-app">
+                        <div class="container-fluid main-container">
+
+                            {% block content %}{% endblock %}
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end app-content-->
+            </div>
+            <!-- PAGE-MAIN END -->
+
+            {% block modal %}{% endblock %}
+
+            <!-- FOOTER -->
+            {% include 'components/layouts/footer.html' %}
+
+        </div>
+        <!-- PAGE END -->
+
+        <!-- SCRIPTS -->
+        {% include 'components/layouts/scripts.html' %}
+        {% block scripts %}{% endblock %}
+        
+        <!-- Switcher-Styles js -->
+        <script src="{% static 'interface_administration/assets/js/switcher-styles.js' %}"></script>
+        <!-- Switcher js -->
+        <script src="{% static 'interface_administration/assets/switcher/js/switcher.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/notify/js/rainbow.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/notify/js/sample.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/notify/js/jquery.growl.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/notify/js/notifIt.js' %}"></script> 
+        <script>
+            const notificationBadge = document.querySelector('.place_badge');
+
+            const notificationIcon = document.querySelector('.select_icon');
+            function updatePageTitle(total) {
+                localStorage.setItem('totalNotifications',parseInt(localStorage.getItem('totalNotifications'))+total)
+                if(parseInt(localStorage.getItem('totalNotifications'))>0){
+                document.title = `(${parseInt(localStorage.getItem('totalNotifications'))}) Administration Sehatra.com`;
+                notificationBadge.classList.add('pulse', 'notification-badge');
+                notificationBadge.innerHTML=parseInt(localStorage.getItem('totalNotifications'));
+                }
+                else{
+                    document.title = `Administration Sehatra.com`;
+                }
+            }
+            function initialisation(){
+                localStorage.setItem('totalNotifications',0)
+                document.title = `Administration Sehatra.com`;
+            }
+
+            const channel1 = new BroadcastChannel('notification-total');
+          
+            channel1.onmessage = function(event) {
+              updatePageTitle(event.data);
+            };
+          
+
+            const channel = new BroadcastChannel('notification-channel');
+          
+            channel.onmessage = function(event) {
+              handleNotification(event.data);
+            };
+          
+            function handleNotification(payload) {
+                notif({
+                    msg: payload.notification.title+" :"+payload.notification.body,
+                    type: "info"
+                });
+                updateNotifications()
+            }
+            const notificationDropdown = document.querySelector('.header-notify');
+            const notificationMenu = document.querySelector('.notificationpush');
+            function updateNotifications() {
+                fetch('/last_notification') 
+                    .then(response => response.json())
+                    .then(data => {
+                        const notifications = data.notifications;
+                        notificationMenu.innerHTML = ''; 
+            
+                        if (notifications.length === 0) {
+                            notificationMenu.innerHTML='Aucune notification'
+                        } else {
+                            notifications.forEach(notification => {
+                                addNotificationToMenu(notification);
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erreur lors de la récupération des notifications :', error);
+                    });
+            }
+            function addNotificationToMenu(notification) {
+                const checkRead=notification.is_read ? '' : 'unread';
+                const newNotification = document.createElement('a');
+                newNotification.classList.add('dropdown-item', 'd-flex', 'pb-3');
+                if (checkRead) {
+                    newNotification.classList.add(checkRead);
+                  }               
+                const checkIcon = notification.is_read ? '<i class="fa fa-check text-success"></i>' : '<i class="fa fa-circle text-primary"></i>';
+                const checkIconColor = notification.is_read ? 'style="fill:green;' : 'style="fill:blue;"';
+
+
+                const notificationHTML = `
+                    <svg class="header-icon me-4"
+                        x="1008"
+                        y="1248"
+                        viewBox="0 0 24 24"
+                        height="100%"
+                        width="100%"
+                        preserveAspectRatio="xMidYMid meet"
+                        focusable="false">
+                        <path ${checkIconColor} d="M14.38,3.467l0.232-0.633c0.086-0.226-0.031-0.477-0.264-0.559c-0.229-0.081-0.48,0.033-0.562,0.262l-0.234,0.631C10.695,2.38,7.648,3.89,6.616,6.689l-1.447,3.93l-2.664,1.227c-0.354,0.166-0.337,0.672,0.035,0.805l4.811,1.729c-0.19,1.119,0.445,2.25,1.561,2.65c1.119,0.402,2.341-0.059,2.923-1.039l4.811,1.73c0,0.002,0.002,0.002,0.002,0.002c0.23,0.082,0.484-0.033,0.568-0.262c0.049-0.129,0.029-0.266-0.041-0.377l-1.219-2.586l1.447-3.932C18.435,7.768,17.085,4.676,14.38,3.467 M9.215,16.211c-0.658-0.234-1.054-0.869-1.014-1.523l2.784,0.998C10.588,16.215,9.871,16.447,9.215,16.211 M16.573,10.27l-1.51,4.1c-0.041,0.107-0.037,0.227,0.012,0.33l0.871,1.844l-4.184-1.506l-3.734-1.342l-4.185-1.504l1.864-0.857c0.104-0.049,0.188-0.139,0.229-0.248l1.51-4.098c0.916-2.487,3.708-3.773,6.222-2.868C16.187,5.024,17.489,7.783,16.573,10.27"></path>
+                    </svg>
+                    <div class="header-dropdown-msg">
+                        <div class="font-weight-bold">${notification.title}</div>
+                        <div class="small text-muted">${notification.body}</div>
+                    </div>
+                    ${checkIcon}
+                `;
+                
+                newNotification.innerHTML = notificationHTML;
+                
+                notificationMenu.appendChild(newNotification);
+            }
+
+            notificationIcon.addEventListener('click', function () {
+                notificationBadge.classList.remove('pulse');
+                notificationBadge.classList.remove('notification-badge');
+                notificationBadge.innerHTML=''
+                initialisation()
+            });
+        </script>
+        <script type="module" src="{% static 'interface_administration/assets/js/firebase.js' %}">
+        </script>
+
+  
+        
+    </body>
+
+</html>

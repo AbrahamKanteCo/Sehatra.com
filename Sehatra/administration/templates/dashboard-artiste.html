@@ -1,0 +1,332 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% load humanize %}
+
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Vue d'ensemble</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <div class="ms-5 mb-0">
+                                        <a class="btn btn-white date-range-btn" href="javascript:void(0)" id="daterange-btn">
+                                            <svg class="header-icon2 me-3" x="1008" y="1248" viewBox="0 0 24 24" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <path d="M5 8h14V6H5z" opacity=".3"/><path d="M7 11h2v2H7zm12-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-4 3h2v2h-2zm-4 0h2v2h-2z"/>
+                                                </svg> <span>Filtrer par date
+                                                <i class="fa fa-caret-down"></i></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!--Row-->
+                            <hr/>
+                            <div class="row">
+                                <div class="col-xl-3 col-lg-6 col-md-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="fs-50 icon-muted"><i class="si si-wallet icon-dropshadow-danger text-danger"></i></span>
+                                            <p class=" mb-1 ">Revenue</p>
+                                            <div id="revenue">
+                                            <h2 class="mb-1 fs-40 font-weight-bold">{{revenue|intcomma}} Ar</h2>
+                                            {% if revenue_difference > 0%}
+                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
+                                            {%elif revenue_difference < 0%}
+                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
+                                            {%else %}
+                                            <small class="mb-1 text-muted">Aucun évolution</small>
+                                            {%endif%}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="fs-50 icon-muted"><i class="pe-7s-shopbag icon-dropshadow-info text-info"></i></span>
+                                            <p class=" mb-1">Nombre de ventes</p>
+                                            <div id="vente">
+                                            <h2 class="mb-1 fs-40 font-weight-bold">{{ventes}}</h2>
+                                            {% if ventes_difference > 0%}
+                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
+                                            {%elif ventes_difference < 0%}
+                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
+                                            {%else %}
+                                            <small class="mb-1 text-muted">Aucun évolution</small>
+                                            {%endif%}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="fs-50 icon-muted"><i class="pe-7s-play icon-dropshadow-danger text-danger"></i></span>
+                                            <p class=" mb-1 ">Nombre de videos</p>
+                                            <div id="video">
+                                            <h2 class="mb-1 fs-40 font-weight-bold">{{contenues}}</h2>
+                                            {% if contenues_difference > 0%}
+                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
+                                            {%elif contenues_difference < 0%}
+                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
+                                            {%else %}
+                                            <small class="mb-1 text-muted">Aucun évolution</small>
+                                            {%endif%}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-lg-6 col-md-12">
+                                    <div class="card">
+                                        <div class="card-body text-center">
+                                            <span class="fs-50 icon-muted"><i class="pe-7s-news-paper icon-dropshadow-danger text-danger"></i></span>
+                                            <p class=" mb-1 ">Publications avec Mention</p>
+                                            <div id="publication">
+                                            <h2 class="mb-1 fs-40 font-weight-bold">{{publications}}</h2>
+                                            {% if publications_difference > 0%}
+                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
+                                            {%elif publications_difference < 0%}
+                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
+                                            {%else %}
+                                            <small class="mb-1 text-muted">Aucun évolution</small>
+                                            {%endif%}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="page-leftheader">
+                                    <h4 class="page-title">Ventes et audiences</h4>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                
+                                <div class="col-xxl-3 col-xl-6 col-md-12 col-lg-6 d-flex flex-column">
+                                    <div class="card flex-grow-1">
+                                        <div class="card-header mb-4">
+                                            <h3 class="card-title">Mes Ventes par pays</h3>
+                                        </div>
+                                        <div class="p-2" id="ventes_pays">
+                                            <table class="table card-table text-nowrap">
+                                                <tbody>
+                                                    {% if venteparpays %}
+                                                                        {% for venteparpays in venteparpays %}
+                                                                            <tr>
+                                                                                <td class="w-1 text-center ps-5"><i class="flag flag-fr "></i></td>
+                                                                                <td>{{venteparpays.pays}}</td>
+                                                                                <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} ventes</span></td>
+                                                                            </tr>
+                                                                        {% endfor %}
+                                                                    {% else %}
+                                                                        <tr>
+                                                                            <td colspan="3">Aucune vente durant cette période.</td>
+                                                                        </tr>
+                                                                    {% endif %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-5 col-xl-12 col-md-12 col-lg-12 d-flex flex-column">
+                                    <div class="card flex-grow-1">
+                                        <div class="row">
+                                            <div class="col-xl-12 col-md-12 col-lg-12">
+                                                <div class="card-header">
+                                                    <h4 class="card-title">Aperçu de mes contenues</h4>
+                                                </div>
+                                                <div class="card-body text-center">
+                                                    <div id="myfirstchart" class="BarChartShadow" style="height: 285px;"></div>
+                                                    <div class="row mt-5">
+                                                        <div class="col text-center">
+                                                            <div class="text-muted float-end">
+                                                                <div class="w-3 h-3 bg-primary br-3 me-1 mt-1 float-start"></div> Vue sur les oeuvres</div>
+                                                        </div>
+                                                        <div class="col text-center">
+                                                            <div class="text-muted float-start">
+                                                                <div class="w-3 h-3 bg-secondary br-3 me-1 mt-1 float-start"></div> Nouveaux utilisateurs</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-12 col-lg-12 d-flex flex-column">
+                                    <div class="card flex-grow-1">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Marché</h3>
+                                        </div>
+                                        <div class="card-body text-center mx-auto py-7">
+                                            <div class="overflow-hidden">
+                                                <div class="chart-container">
+                                                    <canvas class="canvasDoughnut" height="200" width="200"></canvas>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row no-gutters">
+                                                <div class="col text-center">
+                                                    <div class="text-muted float-start">
+                                                        <div class="w-4 h-3 br-3 me-1 mt-1 float-start" style="background:#2dce89"></div> Madagascar</div>
+                                                </div>
+                                                <div class="col text-center">
+                                                    <div class="text-muted float-start">
+                                                        <div class="w-4 h-3 br-3 me-1 mt-1 float-start" style="background:#ff5b51"></div> International</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End row-->
+                            <div class="row">
+                                    <div class="card card-block">
+                                        <div class="card-header d-sm-flex d-block">
+                                            <h3 class="card-title">Statistiques Revenus</h3>
+                                            <div class="d-flex ms-auto">
+                                                <div class="btn-group mb-0">
+                                                    <button type="button" class="btn btn-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Cette année</button>
+                                                    <div class="dropdown-menu p-0">
+                                                        <a class="dropdown-item"  onclick="filtrerrevenue({{date_actuelle.year}})">Cette année ({{ date_actuelle.year }})</a>
+                                                        {% for annee in annees %}
+                                                            <a class="dropdown-item" onclick="filtrerrevenue({{annee}})">{{ annee }}</a>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>                                                                                           
+                                            </div> 
+                                        </div> 
+                                        <div class="card-body">
+                                            <div class="chart-container1">
+                                                <canvas id="revenue_artiste" class="h-400 chart-dropshadow-primary"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <!--Row-->
+                            <div class="page-leftheader">
+                                <h4 class="page-title">Mes oeuvres</h4>
+                            </div>
+                            <hr/>
+                            <div class="row">
+                                <div class="col-xl-12 col-lg-12 col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Oeuvres ayant les plus d'impacts
+                                            </h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="">
+                                                <div class="table-responsive">
+                                                    <table class="table card-table table-vcenter text-nowrap mb-0 border">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="wd-lg-10p">Video</th>
+                                                                <th class="wd-lg-20p text-center">Nombre de vue</th>
+                                                                <th class="wd-lg-20p text-center">Nombre de ventes</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="page_ecran">
+                                                            {%for oeuvre in oeuvres%}
+                                                            <tr>
+                                                                <td>{{oeuvre.titre}}</td>
+                                                                <td class="text-center">{{oeuvre.total_vues}}</td>
+                                                                <td class="text-center">{{oeuvre.ventes}}</td>
+                                                            </tr>
+                                                            {%endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End row-->
+      
+        {% endblock %}
+
+    {% block scripts %}
+    <script>
+        const loading=
+        `<div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>`
+        function filtrerrevenue(annee){
+            revenue(annee);
+
+        }
+        function load_data_premier(start,end){
+            const revenue=document.getElementById('revenue');
+            const video=document.getElementById('video');
+            const vente=document.getElementById('vente');
+            const vente_pays=document.getElementById('ventes_pays');
+            const publication=document.getElementById('publication');
+            revenue.innerHTML=loading;
+            video.innerHTML=loading;
+            vente.innerHTML=loading;
+            vente_pays.innerHTML=loading;
+            publication.innerHTML=loading;
+            const pages=document.getElementById('page_ecran');
+            pages.innerHTML=loading;
+            fetch(`dashboard_load_artiste?debut=`+start+`&fin=`+end, {
+                method: "GET"
+            })
+            .then(response => response.json())
+            .then(data => {
+                revenue.innerHTML=data.revenue;
+                video.innerHTML=data.contenue;
+                vente.innerHTML=data.ventes;
+                vente_pays.innerHTML=data.ventes_pays;
+                publication.innerHTML=data.pub;
+                pages.innerHTML=data.pages;
+
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }
+        function filtrerparDate(start,end){
+            load_data_premier(start,end);
+        }
+    </script>
+
+        <!--Moment js-->
+        <script src="{% static 'interface_administration/assets/plugins/moment/moment.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/moment/locale/fr.js'%}"></script>
+
+        <!-- Daterangepicker js-->
+        <script src="{% static 'interface_administration/assets/plugins/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/daterange.js' %}"></script>
+
+        <!--Chart js -->
+        <script src="{% static 'interface_administration/assets/plugins/chart/chart.min.js' %}"></script>
+
+        <!-- ECharts js-->
+        <script src="{% static 'interface_administration/assets/plugins/echarts/echarts.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/revenue_artiste.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/index2.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+		
+    {% endblock %}

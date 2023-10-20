@@ -1,0 +1,474 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% load humanize %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+
+							<!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Vue d'ensemble</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <div class="ms-5 mb-0">
+                                        <a class="btn btn-white date-range-btn" href="javascript:void(0)" id="daterange-btn">
+                                            <svg class="header-icon2 me-3" x="1008" y="1248" viewBox="0 0 24 24" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <path d="M5 8h14V6H5z" opacity=".3"/><path d="M7 11h2v2H7zm12-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-4 3h2v2h-2zm-4 0h2v2h-2z"/>
+                                                </svg> <span>Filtrer par date
+                                                <i class="fa fa-caret-down"></i></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+    
+                            <!--Row-->
+                            <div class="row">
+                                <div class="col-xl-9 col-md-12 col-lg-12">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <a href="{%url 'app:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
+                                                    <div id="revenue">
+                                                    <p class="mb-1"> Revenue</p>                                           
+                                                    <h2 class="mb-1 font-weight-bold">{{revenue|intcomma}} Ar</h2>
+                                                    {%if revenue_difference > 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{revenue_difference|intcomma}}</span></span>
+                                                    {%elif revenue_difference < 0%}
+                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{revenue_difference_negative|intcomma}} Ar</span></span>
+                                                    {%endif%}
+                                                    <div class="progress progress-sm mt-3 bg-success-transparent">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{revenue_pourcentage|floatformat:2}}%"></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <a href="{%url 'app:ventes_video'%}"><svg class=" svg-icon card-custom-icon text-secondary icon-dropshadow-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                            <path d="M18.175,4.142H1.951C1.703,4.142,1.5,4.344,1.5,4.592v10.816c0,0.247,0.203,0.45,0.451,0.45h16.224c0.247,0,0.45-0.203,0.45-0.45V4.592C18.625,4.344,18.422,4.142,18.175,4.142 M4.655,14.957H2.401v-1.803h2.253V14.957zM4.655,12.254H2.401v-1.803h2.253V12.254z M4.655,9.549H2.401V7.747h2.253V9.549z M4.655,6.846H2.401V5.043h2.253V6.846zM14.569,14.957H5.556V5.043h9.013V14.957z M17.724,14.957h-2.253v-1.803h2.253V14.957z M17.724,12.254h-2.253v-1.803h2.253V12.254zM17.724,9.549h-2.253V7.747h2.253V9.549z M17.724,6.846h-2.253V5.043h2.253V6.846z"></path></a>
+                                                    </svg>
+                                                    <div id="oeuvre_vendu">
+                                                    <p class="mb-1">Oeuvres vendues</p>
+                                                    <h2 class="mb-1 font-weight-bold">{{oeuvre}}</h2>                                                    
+                                                    {%if oeuvre_last_month > 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{oeuvre_last_month}}</span></span>
+                                                    {%elif oeuvre_last_month < 0%}
+                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{oeuvre_last_month_negative}}</span></span>
+                                                    {%endif%}
+                                                    <div class="progress progress-sm mt-3 bg-secondary-transparent">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{oeuvre_pourcentage|floatformat:2}}%"></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <svg class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                            <path d="M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z"></path>
+                                                    </svg>
+                                                    <div id="utilisateurs">
+                                                    <p class=" mb-1 ">Utilisateurs actifs</p>
+                                                    <h2 class="mb-1 font-weight-bold">{{utilisateur}}</h2>
+                                                    {%if utilisateur_last_month > 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{utilisateur_last_month|floatformat:2}}</span></span>
+                                                    {%elif utilisateur_last_month < 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{utilisateur_last_month_negative|floatformat:2}} %</span></span>
+                                                    {%endif%}
+                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{utilisateur_last_month|floatformat:2}}%"></div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-12 col-md-12 col-lg-12">
+                                            <div class="card overflow-hidden">
+                                                <div class="row">
+                                                    <div class="col-xl-8 col-md-12 col-lg-7 pb-5">
+                                                        <div class="card-header pb-50  border-0">
+                                                            <h4 class="card-title">Ventes par pays</h4>
+                                                        </div>
+                                                        <div id="vmap" class="vmap-width"></div>
+                                                    </div>
+                                                    <div class="col-xl-4 col-md-12 col-lg-5 pt-3 country-profit">
+    
+                                                        <div class="countryscroll">
+                                                            <table class="table countrytable">
+                                                                <tbody id="vente_pays">
+                                                                    {% if venteparpays %}
+                                                                        {% for venteparpays in venteparpays %}
+                                                                            <tr>
+                                                                                <td class="w-1 text-center ps-5"><i class="flag flag-{{venteparpays.codepays}}"></i></td>
+                                                                                <td>{{venteparpays.pays}}</td>
+                                                                                <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} ventes</span></td>
+                                                                            </tr>
+                                                                        {% endfor %}
+                                                                    {% else %}
+                                                                        <tr>
+                                                                            <td colspan="3">Aucune vente durant cette période.</td>
+                                                                        </tr>
+                                                                    {% endif %}
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="col-xl-3 col-md-12 col-lg-6">
+                                    <div class="card">
+                                        <div class="d-block mt-4 card-header border-0 text-center">
+                                            <h2 class="text-center"></b></h2>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row text-center">
+                                                <div class="col-md-12">
+                                                    <img src="{% static 'interface_administration/assets/images/fb/fbicone.png' %}" height="200px" alt="img" class="sales-img">
+                                                    <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold">{{facebook.followers_count}} <small style="font-size: 12px">followers</small> </h2>
+                                                    <hr/>
+                                                    <p><a href="{% url 'administration:facebook' %}">Voir plus</a></p>                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="col-xl-12 col-lg-6">
+                                    <div class="row">
+                                        <div class="col-xl-4 col-md-12 col-lg-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col" id="chiffre_affaire">
+                                                            <p class="mb-1">CA aujourd'hui</p>
+                                                            <h2 class="mb-0 font-weight-bold">{{chiffre_affaire|intcomma}} Ar</h2>
+                                                        </div>
+                                                        <div class="col col-auto">
+                                                            <i class="pe-7s-piggy"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-md-12 col-lg-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col" id="compte_creer">
+                                                            <p class="mb-1">Compte crée aujourd'hui</p>
+                                                            <h2 class="mb-0 font-weight-bold">{{compte}}</h2>
+                                                        </div>
+                                                        <div class="col col-auto">
+                                                            <i class="si si-user-follow"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-md-12 col-lg-12">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col" id="depense">
+                                                            <p class="mb-1">Dépenses</p>
+                                                            <h2 class="mb-0 font-weight-bold">{{depense|intcomma}} Ar</h2>
+                                                        </div>
+                                                        <div class="col col-auto">
+                                                            <i class="ti-share"></i>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <!--Row-->  
+                            <div class="row row-deck">
+                                <div class="col-xxl-4 col-xl-5 col-lg-12">
+                                    <div class="card overflow-hidden">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Top Video</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="scrollbar h-400" id="scrollbar">
+                                                {%for vente in ventes_par_video%}
+                                                <div class="d-flex mb-5">
+                                                    <a href="javascript:void(0)" class="me-4">
+                                                        <img class="w-8 h-8 rounded shadow" src="/media/assets/images/upload/{{ vente.photo_de_couverture }}" alt="media1">
+                                                    </a>
+                                                    <div class="mt-3">
+                                                        <h5 class="mb-1 font-weight-semibold">{{vente.titre}}</h5>
+                                                        <small class="text-muted">{{vente.nombre_ventes}} fois    </small>
+                                                    </div>
+                                                </div>
+                                                {%endfor%}
+                                            </div>
+                                            <a  href="{%url 'app:ventes_video'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="col-xxl-8 col-xl-7 col-lg-12">
+                                    <div class="card card-block">
+                                        <div class="card-header d-sm-flex d-block">
+                                            <h3 class="card-title">Revenue</h3>
+                                            <div class="d-flex ms-auto">
+                                                <div class="btn-group mb-0">
+                                                    <button type="button" class="btn btn-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Cette année</button>
+                                                    <div class="dropdown-menu p-0">
+                                                        <a class="dropdown-item"  onclick="filtrerrevenue({{date_actuelle.year}})">Cette année ({{ date_actuelle.year }})</a>
+                                                        {% for annee in annees %}
+                                                            <a class="dropdown-item" onclick="filtrerrevenue({{annee}})">{{ annee }}</a>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>                                                                                           
+                                            </div> 
+                                        </div>  
+                                        <div class="card-body">
+                                            <div class="chart-container">
+                                                <canvas id="leads" class="h-400 chart-dropshadow-primary"></canvas>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-8 col-xl-8 col-lg-12">
+                                    <div class="card overflow-hidden">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Nouvelles Transactions</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="h-400 scrollbar2" id="scrollbar2">
+                                                <div class="table-responsive">
+                                                    <table class="table transaction-table mb-0 text-nowrap">
+                                                        <thead>
+                                                            <tr class="bold">
+                                                                <th class="border-bottom-0 w-200 d-block">Video</th>
+                                                                <th class="border-bottom-0">Billet</th>
+                                                                <th class="border-bottom-0">Date &Heure </th>
+                                                                <th class="border-bottom-0">Mode de paiement</th>
+                                                                <th class="border-bottom-0">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {%for transaction in transactions%}
+                                                            <tr>
+                                                                <td class="font-weight-bold"><img class="w-7 h-7 rounded shadow me-3" src="{% static 'interface_administration/assets/images/fb/pub1.jpg' %}" alt="media1"> {{transaction.billet.video.titre}}</td>
+                                                                <td>{{transaction.billet.slug}}</td>
+                                                                <td>{{transaction.date|date:"d F Y, H:i"}}</td>
+                                                                <td class="font-weight-bold">{{transaction.mode.nom }}</td>
+                                                                {% if transaction.valide %}
+                                                                <td><span class="badge bg-success rounded-pill">Valide</span></td>
+                                                                {%else%}
+                                                                <td><span class="badge bg-danger rounded-pill">Non Valide</span></td>
+                                                                {%endif%}
+                                                            </tr>
+                                                            {%endfor%}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <a  href="{%url 'app:transactions'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xxl-4 col-xl-4 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Compte Récent</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="h-400 scrollbar3" id="scrollbar3">
+                                                <div class="table-responsive">
+                                                    <table class="table transaction-table mb-0">
+                                                        <tbody>
+                                                            {%for compte_recent in comptes_recents%}
+                                                            <tr>
+                                                                <td class="d-flex">
+                                                                    <div class="mt-2">
+                                                                        <h6 class="mb-1 font-weight-semibold">{{compte_recent.username}}</h6>
+                                                                        <small class="text-muted">{{compte_recent.date_joined|date:"d F Y, H:i"}}</small>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            {%endfor%}
+                                                            
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <a  href="{%url 'app:compteutilisateur'%}" class="btn btn-square btn-primary">Voir plus </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-12 col-lg-12 col-md-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Les écrans ayant été les plus visitées</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table id="example1" class="table table-striped table-bordered text-nowrap" style="width:100%">
+                                                    <thead>
+                                                        <tr class="bold">
+                                                            <th class="border-bottom-0">Nom de la page</th>
+                                                            <th class="border-bottom-0">/</th>
+                                                            <th class="border-bottom-0">Vue de la page</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="page_ecran">
+                                                        {%for page in pages%}
+                                                        <tr>
+                                                            <td class="font-weight-bold">{{page.screenname}}</td>
+                                                            <td>{{page.path}}</td>
+                                                            <td>{{page.total_vue}}</td>
+                                                        </tr>
+                                                        {%endfor%}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+    
+                            </div>
+                            <!--End row-->
+
+        {% endblock %}
+
+    {% block scripts %}
+        <script>
+            const loading=
+            `<div class="sk-circle">
+                <div class="sk-circle1 sk-child"></div>
+                <div class="sk-circle2 sk-child"></div>
+                <div class="sk-circle3 sk-child"></div>
+                <div class="sk-circle4 sk-child"></div>
+                <div class="sk-circle5 sk-child"></div>
+                <div class="sk-circle6 sk-child"></div>
+                <div class="sk-circle7 sk-child"></div>
+                <div class="sk-circle8 sk-child"></div>
+                <div class="sk-circle9 sk-child"></div>
+                <div class="sk-circle10 sk-child"></div>
+                <div class="sk-circle11 sk-child"></div>
+                <div class="sk-circle12 sk-child"></div>
+            </div>`
+            function filtrerrevenue(annee){
+                index1(annee);
+    
+            }
+            function load_data_premier(start,end){
+                const compte=document.getElementById('compte_creer');
+                const revenue=document.getElementById('revenue');
+                const oeuvre_vendu=document.getElementById('oeuvre_vendu');
+                const vente_pays=document.getElementById('vente_pays');
+                const chiffre_affaire=document.getElementById('chiffre_affaire');
+                const depense=document.getElementById('depense');
+                const utilisateurs=document.getElementById('utilisateurs');
+                const pages=document.getElementById('page_ecran');
+                compte.innerHTML=loading;
+                revenue.innerHTML=loading;
+                oeuvre_vendu.innerHTML=loading;
+                vente_pays.innerHTML=loading;
+                chiffre_affaire.innerHTML=loading;
+                depense.innerHTML=loading;
+                utilisateurs.innerHTML=loading;
+                pages.innerHTML=loading;
+                fetch(`dashboard_load_data?debut=`+start+`&fin=`+end, {
+                    method: "GET"
+                })
+                .then(response => response.json())
+                .then(data => {
+                    compte.innerHTML=data.compte;
+                    revenue.innerHTML=data.revenue;
+                    oeuvre_vendu.innerHTML=data.oeuvre;
+                    vectormap(start,end);
+                    vente_pays.innerHTML=data.ventes;
+                    chiffre_affaire.innerHTML=data.chiffre_affaire;
+                    depense.innerHTML=data.depense;
+                    utilisateurs.innerHTML=data.utilisateurs;
+                    pages.innerHTML=data.pages;
+    
+                })
+                .catch(error => {
+                    console.log(error)
+                });
+            }
+            function filtrerparDate(start,end){
+                load_data_premier(start,end);
+            }
+        </script>
+
+        <!-- ECharts js -->
+        <script src="{% static 'interface_administration/assets/plugins/echarts/echarts.js'%}"></script>
+
+        <!-- Peitychart js-->
+        <script src="{% static 'interface_administration/assets/plugins/peitychart/jquery.peity.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/peitychart/peitychart.init.js'%}"></script>
+
+        <!-- Apexchart js-->
+        <script src="{% static 'interface_administration/assets/js/apexcharts.js'%}"></script>
+
+        <!--Moment js-->
+        <script src="{% static 'interface_administration/assets/plugins/moment/moment.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/moment/locale/fr.js'%}"></script>
+
+
+        <!-- Daterangepicker js-->
+        <script src="{% static 'interface_administration/assets/plugins/bootstrap-daterangepicker/daterangepicker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/daterange.js'%}"></script>
+
+        <!---jvectormap js-->
+        <script src="{% static 'interface_administration/assets/plugins/jvectormap/jquery.vmap.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/jvectormap/jquery.vmap.world.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/jvectormap/jquery.vmap.sampledata.js'%}"></script>
+
+        <!-- Data tables js-->
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jquery.dataTables.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.bootstrap5.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.buttons.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.bootstrap5.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jszip.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/pdfmake.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/vfs_fonts.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.html5.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.print.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.colVis.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/dataTables.responsive.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/responsive.bootstrap5.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/datatables.js'%}"></script>
+
+        <!-- Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+        <!--Counters -->
+        <script src="{% static 'interface_administration/assets/plugins/counters/counterup.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/counters/waypoints.min.js'%}"></script>
+
+        <!--Chart js -->
+        <script src="{% static 'interface_administration/assets/plugins/chart/chart.bundle.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/chart/utils.js'%}"></script>
+
+        <!-- Index js-->
+        <script src="{% static 'interface_administration/assets/js/index1.js'%}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js'%}"></script>
+
+    {% endblock %}

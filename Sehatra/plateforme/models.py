@@ -9,13 +9,19 @@ from django_countries.fields import CountryField
 from django.utils.text import slugify
 
 
-# Create your models here.
+def custom_upload_path(instance, filename):
+    base_filename, file_extension = os.path.splitext(filename)
+    timestamp = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+    new_filename = f"{timestamp}_{base_filename}{file_extension}"
+    return f'{new_filename}'
+
+
 def remove_accents(input_str):
     return ''.join((c for c in unicodedata.normalize('NFD', input_str) if unicodedata.category(c) != 'Mn'))
 
 
 def upload_to (instance, filename):
-    upload = instance.__class__.__name__.lower() + "/" + str(datetime.datetime.now())
+    upload = instance.__class__.__name__.lower() + "/" + str(datetime.datetime.now().strftime('%Y%m%d%H%M%S'))
     filename = remove_accents(filename)
     return os.path.join(upload, filename)
 

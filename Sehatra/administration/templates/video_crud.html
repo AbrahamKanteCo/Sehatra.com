@@ -1,0 +1,979 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Vidéos</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+                            <div class="row">
+                                <div class="col mb-4">
+                                    <a class="btn btn-primary"  data-bs-target="#form-videos-create" data-bs-toggle="modal" href="javascript:void(0)">
+                                        <i class="fe fe-plus"></i>Nouvelle vidéo
+                                    </a>
+                                </div>
+                                <div class="col col-auto mb-4">
+                                    <div class="mb-3 w-100">
+                                        <form method="GET" action="{% url 'administration:recherche-videos' %}">
+                                            {% csrf_token %}
+                                            <div class="input-icon">
+                                            <span class="input-icon-addon">
+                                                    <i class="fe fe-search"></i>
+                                                </span>
+                                                <input id="search-input" type="text" class="form-control" placeholder="Rechercher vidéos" {% if search != "" %} value="{{ search }}" {% endif %} name="search">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-2 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i></h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Gratuit</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_gratuit}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Film</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_film}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Levée de fond</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_levee_de_fond}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div>
+                                                <p class="text-muted">Live</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_live}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+
+                            <!--Row-->
+                            <div class="row">
+                                {%for video in videos%}
+                                <div>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">{{ video.titre }} <span class="badge bg-primary rounded-pill">par {{ video.organisateur }}</span></div>
+            <div class="card-options">
+                <a href="javascript:void(0)" class="option-dots" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="modifier({{ video.id }});"><i class="fe fe-trash me-2"></i> Modifier</a>
+                    <a class="dropdown-item" href="javascript:void(0)" onclick="supprimer({{ video.id }});"><i class="fe fe-trash me-2"></i> Supprimer</a>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6">
+                    <img src="/media/assets/images/upload/{{ video.photo_de_couverture }}" alt="image" class="img-height">
+                    <hr/>
+                    <nav class="nav">
+                        {% if video.en_ligne%}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>En ligne </p>
+                        {%endif%}
+                        {% if video.levee_de_fond %}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>Levee de fond</p>
+                        {%endif%}
+                        {% if video.gratuit%}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>Gratuit</p>
+                        {%endif%}
+                        {% if video.a_la_une%}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>A la une</p>
+                        {%endif%}
+                        {% if video.is_live%}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>Live</p>
+                        {%endif%}
+                        {% if video.is_film%}
+                        <p class="text-muted"> <i class="fa fa-check text-success"></i>Film</p>
+                        {%endif%}
+                    </nav>
+                </div>
+                <div class="col-lg-6">
+                    <div class="main-contact-info-body">
+                        <div class="media-list pt-0">
+                            <div class="media py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-align-left"></i>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <label>Description courte</label>
+                                                <span class="font-weight-semibold fs-14">{{ video.description_courte }}</span>
+                                            </div>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-align-left"></i>
+                                        </div>
+                                        <div>
+                                            <div>
+                                                <label>Description longue</label>
+                                                <span class="font-weight-semibold fs-14">{{ video.description_longue }}</span>
+                                            </div>                                       
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-youtube-play"></i>
+                                        </div>
+                                        <div>
+                                            <label>Youtube</label> <span class="font-weight-semibold fs-14"><a href="{{video.youtube}}">{{video.youtube}}</a></span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-chain"></i>
+                                        </div>
+                                        <div>
+                                            <label>Slug</label> <span class="font-weight-semibold fs-14">{{video.slug}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-caret-square-o-right"></i>
+                                        </div>
+                                        <div>
+                                            <label>Lien vidéo</label> <span class="font-weight-semibold fs-14"> <a href="{{video.lien_video}}">{{video.lien_video}}</a></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-chain"></i>
+                                        </div>
+                                        <div>
+                                            <label>Date de sortie</label> <span class="font-weight-semibold fs-14">{{video.date_sortie}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-caret-square-o-right"></i>
+
+                                        </div>
+                                        <div>
+                                            <label>Durée </label> <span class="font-weight-semibold fs-14">{{video.duree}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-money"></i>
+                                        </div>
+                                        <div>
+                                            <label>Ariary</label> <span class="font-weight-semibold fs-14">{{video.tarif_ariary}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-euro"></i>
+
+                                        </div>
+                                        <div>
+                                            <label>Euro </label> <span class="font-weight-semibold fs-14">{{video.tarif_euro}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-dollar"></i>
+
+                                        </div>
+                                        <div>
+                                            <label>Dollars </label> <span class="font-weight-semibold fs-14">{{video.tarif_dollar}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="media mb-0 py-4 border-top mt-0">
+                                <div class="media-body">
+                                    <div class="d-flex">
+                                        <div class="media-icon bg-light text-primary me-3 mt-1">
+                                            <i class="fa fa-chain-broken"></i>
+                                        </div>
+                                        <div>
+                                            <label>Stripe price id </label> <span class="font-weight-semibold fs-14">{{video.stripe_price_id}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                {%endfor%}
+                                <nav aria-label="Pagination">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item {% if not videos.has_previous %}disabled{% endif %}">
+                                            <a class="page-link" href="?page=1" tabindex="-1">
+                                                <i class="fa fa-angle-left"></i>
+                                                <span class="sr-only">Previous</span>
+                                            </a>
+                                        </li>
+                                    
+                                        {% for num in videos.paginator.page_range %}
+                                            <li class="page-item {% if num == videos.number %}active{% endif %}">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    
+                                        <li class="page-item {% if not videos.has_next %}disabled{% endif %}">
+                                            <a class="page-link" href="?page={{ videos.paginator.num_pages }}">
+                                                <i class="fa fa-angle-right"></i>
+                                                <span class="sr-only">Next</span>
+                                            </a>
+                                        </li>
+                                    </ul>                                                            
+                                </nav>
+                            </div>
+                            <!-- End Row-->
+
+
+                            <div class="modal fade" role="dialog" tabindex="-1" id="form-videos-create">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Ajouter une nouvelle vidéo</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Date de sortie</label>
+                                                                        <input type="date" class="form-control" type="text" id="date_sortie" name="date_sortie" >
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Titre</label>
+                                                                        <input class="form-control" type="text" name="titre" id="titre" placeholder="Sakaiza mandoro">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Durée</label>
+                                                                        <input class="form-control" type="text" name="duree" id="duree" placeholder="Duree">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="mb-0">
+                                                                <label class="form-label">Artistes</label>
+                                                                <select class="form-control select2" data-placeholder="Choose artistes" id="artistes" name="artistes" multiple>
+                                                                        {% for artiste in artistes%}
+                                                                        <option value="{{artiste.id}}">{{artiste.nom}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Artiste</label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="artiste" name="artiste">
+                                                                                <option class="hemant">Choisissez une artiste</option>
+                                                                                {% for artiste in artistes%}
+                                                                                <option class="hemant" value="{{artiste.id}}">{{artiste.nom}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Organisateur </label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="organisateur" name="organisateur">
+                                                                                <option class="hemant">Choisissez un organisateur</option>
+                                                                                {% for organisateur in organisateurs%}
+                                                                                <option class="hemant" value="{{organisateur.id}}">{{organisateur.nom}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Live </label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="live" name="live">
+                                                                                <option class="hemant">Choisissez un live</option>
+                                                                                {% for live in lives%}
+                                                                                <option class="hemant" value="{{live.id}}">{{live.titre}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Description longue</label>
+                                                                        <textarea class="form-control mb-4" placeholder="Description" id="description_longue" name="description_longue" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Description courte</label>
+                                                                        <textarea class="form-control mb-4" placeholder="Description" id="description_courte" name="description_courte" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Action</label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="action" name="action">
+                                                                                <option class="hemant">Choisissez une action</option>
+                                                                                {% for action in actions%}
+                                                                                <option class="hemant" value="{{action.id}}">{{action.titre}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Stripe price id</label>
+                                                                        <input class="form-control" type="text" id="stripe_price_id" name="stripe_price_id" placeholder="Stripe price id">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Youtube</label>
+                                                                        <input class="form-control" type="text" id="youtube" name="youtube" placeholder="Lien Youtube">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Lien vidéo</label>
+                                                                        <input class="form-control" type="text" id="lien_video" name="lien_video" placeholder="Lien VIdéo">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Tarif en Ariary</label>
+                                                                        <input class="form-control" type="number" id="tarif_ariary" name="tarif_ariary" placeholder="Tarif en Ariary">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Tarif en Euro</label>
+                                                                        <input class="form-control" type="number" id="tarif_euro" name="tarif_euro" placeholder="Tarif en euro">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Tarif en Dollars</label>
+                                                                        <input class="form-control" type="number" id="tarif_dollar" name="tarif_dollar" placeholder="Tarif en dollars">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col mb-3">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de couverture</label>
+                                                                        <input type="file" class="dropify" id="photo_de_couverture" name="photo_de_couverture"  data-height="180" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="en_ligne" name="en_ligne">
+                                                                            <span class="custom-control-label">En ligne</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="gratuit" name="gratuit">
+                                                                            <span class="custom-control-label">Gratuit</span>
+                                                                        </label>                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="levee_de_fond" name="levee_de_fond">
+                                                                            <span class="custom-control-label">Levee de fond</span>
+                                                                        </label>  
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="a_la_une" name="a_la_une">
+                                                                            <span class="custom-control-label">A la une</span>
+                                                                        </label>  
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="is_live" name="is_live">
+                                                                            <span class="custom-control-label">Live</span>
+                                                                        </label>  
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="is_film" name="is_film">
+                                                                            <span class="custom-control-label">Film</span>
+                                                                        </label>  
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="add-button" type="submit">Ajouter</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Row -->
+
+                    <!--Modal update-->
+                    <div class="modal fade" role="dialog" tabindex="-1" id="form-videos-update">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="py-1">
+                                        {% comment %} <form class="form" novalidate="" method="put"> {% endcomment %}
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Date de sortie</label>
+                                                                <input type="date" class="form-control" type="text" name="date_sortie" id="update_date_sortie" >
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Titre</label>
+                                                                <input class="form-control" type="text" id="update_titre" name="titre" placeholder="Sakaiza mandoro">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Durée</label>
+                                                                <input class="form-control" type="text" id="update_duree" name="duree" placeholder="Duree">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-0">
+                                                        <label class="form-label">Artistes</label>
+                                                        <select class="form-control select2" data-placeholder="Choose artistes" id="update_artistes" name="artistes" multiple>
+                                                                {% for artiste in artistes%}
+                                                                <option value="{{artiste.id}}">{{artiste.nom}}</option>
+                                                                {%endfor%}
+                                                            </select>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Artiste</label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" id="update_artiste" name="artiste">
+                                                                        <option class="hemant">Choisissez une artiste</option>
+                                                                        {% for artiste in artistes%}
+                                                                        <option class="hemant" value="{{artiste.id}}">{{artiste.nom}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Organisateur </label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" id="update_organisateur" name="organisateur">
+                                                                        <option class="hemant">Choisissez un organisateur</option>
+                                                                        {% for organisateur in organisateurs%}
+                                                                        <option class="hemant" value="{{organisateur.id}}">{{organisateur.nom}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Live </label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" id="update_live" name="live">
+                                                                        <option class="hemant">Choisissez un live</option>
+                                                                        {% for live in lives%}
+                                                                        <option class="hemant" value="{{live.id}}">{{live.titre}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Description longue</label>
+                                                                <textarea id="update_description_longue" class="form-control mb-4" placeholder="Description" name="description_longue" rows="3"></textarea>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Description courte</label>
+                                                                <textarea id="update_description_courte" class="form-control mb-4" placeholder="Description" name="description_courte" rows="3"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Action</label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" id="update_action" name="action">
+                                                                        <option class="hemant">Choisissez une action</option>
+                                                                        {% for action in actions%}
+                                                                        <option class="hemant" value="{{action.id}}">{{action.nomaction}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Stripe price id</label>
+                                                                <input class="form-control" id="update_stripe_price_id" type="text" name="stripe_price_id" placeholder="Stripe price id">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Youtube</label>
+                                                                <input class="form-control" id="update_youtube" type="text" name="youtube" placeholder="Lien Youtube">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Lien vidéo</label>
+                                                                <input class="form-control" id="update_lien_video" type="text" name="lien_video" placeholder="Lien VIdéo">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Tarif en Ariary</label>
+                                                                <input class="form-control" id="update_tarif_ariary" type="number" name="tarif_ariary" placeholder="Tarif en Ariary">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Tarif en Euro</label>
+                                                                <input class="form-control" type="number" id="update_tarif_euro" name="tarif_euro" placeholder="Tarif en euro">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Tarif en Dollars</label>
+                                                                <input class="form-control" id="update_tarif_dollar" type="number" name="tarif_dollar" placeholder="Tarif en dollars">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col mb-3">
+                                                            <div class="mb-3">
+                                                                <label>Photo de couverture</label>
+                                                                <input type="file" class="dropify" id="update_photo_de_couverture" name="photo_de_couverture"  data-height="180" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_en_ligne" class="custom-control-input" name="en_ligne">
+                                                                    <span class="custom-control-label">En ligne</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_gratuit" class="custom-control-input" name="gratuit">
+                                                                    <span class="custom-control-label">Gratuit</span>
+                                                                </label>                                                                    </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_levee_de_fond" class="custom-control-input" name="levee_de_fond">
+                                                                    <span class="custom-control-label">Levee de fond</span>
+                                                                </label>  
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_a_la_une" class="custom-control-input" name="a_la_une">
+                                                                    <span class="custom-control-label">A la une</span>
+                                                                </label>  
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_is_live" class="custom-control-input" name="is_live">
+                                                                    <span class="custom-control-label">Live</span>
+                                                                </label>  
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" id="update_is_film" class="custom-control-input" name="is_film">
+                                                                    <span class="custom-control-label">Film</span>
+                                                                    <input type="hidden" name="videoid" id="update-videos-id">
+                                                                </label>  
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" id="update-button" type="submit">Modifier</button>
+                                                </div>
+                                            </div>
+                                        {% comment %} </form> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <!--Fin modal update-->
+
+        {% endblock %}
+
+    {% block scripts %}
+        <!--Select2 js -->
+<script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+<!-- Timepicker js -->
+<script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+
+<!-- Datepicker js -->
+<script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+
+<!--File-Uploads Js-->
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+
+<!-- File uploads js -->
+<script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+
+<!-- Multiple select js -->
+<script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+
+<!--Sumoselect js-->
+<script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+
+<!--intlTelInput js-->
+<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
+<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
+
+<!--jquery transfer js-->
+<script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+
+<!--multi js-->
+    <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+
+<!-- Form Advanced Element -->
+<script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+<script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+
+
+ <!-- Sweet alert js -->
+        <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+    <script>
+        function afficherAlert(title,message,icon){
+            var message =message;
+            var title =title;
+            swal({
+                title: title,
+                text: message,
+                timer: 3000,
+                icon:icon,
+                showConfirmButton: false
+            });
+        }
+
+        document.getElementById("add-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("titre", document.getElementById("titre").value);
+            formData.append("duree", document.getElementById("duree").value);
+            formData.append("date_sortie", document.getElementById("date_sortie").value);
+            formData.append("organisateur", document.getElementById("organisateur").value);
+            formData.append("stripe_price_id", document.getElementById("stripe_price_id").value);
+            formData.append("action", document.getElementById("action").value);
+            formData.append("live", document.getElementById("live").value);
+            formData.append("artiste", document.getElementById("artiste").value);
+            formData.append("artistes", document.getElementById("artistes").value);
+            formData.append("tarif_ariary", document.getElementById("tarif_ariary").value);
+            formData.append("tarif_dollar", document.getElementById("tarif_dollar").value);
+            formData.append("tarif_euro", document.getElementById("tarif_euro").value);
+            formData.append("youtube", document.getElementById("youtube").value);
+            formData.append("description_longue",document.getElementById("description_longue").value);
+            formData.append("description_courte",document.getElementById("description_courte").value);
+            formData.append("lien_video", document.getElementById("lien_video").value);
+            formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+            formData.append("en_ligne", document.getElementById("en_ligne").checked);
+            formData.append("levee_de_fond", document.getElementById("levee_de_fond").checked);
+            formData.append("gratuit", document.getElementById("gratuit").checked);
+            formData.append("is_live", document.getElementById("is_live").checked);
+            formData.append("is_film", document.getElementById("is_film").checked);
+            formData.append("a_la_une", document.getElementById("a_la_une").checked);
+    
+            const loadingSwal = swal({
+                title: "Ajout",
+                text: "En cours...",
+                icon: "info",
+                buttons: false, 
+                closeOnClickOutside: false, 
+                closeOnEsc: false
+            });
+
+            fetch(`/videos/ajouter/`, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                afficherAlert("Ajout","Videos mis à jour avec succès !",'success')
+                location.reload()
+
+            })
+            .catch(error => {
+                swal("Erreur", error, "error");
+            });
+        });
+        document.getElementById("update-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("titre", document.getElementById("update_titre").value);
+            formData.append("duree", document.getElementById("update_duree").value);
+            formData.append("date_sortie", document.getElementById("update_date_sortie").value);
+            formData.append("organisateur", document.getElementById("update_organisateur").value);
+            formData.append("stripe_price_id", document.getElementById("update_stripe_price_id").value);
+            formData.append("action", document.getElementById("update_action").value);
+            formData.append("live", document.getElementById("update_live").value);
+            formData.append("artiste", document.getElementById("update_artiste").value);
+            formData.append("artistes", document.getElementById("update_artistes").value);
+            formData.append("tarif_ariary", document.getElementById("update_tarif_ariary").value);
+            formData.append("tarif_dollar", document.getElementById("update_tarif_dollar").value);
+            formData.append("tarif_euro", document.getElementById("update_tarif_euro").value);
+            formData.append("youtube", document.getElementById("update_youtube").value);
+            formData.append("description_longue",document.getElementById("update_description_longue").value);
+            formData.append("description_courte",document.getElementById("update_description_courte").value);
+            formData.append("lien_video", document.getElementById("update_lien_video").value);
+            formData.append("photo_de_couverture", document.getElementById("update_photo_de_couverture").files[0]);
+            formData.append("en_ligne", document.getElementById("update_en_ligne").checked);
+            formData.append("levee_de_fond", document.getElementById("update_levee_de_fond").checked);
+            formData.append("gratuit", document.getElementById("update_gratuit").checked);
+            formData.append("is_live", document.getElementById("update_is_live").checked);
+            formData.append("is_film", document.getElementById("update_is_film").checked);
+            formData.append("a_la_une", document.getElementById("update_a_la_une").checked);
+            videoId=document.getElementById('update-videos-id').value;
+    
+            fetch(`/videos/${videoId}/update/`, {
+                method: "PUT",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                afficherAlert("Update","Videos mis à jour avec succès !",'success')
+                location.reload()
+            })
+            .catch(error => {
+                swal("Erreur", error, "error");
+            });
+        });
+        function afficherDetailsArtiste(details) {
+            document.getElementById("update_titre").value=details.titre;
+            document.getElementById("update_duree").value=details.duree;
+            document.getElementById("update_date_sortie").value=details.date_sortie;
+            document.getElementById("update_organisateur").value=details.organisateur;
+            document.getElementById("update_stripe_price_id").value=details.stripe_price_id;
+            document.getElementById("update_action").value=details.action;
+            document.getElementById("update_live").value=details.live;
+            document.getElementById("update_artiste").value=details.artiste;
+            document.getElementById("update_artistes").value=details.artistes;
+            document.getElementById("update_tarif_ariary").value=details.tarif_ariary;
+            document.getElementById("update_tarif_dollar").value=details.tarif_dollar;
+            document.getElementById("update_tarif_euro").value=details.tarif_euro;
+            document.getElementById("update_youtube").value=details.youtube;
+            document.getElementById("update_description_longue").value=details.description_longue;
+            document.getElementById("update_description_courte").value=details.description_courte;
+            document.getElementById("update_lien_video").value=details.lien_video;
+            document.getElementById("update_photo_de_couverture").files[0]=details.photo_de_couverture;
+            document.getElementById("update_en_ligne").checked=details.en_ligne;
+            document.getElementById("update_levee_de_fond").checked=details.levee_de_fond;
+            document.getElementById("update_gratuit").checked=details.gratuit;
+            document.getElementById("update_is_live").checked=details.is_live;
+            document.getElementById("update_is_film").checked=details.is_film;
+            document.getElementById("update_a_la_une").checked=details.a_la_une;
+
+        }
+        function modifier(id){
+        var videoId = id;
+            
+        fetch(`/videos/${videoId}/detail/`, {
+            method: "GET",
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            document.getElementById('update-videos-id').value=videoId
+            afficherDetailsArtiste(data)
+            var modal = new bootstrap.Modal(document.getElementById('form-videos-update'));
+            modal.show();
+        });
+
+        }
+        function supprimer(id) {
+            var videoId = id;
+        
+            swal({
+                title: "Êtes-vous sûr ?",
+                text: "Voulez-vous vraiment supprimer ce vidéo?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Supprimer',
+                cancelButtonText: 'Annuler'
+            },
+            function(isConfirm){
+                if (isConfirm) {
+                    fetch(`/videos/${videoId}/delete/`, {
+                        method: "DELETE",
+                    })
+                    .then(response => {
+                        swal("Message", "Vidéo supprimé avec succès", "success");
+                        location.reload();
+                    });
+                } else {
+                    swal("Message", "Suppression annulée", "info");
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("search-input");
+            
+            searchInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.querySelector("form").submit();
+                }
+            });
+        });
+    </script>
+
+    {% endblock %}

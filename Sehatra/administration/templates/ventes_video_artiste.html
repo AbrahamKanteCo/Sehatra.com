@@ -1,0 +1,88 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Ventes des vidéos</h4>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!-- Row -->
+                            <div class="row flex-lg-nowrap">
+                                <div class="col-12">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col-12 mb-3">
+                                            <div class="e-panel card">
+                                                <div class="card-body">
+                                                    <div class="e-table">
+                                                        <div class="table-responsive table-lg mt-3">
+                                                            <table class="table table-bordered border-top text-nowrap" id="example1">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="border-bottom-0 w-20">Photo </th>
+                                                                        <th class="border-bottom-0 w-15">Titre</th>
+                                                                        <th class="border-bottom-0 w-30">Nombre de fois(ces 28 derniers jours)</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for vente in ventes_video%}
+                                                                    <tr>
+                                                                       
+                                                                        <td class="align-middle">
+                                                                            <div class="d-flex">
+                                                                                <a href="javascript:void(0)" class="me-4">
+                                                                                    <img class="w-8 h-8 rounded shadow" src="/media/assets/images/upload/{{ vente.photo_de_couverture }}" alt="media1">
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-nowrap align-middle"> <h5 class="mb-1 font-weight-semibold">{{vente.titre}}</h5></td>
+                                                                        <td>
+                                                                            <small class="text-muted">{{vente.nombre_ventes}} fois    </small>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {%endfor%}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+        
+        {% endblock %}
+
+    {% block scripts %}
+
+        <!-- Data tables -->
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.bootstrap5.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jszip.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/pdfmake.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/vfs_fonts.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.colVis.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/responsive.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/datatables.js' %}"></script>
+
+        <!-- Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

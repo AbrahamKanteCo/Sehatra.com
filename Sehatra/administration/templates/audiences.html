@@ -1,0 +1,340 @@
+{% extends 'components/base.html' %}
+{% load static %}
+{% block styles %}{% endblock %}
+{% block content %}
+    <!--Page header-->
+    {%if erreur %}
+    <div class="page relative">
+        <div class="page-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-7 mx-auto d-block">
+                    <div class="card p-7 mb-0 mt-7 mt-md-0">
+                        <div class="text-center">
+                            <div class="fs-100  mb-5 text-primary font-weight-normal h1"><i class="fa fa-frown-o"></i>ops!</div>
+                            <h1 class="h3  mb-3 font-weight-bold">{{erreur}}</h1>
+                            <p class="h5 font-weight-normal mb-7 leading-normal">Verifier votre connexion</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    {%else%}
+    <div class="page-header">
+        <div class="page-leftheader">
+            <h4 class="page-title" id="sexe">Audience par sexe</h4>
+        </div>
+        <div class="page-rightheader ms-auto d-lg-flex d-none">
+            <div class="ms-5 mb-0">
+                <a class="btn btn-white date-range-btn"
+                   href="javascript:void(0)"
+                   id="daterange-btn">
+                    <svg class="header-icon2 me-3"
+                         x="1008"
+                         y="1248"
+                         viewBox="0 0 24 24"
+                         height="100%"
+                         width="100%"
+                         preserveAspectRatio="xMidYMid meet"
+                         focusable="false">
+                        <path d="M5 8h14V6H5z" opacity=".3" />
+                        <path d="M7 11h2v2H7zm12-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-4 3h2v2h-2zm-4 0h2v2h-2z" />
+                    </svg>
+                    <span>Filtrer par date
+                        <i class="fa fa-caret-down"></i></span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!--End Page header-->
+    <!--Row-->
+    <hr />
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row" id="homme">
+                        <div class="col mb-lg-4 mb-xl-0">
+                            <div class="mb-2 fs-18 text-muted">Homme</div>
+                            <h1 class="font-weight-bold mb-1">{{ sexe.nb_masculin }}</h1>
+                        </div>
+                        <div class="col col-auto">
+                            <div class="mx-auto chart-circle chart-circle-md chart-circle-primary mt-sm-0 mb-0" id="chart-circle-primary"
+                                 data-value="{{ sexe.m|floatformat:"2" }}"
+                                 data-thickness="12"
+                                 data-color="">
+                                <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.masculin|floatformat:"2" }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row" id="femme">
+                        <div class="col mb-lg-4 mb-xl-0">
+                            <div class="mb-2 fs-18 text-muted">Femme</div>
+                            <h1 class="font-weight-bold mb-1">{{ sexe.nb_feminin }}</h1>
+                        </div>
+                        <div class="col col-auto">
+                            <div class="mx-auto chart-circle chart-circle-md chart-circle-success mt-sm-0 mb-0"
+                                 data-value="{{ sexe.f|floatformat:"2" }}"
+                                 data-thickness="12"
+                                 data-color="#2dce89">
+                                <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.feminin|floatformat:"2" }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row" id="autresexe">
+                        <div class="col mb-lg-4 mb-xl-0">
+                            <div class="mb-2 fs-18 text-muted">Non défini</div>
+                            <h1 class="font-weight-bold mb-1">{{ sexe.nb_autre }}</h1>
+                        </div>
+                        <div class="col col-auto">
+                            <div class="mx-auto chart-circle chart-circle-md chart-circle-warning mt-sm-0 mb-0"
+                                 data-value="{{ sexe.u|floatformat:"2" }}"
+                                 data-thickness="12"
+                                 data-color="#2dce89">
+                                <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.autre|floatformat:"2" }}%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h4 class="page-title">Audience par démographie</h4>
+    <hr />
+    <div class="row row-deck">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title" id="demographie">Données démographiques par pays:</h3>
+            </div>
+            <div class="card-body">
+                <div id="vmap" class="vmap-width"></div>
+            </div>
+            <div class="card-footer text-start">
+                <div class="scrollbar5 h-200"  id="scrollbar5">
+                    <div id="pays_tableau">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Pays</td>
+                                <td>Utilisateurs</td>
+                                <td>Nouveaux utilisateurs</td>
+                            </tr>
+                            {% for country in countries.values %}
+                                <tr class="border-bottom">
+                                    <td></td>
+                                    <td class="p-3 d-flex">{{ country.0 }}</td>
+                                    <td class="p-3">{{ country.1 }}</td>
+                                    <td class="p-3">{{ country.2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Row-->
+    <hr />
+    <div class="row row-deck">
+        <div class="col-xl-12 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" id="langue">Audience par langue</h3>
+                </div>
+                <div class="card-body mx-auto text-center">
+                    <div class="overflow-hidden">
+                        <div class="chart-container1">
+                            <canvas class="langue_stat" height="200" width="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="langue_tableau">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Langue</td>
+                                <td>Utilisateurs</td>
+                                <td>Nouveaux utilisateurs</td>
+                            </tr>
+                            <div>
+                                {% for langue in langues.values %}
+                                    <tr class="border-bottom">
+                                        <td></td>
+                                        <td class="p-3 d-flex">{{ langue.0 }}</td>
+                                        <td class="p-3">{{ langue.1 }}</td>
+                                        <td class="p-3">{{ langue.2 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" id="source">Source des clics qui mènent vers Sehatra.com</h3>
+                </div>
+                <div class="card-body mx-auto text-center">
+                    <div class="overflow-hidden">
+                        <div class="chart-container2">
+                            <canvas class="sourceClicks" height="200" width="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="source_tableau">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Clicks</td>
+                                <td>Utilisateurs</td>
+                            </tr>
+                            <div>
+                                {% for source in sources.values %}
+                                    <tr class="border-bottom">
+                                        <td></td>
+                                        <td class="p-3 d-flex">{{ source.0 }}</td>
+                                        <td class="p-3">{{ source.1 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </div>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-12 col-lg-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title" id="ageetsexe">Audience par âge et par sexe</h3>
+                </div>
+                <div class="card-body mx-auto text-center">
+                    <div class="overflow-hidden">
+                        <div class="chart-container3">
+                            <canvas class="age_sexe_statistique" height="200" width="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="agesexe_tableau">
+                    <div class="scrollbar6 h-200"  id="scrollbar6">
+                    <table class="table table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Age/Sexe</td>
+                                <td>Utilisateurs</td>
+                            </tr>
+                            {% for age_group, count in ageSexes.items %}
+                                <tr class="border-bottom">
+                                    <td></td>
+                                    <td class="p-3 d-flex">{{ age_group }}</td>
+                                    <td class="p-3">{{ count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endif%}
+{% endblock %}
+{% block scripts %}
+    <script>
+        const loading=
+        `<div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>`
+        function load_data_premier(start,end){
+            const homme=document.getElementById('homme');
+            const femme=document.getElementById('femme');
+            const autresexe=document.getElementById('autresexe');
+            const pays_tableau=document.getElementById('pays_tableau');
+            const agesexe_tableau=document.getElementById('agesexe_tableau');
+            const langue_tableau=document.getElementById('langue_tableau');
+            const source_tableau=document.getElementById('source_tableau');
+            homme.innerHTML=loading;
+            femme.innerHTML=loading;
+            autresexe.innerHTML=loading;
+            pays_tableau.innerHTML=loading;
+            agesexe_tableau.innerHTML=loading;
+            langue_tableau.innerHTML=loading;
+            source_tableau.innerHTML=loading;
+            fetch(`audiences_admin_data?debut=`+start+`&fin=`+end, {
+                method: "GET"
+            })
+            .then(response => response.json())
+            .then(data => {
+                homme.innerHTML=data.homme;
+                femme.innerHTML=data.femme;
+                autresexe.innerHTML=data.autre;
+                chartcircleprimary();
+                chartcirclewarning();
+                chartcirclesuccess();
+                vectormap(start,end);
+                pays_tableau.innerHTML=data.countries;
+                age_sexe_statistique(start,end);
+                agesexe_tableau.innerHTML=data.agesexe;
+                langue(start,end);
+                langue_tableau.innerHTML=data.langues;
+                sourceClicks(start,end);
+                source_tableau.innerHTML=data.sources;
+
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }
+        function filtrerparDate(start,end){
+            load_data_premier(start,end);
+        }
+    </script>
+    <!---jvectormap js-->
+    <script src="{% static 'interface_administration/assets/plugins/jvectormap/jquery.vmap.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/jvectormap/jquery.vmap.world.js'%}"></script>
+    <!-- Index js-->
+    <script src="{% static 'interface_administration/assets/js/audience.js'%}"></script>
+    <!--Moment js-->
+    <script src="{% static 'interface_administration/assets/plugins/moment/moment.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/moment/locale/fr.js'%}"></script>
+<!-- Daterangepicker js-->
+    <script src="{% static 'interface_administration/assets/plugins/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'interface_administration/assets/js/daterange.js' %}"></script>
+    <!--Chart js -->
+    <script src="{% static 'interface_administration/assets/plugins/chart/chart.min.js' %}"></script>
+    <!-- Index js-->
+    <script src="{% static 'interface_administration/assets/js/index4.js' %}"></script>
+    <!-- Color Theme js -->
+    <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+{% endblock %}

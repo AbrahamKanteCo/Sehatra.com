@@ -1,0 +1,840 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Organisateurs</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-4 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total des organisateurs actifs</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_actif}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div>
+                                                <p class="text-muted">Total des associations</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_association}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!-- Row -->
+                            <div class="card">
+                                <div class="row no-gutters">
+                                    <div class="col-lg-4 col-xl-3">
+                                        <div class="border-end">
+                                            <div class="main-content-left main-content-left-contacts">
+                                                <div class="card-header">
+                                                    <div class="card-title"> 
+                                                            <form method="GET" action="{% url 'administration:recherche-organisateur' %}">
+                                                                {% csrf_token %}
+                                                                <div class="input-icon">
+                                                                <span class="input-icon-addon">
+                                                                        <i class="fe fe-search"></i>
+                                                                    </span>
+                                                                    <input id="search-input" type="text" class="form-control" placeholder="Rechercher organisateur" name="search">
+                                                                </div>
+                                                            </form>
+                                                    </div>
+                                                    <div class="card-options">
+                                                        <a class="#" data-bs-target="#form-organisateur-create" data-bs-toggle="modal" href="javascript:void(0)"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M15 16c-2.69 0-5.77 1.28-6 2h12c-.2-.71-3.3-2-6-2z" opacity=".3"/><circle cx="15" cy="8" opacity=".3" r="2"/><path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0-6c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zm-6 4c.22-.72 3.31-2 6-2 2.7 0 5.8 1.29 6 2H9zm-3-3v-3h3v-2H6V7H4v3H1v2h3v3z"/></svg></a>
+                                                    </div>
+                                                </div>
+                                                <div class="main-contacts-list" id="mainContactList">
+                                                    {%for organisateur in organisateurs%}
+                                                    <div class="main-contact-item" id="partienav{{organisateur.id}}">
+                                                        <div class="main-img-user online"><img alt="" src="/media/assets/images/upload/{{organisateur.photo_de_profil}}" class="avatar avatar-md brround"></div>
+                                                        <div class="main-contact-body">
+                                                            <a href="#" onclick="details({{organisateur.id}});"><h6>{{organisateur.nom}}</h6><span class="phone">{{organisateur.user}}</span></a>
+                                                        </div>
+                                                    </div>
+                                                    {%endfor%}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8 col-xl-9" id="details-organisateurs">
+                                        {%if details %}
+                                        <div class="">
+                                            <div class="main-content-body main-content-body-contacts">
+                                                <div class="main-contact-info-header">
+                                                    <div class="media">
+                                                        <div class="main-img-user brround">
+                                                            <img alt="" src="/media/assets/images/upload/{{details.photo_de_profil}}" class="w-100 h-100 brround">
+                                                            <a href="javascript:void(0)"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 6h-4.05l-1.83-2H9.88L8.05 6H4v12h16V6zm-8 11c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z" opacity=".3"/><path d="M4 20h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2zM4 6h4.05l1.83-2h4.24l1.83 2H20v12H4V6zm8 1c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z"/></svg></a>
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <h4>{{details.nom}}</h4>
+                                                            <p><span class="badge bg-light rounded-pill">Utilisateur: {{details.user}}</span></p>
+                                                            <nav class="nav">
+                                                                {% if details.en_ligne %}
+                                                                <span class="text-muted"><i class="fa fa-check text-success"></i> En ligne</span>
+                                                                {% endif %}
+                                                                {% if details.is_association %}
+                                                                <span class="text-muted"><i class="fa fa-check text-success"></i> Association</span>
+                                                                {% endif %}
+                                                            </nav>
+                                                        </div>
+                                                    </div>
+                                                    <div class="main-contact-action">
+                                                        <a href="javascript:void(0)"  onclick="modifierorganisateur({{ details.id }})" class="btn btn-white btn-svgs"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 18.08V19h.92l9.06-9.06-.92-.92z" opacity=".3"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29s-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19z"/></svg><span>Modifier</span></a>
+                                                        <a href="javascript:void(0)" onclick="supprimerorganisateur({{ details.id }})" class="btn btn-danger btn-svgs"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M8 9h8v10H8z" opacity=".3"/><path d="M15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z"/></svg><span>Supprimer</span></a>
+                                                    </div>
+                                                    <!-- main-contact-action -->
+                                                </div>
+                                                <div class="main-contact-info-body">
+                                                    <div class="media-list pt-0">
+                                                        <div class="media py-4 border-top mt-0">
+                                                            <div class="media-body">
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-align-left"></i>
+
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Description</label> <span class="font-weight-semibold fs-14"> {{details.description}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="media py-4 border-top mt-0">
+                                                            <div class="media-body">
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-youtube-play"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Youtube</label> <span class="font-weight-semibold fs-14"><a href="{{details.youtube}}">{{details.youtube}}</a></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-globe"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Site Web</label> <span class="font-weight-semibold fs-14"><a href="{{details.siteweb}}">{{details.siteweb}}</a></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Facebook</label> <span class="font-weight-semibold fs-14"><a href="{{details.facebook}}">{{details.facebook}}</a></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="media py-4 border-top mt-0">
+                                                            <div class="media-body">
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-map-marker"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Slug</label> <span class="font-weight-semibold fs-14">{{details.slug}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="media mb-0 py-4 border-top mt-0">
+                                                            <div class="media-body">
+                                                                <div class="d-flex">
+                                                                    <div class="media-icon bg-light text-primary me-3 mt-1">
+                                                                        <i class="fa fa-image"></i>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label>Photo de couverture</label>
+                                                                        <img src="/media/assets/images/upload/{{ details.photo_de_couverture }}" alt="image" class="img-height">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {%endif%}
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- End Row -->
+        
+                            <div class="modal fade" role="dialog" tabindex="-1" id="form-organisateur-create">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Ajouter un nouveau organisateur</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Nom</label>
+                                                                        <input class="form-control" type="text" id="nom" name="nom" placeholder="John Smith">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label> <i class="fe fe-user"></i> User</label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" id="user" name="user">
+                                                                                <option class="hemant">Choisissez un utilisateur</option>
+                                                                                {% for utilisateur in utilisateurs%}
+                                                                                <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Description</label>
+                                                                        <textarea class="form-control mb-4" placeholder="Description" id="description" name="description" rows="3"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Youtube</label>
+                                                                        <input class="form-control" type="text" name="youtube" id="youtube" placeholder="Lien Youtube">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Site web</label>
+                                                                        <input class="form-control" type="text" name="siteweb" id="siteweb" placeholder="Site Web">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Facebook</label>
+                                                                        <input class="form-control" type="text" name="facebook" id="facebook" placeholder="Facebook">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de profil</label>
+                                                                        <input type="file" class="dropify" name="photo_de_profil" id="photo_de_profil" data-height="180" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col mb-3">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de couverture</label>
+                                                                        <input type="file" class="dropify" name="photo_de_couverture" id="photo_de_couverture"  data-height="180" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="en_ligne" name="en_ligne">
+                                                                    <span class="custom-control-label">En ligne</span>
+                                                                </label>
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" id="is_association" name="is_association">
+                                                                    <span class="custom-control-label">Association</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="add-button" type="submit">Ajouter</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        <div class="modal fade"role="dialog" tabindex="-1" id="form-organisateur-update">
+                            <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Modifier</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                <span aria-hidden="true">×</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                {% comment %} <form class="form" novalidate="" method="put"> {% endcomment %}
+                                                {% csrf_token %}
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Nom</label>
+                                                                    <input class="form-control"
+                                                                        type="text"
+                                                                        name="nom"
+                                                                        placeholder="John Smith"
+                                                                        id="update-nom">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>
+                                                                        <i class="fe fe-user"></i> User
+                                                                    </label>
+                                                                    <div class="col-md-12">
+                                                                        <select class="search-box" name="user" id="update-user">
+                                                                            <option class="hemant">Choisissez un utilisateur</option>
+                                                                            {% for utilisateur in utilisateurs %}
+                                                                                <option class="hemant" value="{{ utilisateur.id }}">{{ utilisateur.username }}</option>
+                                                                            {% endfor %}
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Description</label>
+                                                                    <textarea class="form-control mb-4"
+                                                                            placeholder="Description"
+                                                                            name="description"
+                                                                            id="update-description"
+                                                                            rows="3"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Youtube</label>
+                                                                    <input class="form-control"
+                                                                        type="text"
+                                                                        name="youtube"
+                                                                        placeholder="Lien Youtube"
+                                                                        id="update-youtube">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Site web</label>
+                                                                    <input class="form-control"
+                                                                        type="text"
+                                                                        id="update-siteweb"
+                                                                        name="siteweb"
+                                                                        placeholder="Site Web">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Facebook</label>
+                                                                    <input class="form-control"
+                                                                        type="text"
+                                                                        id="update-facebook"
+                                                                        name="facebook"
+                                                                        placeholder="Facebook">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Slug</label>
+                                                                    <input class="form-control"
+                                                                        type="text"
+                                                                        name="slug"
+                                                                        placeholder="Slug"
+                                                                        id="update-slug" readonly>
+                                                                    <input type="hidden" name="organisateurid" id="update-organisateur-id">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col">
+                                                                <div class="mb-3">
+                                                                    <label>Photo de profil</label>
+                                                                    <img src=""
+                                                                        class="img-preview"
+                                                                        data-height="180"
+                                                                        id="update-photodeprofil-preview" />
+                                                                    <input type="file"
+                                                                        class="dropify"
+                                                                        name="photo_de_profil"
+                                                                        data-height="180"
+                                                                        id="update-photodeprofil" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col mb-3">
+                                                                <div class="mb-3">
+                                                                    <label>Photo de couverture</label>
+                                                                    <img src=""
+                                                                        class="img-preview"
+                                                                        data-height="180"
+                                                                        id="update-photodecouverture-preview" />
+                                                                    <input type="file"
+                                                                        class="dropify"
+                                                                        name="photo_de_couverture"
+                                                                        data-height="180"
+                                                                        id="update-photodecouverture" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="custom-control custom-checkbox">
+                                                            <label class="custom-control custom-checkbox">
+                                                                <input type="checkbox"
+                                                                    class="custom-control-input"
+                                                                    name="en_ligne"
+                                                                    id="update-enligne">
+                                                                <span class="custom-control-label">En ligne</span>
+                                                            </label>
+                                                            <label class="custom-control custom-checkbox">
+                                                                <input type="checkbox"
+                                                                    class="custom-control-input"
+                                                                    name="is_association"
+                                                                    id="update-is_association">
+                                                                <span class="custom-control-label">Association</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col d-flex justify-content-end">
+                                                        <button class="btn btn-primary" id="update-button" type="submit">Modifier</button>
+                                                    </div>
+                                                </div>
+                                                {% comment %} </form> {% endcomment %}
+                                            </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        <!--Fin modal update-->
+
+        {% endblock %}
+
+    {% block scripts %}
+    <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+    <!-- Timepicker js -->
+    <script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+    <!-- Datepicker js -->
+    <script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+    <!--File-Uploads Js-->
+    <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+    <!-- File uploads js -->
+    <script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+    <!-- Multiple select js -->
+    <script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+    <!--Sumoselect js-->
+    <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+    <!--intlTelInput js-->
+    <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
+    <!--jquery transfer js-->
+    <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+    <!--multi js-->
+    <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+    <!-- Form Advanced Element -->
+    <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+    <script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+    <!-- Sweet alert js -->
+    <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+    <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+    <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+
+
+        <!-- Contact js -->
+        <script src="{% static 'interface_administration/assets/js/contact.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+        <script>
+            const searchInput = document.getElementById("search-input");
+            const zone=document.getElementById("mainContactList");
+            function afficherAlert(title,message){
+                var message =message;
+                var title =title;
+                swal({
+                    title: title,
+                    text: message,
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            }
+            document.getElementById("add-button").addEventListener("click", function() {
+                const formData = new FormData();
+                formData.append("nom", document.getElementById("nom").value);
+                formData.append("user", document.getElementById("user").value);
+                formData.append("youtube", document.getElementById("youtube").value);
+                formData.append("facebook", document.getElementById("facebook").value);
+                formData.append("siteweb", document.getElementById("siteweb").value);
+                formData.append("description",document.getElementById("description").value);
+                formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+                formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                formData.append("en_ligne", document.getElementById("en_ligne").checked);
+                formData.append("is_association", document.getElementById("is_association").checked);
+        
+                const loadingSwal = swal({
+                    title: "Ajout",
+                    text: "En cours...",
+                    icon: "info",
+                    buttons: false, 
+                    closeOnClickOutside: false, 
+                    closeOnEsc: false
+                });
+        
+                fetch(`organisateurs/ajouter/`, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                        afficherAlert("Ajout","Ajout organisateur avec succès !",'success')
+                        location.reload();
+                })
+                .catch(error => {
+                        swal("Erreur", error, "error");
+                });
+            });
+            const nomInput = document.getElementById("update-nom");
+            const userSelect = document.getElementById("update-user");
+            const youtubeInput = document.getElementById("update-youtube");
+            const slugInput = document.getElementById("update-slug");
+            const enligneCheckbox = document.getElementById("update-enligne");
+            const associationCheckbox = document.getElementById("update-is_association");
+            const photodeprofil = document.getElementById("update-photodeprofil-preview");
+            const photodecouverture = document.getElementById("update-photodecouverture-preview");
+            const photodeprofilInput = document.getElementById("update-photodeprofil");
+            const photodecouvertureInput = document.getElementById("update-photodecouverture");
+            const sitewebInput = document.getElementById("update-siteweb");
+            const facebookInput = document.getElementById("update-facebook");
+            const descriptionInput = document.getElementById("update-description");
+            document.getElementById("update-button").addEventListener("click", function() {
+                const formData = new FormData();
+                formData.append("nom", nomInput.value);
+                formData.append("user", userSelect.value);
+                formData.append("youtube", youtubeInput.value);
+                formData.append("facebook", facebookInput.value);
+                formData.append("siteweb", sitewebInput.value);
+                formData.append("description", descriptionInput.value);
+                formData.append("photo_de_profil", photodeprofilInput.files[0]);
+                formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+                formData.append("en_ligne", enligneCheckbox.checked);
+                formData.append("is_association", associationCheckbox.checked);
+                organisateurId=document.getElementById('update-organisateur-id').value;
+        
+                const loadingSwal = swal({
+                    title: "Update",
+                    text: "En cours...",
+                    icon: "info",
+                    buttons: false, 
+                    closeOnClickOutside: false, 
+                    closeOnEsc: false
+                });
+        
+                fetch(`/organisateurs/${organisateurId}/update/`, {
+                    method: "PUT",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                        afficherAlert("Update","Organisateur mis à jour avec succès !",'success')
+                        location.reload();
+                })
+                .catch(error => {
+                        swal("Erreur", error, "error");
+                });
+            });
+            function afficherDetailsArtiste(details) {
+                nomInput.value = details.nom;
+                userSelect.value = details.user;
+                youtubeInput.value = details.youtube;
+                slugInput.value = details.slug;
+                facebookInput.value = details.facebook;
+                descriptionInput.value = details.description;
+                descriptionInput.placeholder = details.description;
+                sitewebInput.value = details.siteweb;
+                enligneCheckbox.checked = details.en_ligne;
+                associationCheckbox.checked = details.is_assocation;
+                photodeprofil.src=details.photo_de_profil;
+                photodecouverture.src=details.photo_de_couverture
+    
+                for (let i = 0; i < userSelect.options.length; i++) {
+                    if (details.user == userSelect.options[i].value ) {
+                        userSelect.options[i].value = details.user.toString();
+                        userSelect.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+            function modifierorganisateur(id){
+            var organisateurId = id;
+                
+            fetch(`/organisateurs/${organisateurId}/detail/`, {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('update-organisateur-id').value=organisateurId
+                afficherDetailsArtiste(data)
+                console.log(data)
+                var modal = new bootstrap.Modal(document.getElementById('form-organisateur-update'));
+                modal.show();
+            });
+    
+            }
+            function supprimerorganisateur(id) {
+                var organisateurid = id;
+            
+                swal({
+                    title: "Êtes-vous sûr ?",
+                    text: "Voulez-vous vraiment supprimer cet organisateur ?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Supprimer',
+                    cancelButtonText: 'Annuler'
+                },
+                function(isConfirm){
+                    if (isConfirm) {
+                        fetch(`/organisateurs/${organisateurid}/delete/`, {
+                            method: "DELETE",
+                        })
+                        .then(response => {
+                            swal("Message", "Organisateur supprimé avec succès", "success");
+                            location.reload();
+                        });
+                    } else {
+                        swal("Message", "Suppression annulée", "info");
+                    }
+                });
+            }
+            photodeprofilInput.addEventListener("change", function() {
+                const selectedFile = photodeprofilInput.files[0];
+                if (selectedFile) {
+                    photodeprofilPreview.src = URL.createObjectURL(selectedFile);
+                }
+            });
+            
+            photodecouvertureInput.addEventListener("change", function() {
+                const selectedFile = photodecouvertureInput.files[0];
+                if (selectedFile) {
+                    photodecouverturePreview.src = URL.createObjectURL(selectedFile);
+                }
+            });
+            function details(id){
+                const detailsOrganisateurs = document.getElementById("details-organisateurs");
+                fetch(`detailorganisateur/?id=`+id, {
+                    method: "GET",
+                })
+                .then(response => response.json())
+                .then(data=> {
+                    const elements = document.querySelectorAll('[id^="partienav"]');
+                    elements.forEach(element => {
+                        element.classList.remove('selected');
+                    });
+                    const details = data.details;
+                    const partieselected=document.getElementById('partienav'+details.id);
+                    partieselected.classList.add('selected');
+                    const content = `
+    <div class="main-content-body main-content-body-contacts">
+        <div class="main-contact-info-header">
+            <div class="media">
+                <div class="main-img-user brround">
+                    <img alt="" src="/media/assets/images/upload/${details.photo_de_profil}" class="w-100 h-100 brround">
+                    <a href="javascript:void(0)"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 18.08V19h.92l9.06-9.06-.92-.92z" opacity=".3"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.20-.45-.29-.71-.29s-.51.10-.70.29l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19z"/></svg></a>
+                </div>
+                <div class="media-body">
+                    <h4>${details.nom}</h4>
+                    <p><span class="badge bg-light rounded-pill">Utilisateur: ${details.user.username}</span></p>
+                    <nav class="nav">
+                        ${details.en_ligne ? '<span class="text-muted"><i class="fa fa-check text-success"></i> En ligne</span>' : ''}
+                        ${details.is_association ? '<span class="text-muted"><i class="fa fa-check text-success"></i> Association</span>' : ''}
+                    </nav>
+                </div>
+            </div>
+            <div class="main-contact-action">
+                <a href="javascript:void(0)"  onclick="modifierorganisateur(${details.id})" class="btn btn-white btn-svgs"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M5 18.08V19h.92l9.06-9.06-.92-.92z" opacity=".3"/><path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.20-.45-.29-.71-.29s-.51.10-.70.29l-1.83 1.83 3.75 3.75 1.83-1.83zM3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM5.92 19H5v-.92l9.06-9.06.92.92L5.92 19z"/></svg><span>Modifier</span></a>
+                <a href="javascript:void(0)" onclick="supprimerorganisateur(${details.id})" class="btn btn-danger btn-svgs"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M8 9h8v10H8z" opacity=".3"/><path d="M15.5 4l-1-1h-5l-1 1H5v2h14V4zM6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM8 9h8v10H8V9z"/></svg><span>Supprimer</span></a>
+            </div>
+        </div>
+        <div class="main-contact-info-body">
+            <div class="media-list pt-0">
+                <div class="media py-4 border-top mt-0">
+                    <div class="media-body">
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-align-left"></i>
+                            </div>
+                            <div>
+                                <label>Description</label> <span class="font-weight-semibold fs-14">${details.description}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="media py-4 border-top mt-0">
+                    <div class="media-body">
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-youtube-play"></i>
+                            </div>
+                            <div>
+                                <label>Youtube</label> <span class="font-weight-semibold fs-14"><a href="${details.youtube}">${details.youtube}</a></span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-globe"></i>
+                            </div>
+                            <div>
+                                <label>Site Web</label> <span class="font-weight-semibold fs-14"><a href="${details.siteweb}">${details.siteweb}</a></span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-facebook-official" aria-hidden="true"></i>
+                            </div>
+                            <div>
+                                <label>Facebook</label> <span class="font-weight-semibold fs-14"><a href="${details.facebook}">${details.facebook}</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="media py-4 border-top mt-0">
+                    <div class="media-body">
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-map-marker"></i>
+                            </div>
+                            <div>
+                                <label>Slug</label> <span class="font-weight-semibold fs-14">${details.slug}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="media mb-0 py-4 border-top mt-0">
+                    <div class="media-body">
+                        <div class="d-flex">
+                            <div class="media-icon bg-light text-primary me-3 mt-1">
+                                <i class="fa fa-image"></i>
+                            </div>
+                            <div>
+                                <label>Photo de couverture</label>
+                                <img src="/media/assets/images/upload/${details.photo_de_couverture}" alt="image" class="img-height">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+`;
+
+            detailsOrganisateurs.innerHTML = content;
+
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
+            document.addEventListener("DOMContentLoaded", function() {
+                
+                searchInput.addEventListener("input", function(event) {
+                    if(searchInput.value!=""){
+                        event.preventDefault();
+                        fetch(`organisateur/recherche?search=`+searchInput.value, {
+                            method: "GET",
+                        })
+                        .then(response => response.json())
+                        .then(data=> {
+                            zone.innerHTML = "";
+                
+                            for(var i=0;i< data.organisateurs.length;i++)
+                            {
+                                const div = document.createElement("div");
+                                div.className = "main-contact-item";
+                                div.id="partienav"+data.organisateurs[i].id;
+                                div.innerHTML = `
+                                    <div class="main-img-user online">
+                                        <img alt="photo_de_profil" src="/media/assets/images/upload/${data.organisateurs[i].photo_de_profil}" class="avatar avatar-md brround">
+                                    </div>
+                                    <div class="main-contact-body">
+                                        <a href="#"  onclick="details(${data.organisateurs[i].id});"><h6>${data.organisateurs[i].nom}</h6>
+                                        <span class="phone">${data.organisateurs[i].user.username}</span></a>
+                                    </div>
+                                `;
+                                zone.appendChild(div);
+                            }
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                    }
+                });
+            });
+        </script>
+
+    {% endblock %}

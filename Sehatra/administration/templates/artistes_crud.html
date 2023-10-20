@@ -1,0 +1,560 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Liste des artistes</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!-- Row -->
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-5 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total des artistes</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div >
+                                                <p class="text-muted">Total des artistes actifs</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_artiste_actif}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row flex-lg-nowrap">
+                                <div class="col-12">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col-12 mb-3">
+                                            <div class="e-panel card">
+                                                <div class="card-body pb-2">
+                                                    <div class="row">
+                                                        <div class="col mb-4">
+                                                            <a class="btn btn-primary"  data-bs-target="#form-artiste-create" data-bs-toggle="modal" href="javascript:void(0)">
+                                                                <i class="fe fe-plus"></i>Nouveau artiste
+                                                            </a>
+                                                        </div>
+                                                        <div class="col col-auto mb-4">
+                                                            <div class="mb-3 w-100">
+                                                                <form method="GET" action="{% url 'administration:recherche-artiste' %}">
+                                                                    {% csrf_token %}
+                                                                    <div class="input-icon">
+                                                                    <span class="input-icon-addon">
+                                                                            <i class="fe fe-search"></i>
+                                                                        </span>
+                                                                        <input id="search-input" type="text" class="form-control" placeholder="Rechercher artiste" {% if search != "" %} value="{{ search }}" {% endif %} name="search">
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        {% for artiste in artistes %}
+                                                        <div class="col-xl-4 col-md-6">
+                                                            <div class="card border p-0 shadow-none">
+                                                                <div class="d-flex align-items-center p-4">
+                                                                    <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/assets/images/upload/{{artiste.photo_de_profil}}">
+                                                                        {% if artiste.en_ligne %}
+                                                                            <span class="avatar-status bg-green"></span>
+                                                                        {% else %}
+                                                                            <span class="avatar-status"></span>
+                                                                        {% endif %}
+                                                                    </span>
+                                                                    <div class="wrapper ms-3">
+                                                                        <p class="mb-0 mt-1 text-dark font-weight-semibold">{{artiste.nom}} 
+                                                                        <p><span class="badge bg-light rounded-pill">Utilisateur: {{artiste.user}}</span></p>
+                                                                    </div>
+                                                                    <div class="float-end ms-auto">
+                                                                        <div class="btn-group ms-3 mb-0">
+                                                                            <a href="javascript:void(0)" class="option-dots" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                                            <div class="dropdown-menu">
+                                                                                <a class="dropdown-item" href="javascript:void(0)" onclick="detail({{artiste.id}})"><i class="fe fe-edit me-2"></i> Modifier</a>
+                                                                                <a class="dropdown-item" href="javascript:void(0)" onclick="supprimerartiste({{artiste.id}})"><i class="fe fe-trash me-2"></i> Supprimer</a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="card-body border-top">
+                                                                    <div class="d-flex">
+                                                                        <div class="media-icon lh-1">
+                                                                            <i class="fa fa-youtube-play"></i>
+                                                                        </div>
+                                                                        <div class="h6 mb-0 ms-3 mt-1">
+                                                                            <a href="{{artiste.youtube}}" target="_blank">{{artiste.youtube}}</a>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="d-flex">
+                                                                        <div class="media-icon lh-1">
+                                                                            <i class="fa fa-chain"></i>
+                                                                        </div>
+                                                                        <div class="h6 mb-0 ms-3 mt-1">
+                                                                            <a href="{{artiste.slug}}" target="_blank">{{artiste.slug}}</a>
+                                                                        </div>
+                                                                    </div>                                                                       
+                                                                    
+                                                                    <div class="d-flex">
+                                                                        <div class="media-icon lh-1">
+                                                                            <i class="fa fa-image" data-bs-placement="top" data-bs-toggle="tooltip" title="Photo de couverture"></i>
+                                                                        </div>
+                                                                        <div class="h6 mb-0 ms-3 mt-1"><img src="/media/assets/images/upload/{{artiste.photo_de_couverture}}" width="500" height="300"></div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                    <nav aria-label="Pagination">
+                                                        <ul class="pagination justify-content-center">
+                                                            <li class="page-item {% if not artistes.has_previous %}disabled{% endif %}">
+                                                                <a class="page-link" href="?page=1" tabindex="-1">
+                                                                    <i class="fa fa-angle-left"></i>
+                                                                    <span class="sr-only">Previous</span>
+                                                                </a>
+                                                            </li>
+                                                        
+                                                            {% for num in artistes.paginator.page_range %}
+                                                                <li class="page-item {% if num == artistes.number %}active{% endif %}">
+                                                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                                                </li>
+                                                            {% endfor %}
+                                                        
+                                                            <li class="page-item {% if not artistes.has_next %}disabled{% endif %}">
+                                                                <a class="page-link" href="?page={{ artistes.paginator.num_pages }}">
+                                                                    <i class="fa fa-angle-right"></i>
+                                                                    <span class="sr-only">Next</span>
+                                                                </a>
+                                                            </li>
+                                                        </ul>                                                            
+                                                    </nav>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" role="dialog" tabindex="-1" id="form-artiste-create">
+                                        <div class="modal-dialog modal-lg" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Ajouter un nouvel artiste</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                            <span aria-hidden="true">×</span>
+                                                        </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="py-1">
+                                                            {% csrf_token %}
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <div class="mb-3">
+                                                                                <label>Nom</label>
+                                                                                <input class="form-control" type="text" id="nom" name="nom" placeholder="John Smith">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col">
+                                                                            <div class="mb-3">
+                                                                                <label> <i class="fe fe-user"></i> User</label>
+                                                                                <div class="col-md-12">
+                                                                                    <select class="search-box" name="user" id="user">
+                                                                                        <option class="hemant">Choisissez un utilisateur</option>
+                                                                                        {% for utilisateur in utilisateurs%}
+                                                                                        <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
+                                                                                        {%endfor%}
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <div class="mb-3">
+                                                                                <label>Youtube</label>
+                                                                                <input class="form-control" type="text" id="youtube" name="youtube" placeholder="Lien Youtube">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col">
+                                                                            <div class="mb-3">
+                                                                                <label>Photo de profil</label>
+                                                                                <input type="file" class="dropify" id="photo_de_profil" name="photo_de_profil" data-height="180" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row">
+                                                                        <div class="col mb-3">
+                                                                            <div class="mb-3">
+                                                                                <label>Photo de couverture</label>
+                                                                                <input type="file" class="dropify" id="photo_de_couverture" name="photo_de_couverture"  data-height="180" />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="custom-control custom-checkbox">
+                                                                        <label class="custom-control custom-checkbox">
+                                                                            <input type="checkbox" class="custom-control-input" id="en_ligne" name="en_ligne">
+                                                                            <span class="custom-control-label">En ligne</span>
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col d-flex justify-content-end">
+                                                                    <button class="btn btn-primary" type="submit" id="add-button">Ajouter</button>
+                                                                </div>
+                                                            </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End Row -->
+
+                            <!--Modal update-->
+                            <div class="modal fade" role="dialog" tabindex="-1" id="form-artiste-update">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Modifier</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                {% comment %} <form class="form" novalidate="" method="put"> {% endcomment %}
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Nom</label>
+                                                                        <input class="form-control" type="text" name="nom" placeholder="John Smith" id="update-nom">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label> <i class="fe fe-user"></i> User</label>
+                                                                        <div class="col-md-12">
+                                                                            <select class="search-box" name="user" id="update-user">
+                                                                                <option class="hemant">Choisissez un utilisateur</option>
+                                                                                {% for utilisateur in utilisateurs%}
+                                                                                <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
+                                                                                {%endfor%}
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Youtube</label>
+                                                                        <input class="form-control" type="text" name="youtube" placeholder="Lien Youtube" id="update-youtube">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Slug</label>
+                                                                        <input class="form-control" type="text" name="slug" placeholder="Slug" id="update-slug">
+                                                                        <input type="hidden" name="artisteid" id="update-artiste-id">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Photo de profil</label>
+                                                                        <img src="" class="img-preview" data-height="180" id="update-photodeprofil-preview" />
+                                                                        <input type="file" class="dropify" name="photo_de_profil" data-height="180" id="update-photodeprofil"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col mb-3">
+                                                                    <div class="mb-3">
+                                                                            <label>Photo de couverture</label>
+                                                                            <img src="" class="img-preview" data-height="180" id="update-photodecouverture-preview" />
+                                                                            <input type="file" class="dropify" name="photo_de_couverture"  data-height="180" id="update-photodecouverture" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <label class="custom-control custom-checkbox">
+                                                                    <input type="checkbox" class="custom-control-input" name="en_ligne" value="option1" id="update-enligne">
+                                                                    <span class="custom-control-label">En ligne</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="update-button" type="submit">Modifier</button>
+                                                        </div>
+                                                    </div>
+                                                {% comment %} </form> {% endcomment %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                            <!--Fin modal update-->
+       
+        {% endblock %}
+
+    {% block scripts %}
+        <script>
+            function afficherAlert(title,message,etat){
+                var message =message;
+                var title =title;
+                swal({
+                    title: title,
+                    text: message,
+                    timer: 3000,
+                    icon:etat,
+                    showConfirmButton: false
+                });
+            }
+            const nomInput = document.getElementById("update-nom");
+            const userSelect = document.getElementById("update-user");
+            const youtubeInput = document.getElementById("update-youtube");
+            const slugInput = document.getElementById("update-slug");
+            const enligneCheckbox = document.getElementById("update-enligne");
+            const photodeprofil = document.getElementById("update-photodeprofil-preview");
+            const photodecouverture = document.getElementById("update-photodecouverture-preview");
+            const photodeprofilInput = document.getElementById("update-photodeprofil");
+            const photodecouvertureInput = document.getElementById("update-photodecouverture");
+
+            document.getElementById("add-button").addEventListener("click",function(){
+                const formData = new FormData();
+                formData.append("nom", document.getElementById("nom").value);
+                formData.append("user", document.getElementById("user").value);
+                formData.append("youtube", document.getElementById("youtube").value);
+                formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+                formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                formData.append("en_ligne",document.getElementById("en_ligne").checked);
+
+                const loadingSwal = swal({
+                    title: "Ajout",
+                    text: "En cours...",
+                    icon: "info",
+                    buttons: false, 
+                    closeOnClickOutside: false, 
+                    closeOnEsc: false
+                });
+        
+                fetch(`artistes/ajouter/`, {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
+                    location.reload();
+                })
+                .catch(error => {
+                    swal("Erreur", error, "error");
+                });
+            })
+            document.getElementById("update-button").addEventListener("click", function() {
+                const formData = new FormData();
+                formData.append("nom", nomInput.value);
+                formData.append("user", userSelect.value);
+                formData.append("youtube", youtubeInput.value);
+                formData.append("slug", slugInput.value);
+                formData.append("photo_de_profil", photodeprofilInput.files[0]);
+                formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+                formData.append("en_ligne", enligneCheckbox.checked);
+                artisteId=document.getElementById('update-artiste-id').value;
+
+                const loadingSwal = swal({
+                    title: "Modification",
+                    text: "En cours...",
+                    icon: "info",
+                    buttons: false, 
+                    closeOnClickOutside: false, 
+                    closeOnEsc: false
+                });
+        
+                fetch(`/artistes/${artisteId}/update/`, {
+                    method: "PUT",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    afficherAlert("Update","Artiste mis à jour avec succès !",'success')
+                    location.reload();
+                })
+                .catch(error => {
+                    swal("Erreur", error, "error");
+                });
+            });
+            function afficherDetailsArtiste(details) {
+                nomInput.value = details.nom;
+                userSelect.value = details.user;
+                youtubeInput.value = details.youtube;
+                slugInput.value = details.slug;
+                enligneCheckbox.checked = details.en_ligne;
+                photodeprofil.src=details.photo_de_profil;
+                photodecouverture.src=details.photo_de_couverture
+
+                for (let i = 0; i < userSelect.options.length; i++) {
+                    if (details.user == userSelect.options[i].value ) {
+                        userSelect.options[i].value = details.user.toString();
+                        userSelect.options[i].selected = true;
+                        break;
+                    }
+                }
+            }
+            function detail(id){
+            var artisteId = id;
+                
+            fetch(`/artistes/${artisteId}/detail/`, {
+                method: "GET",
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('update-artiste-id').value=artisteId
+                afficherDetailsArtiste(data)
+                var modal = new bootstrap.Modal(document.getElementById('form-artiste-update'));
+                modal.show();
+            });
+
+            }
+            function supprimerartiste(id) {
+                var artisteId = id;
+            
+                swal({
+                    title: "Êtes-vous sûr ?",
+                    text: "Voulez-vous vraiment supprimer cet artiste ?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Supprimer',
+                    cancelButtonText: 'Annuler'
+                },
+                function(isConfirm){
+                    if (isConfirm) {
+                        fetch(`/artistes/${artisteId}/delete/`, {
+                            method: "DELETE",
+                        })
+                        .then(response => {
+                            swal("Message", "Artiste supprimé avec succès", "success");
+                            window.location.href = "/listeartiste";
+                        });
+                    } else {
+                        swal("Message", "Suppression annulée", "info");
+                    }
+                });
+            }
+            
+            
+            
+            photodeprofilInput.addEventListener("change", function() {
+                const selectedFile = photodeprofilInput.files[0];
+                if (selectedFile) {
+                    photodeprofilPreview.src = URL.createObjectURL(selectedFile);
+                }
+            });
+            
+            photodecouvertureInput.addEventListener("change", function() {
+                const selectedFile = photodecouvertureInput.files[0];
+                if (selectedFile) {
+                    photodecouverturePreview.src = URL.createObjectURL(selectedFile);
+                }
+            });
+            document.addEventListener("DOMContentLoaded", function() {
+                const searchInput = document.getElementById("search-input");
+                
+                searchInput.addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        event.preventDefault();
+                        document.querySelector("form").submit();
+                    }
+                });
+            });
+        </script>
+        
+
+        <!--Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+        <!-- Timepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+
+        <!-- Datepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+
+        <!--File-Uploads Js-->
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+
+        <!-- File uploads js -->
+        <script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+
+        <!-- Multiple select js -->
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+
+        <!--Sumoselect js-->
+        <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+
+        <!--intlTelInput js-->
+        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
+
+        <!--jquery transfer js-->
+        <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+
+        <!--multi js-->
+            <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+
+        <!-- Form Advanced Element -->
+        <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+
+
+         <!-- Sweet alert js -->
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+ 
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

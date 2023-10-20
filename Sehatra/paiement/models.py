@@ -46,3 +46,15 @@ class Paiement (models.Model):
 
     def __str__(self):
         return self.mode.nom
+    
+    def calculer_paiement(paiements):
+        somme = 0
+        cours_euro = 4700
+
+        for paiement in paiements:
+            if paiement.mode == 2:
+                somme += paiement.billet.video.tarif_euro * cours_euro
+            else:
+                somme += paiement.billet.video.tarif_ariary
+        
+        return somme

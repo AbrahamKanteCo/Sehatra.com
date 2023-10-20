@@ -1,0 +1,105 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Mes pages(Performance des pages ces 28 derniers jours)</h4>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!-- Row -->
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-5 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Vues</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_vue}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div >
+                                                <p class="text-muted">Ventes</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_ventes}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>  
+                            <div class="row flex-lg-nowrap">
+                                <div class="col-12">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col-12 mb-3">
+                                            <div class="e-panel card">
+                                                <div class="card-body">
+                                                    <div class="e-table">
+                                                        <div class="table-responsive table-lg mt-3">
+                                                            <table class="table table-bordered border-top text-nowrap" id="example1">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="border-bottom-0 w-20">Video</th>
+                                                                        <th class="border-bottom-0 w-15">Ventes</th>
+                                                                        <th class="border-bottom-0 w-30">Vues</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for page in pages%}
+                                                                    <tr>
+                                                                       
+                                                                        <td class="align-middle">
+                                                                            {{page.titre}}
+                                                                        </td>
+                                                                        <td class="text-nowrap align-middle"><span>{{page.ventes}}</span></td>
+                                                                        <td>
+                                                                            {{page.total_vues}}
+                                                                        </td>
+                                                                    </tr>
+                                                                    {%endfor%}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+        
+        {% endblock %}
+
+    {% block scripts %}
+
+        <!-- Data tables -->
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.bootstrap5.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jszip.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/pdfmake.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/vfs_fonts.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.colVis.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/responsive.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/datatables.js' %}"></script>
+
+        <!-- Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

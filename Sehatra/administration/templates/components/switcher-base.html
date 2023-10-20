@@ -1,0 +1,67 @@
+{% load static %}
+<!doctype html>
+<html lang="en" dir="ltr">
+	<head>
+
+		<!-- Meta data -->
+        <meta charset="UTF-8">
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+        <meta content="Dashtic - Django Bootstrap Webapp Responsive Dashboard Simple Admin Panel Premium HTML5 Template" name="description">
+        <meta content="Spruko Technologies Private Limited" name="author">
+		<meta name="keywords" content="admin dashboard, admin dashboard template, admin template, bootstrap 5 django, django, django bootstrap admin, django template, django bootstrap template, django admin, django admin dashboard, django admin dashboard template, django admin panel, django admin template, django dashboard, dashboard template">
+
+        <!-- Title -->
+        <title>Dashtic - Django Bootstrap Webapp Responsive Dashboard Simple Admin Panel Premium HTML5 Template</title>
+
+        <!-- STYLES -->
+        {% include 'components/layouts/styles.html' %}
+        {% block styles %}{% endblock %}
+
+    </head>
+
+    <body class="main-body app sidebar-mini light-mode ltr">
+
+        <!---Global-loader-->
+        <div id="global-loader">
+            <img src="{% static 'interface_administration/assets/images/svgs/loader.svg'%}" alt="loader">
+        </div>
+
+        <!-- PAGE -->
+        <div class="page">
+            <div class="page-main">
+
+                <!-- APP-HEADER -->
+                {% include 'components/layouts/app-header.html' %}
+
+                <!-- MAIN-SIDEBAR -->
+                {% include 'components/layouts/main-sidebar.html' %}
+
+               <!-- app-content start-->
+                <div class="app-content main-content">
+                    <div class="side-app">
+                        <div class="container-fluid main-container">
+
+                            {% block content %}{% endblock %}
+
+                        </div>
+                    </div>
+                </div>
+                <!-- end app-content-->
+            </div>
+            <!-- PAGE-MAIN END -->
+
+            {% block modal %}{% endblock %}
+
+            <!-- FOOTER -->
+            {% include 'components/layouts/footer.html' %}
+
+        </div>
+        <!-- PAGE END -->
+
+        <!-- SCRIPTS -->
+        {% include 'components/layouts/scripts.html' %}
+        {% block scripts %}{% endblock %}
+
+    </body>
+
+</html>

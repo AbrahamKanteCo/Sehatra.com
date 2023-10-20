@@ -1,0 +1,170 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">{{video.titre}}</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="{% url 'administration:dashboard-artiste' %}" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Accueil</span></a></li>
+                                        <li class="breadcrumb-item"><a href="{% url 'administration:artiste-video' %}">Mes Vidéos</a></li>
+                                        <li class="breadcrumb-item active" aria-current="page">{{video.titre}}</li>
+                                    </ol>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <div class="ms-5 mb-0">
+                                        <a class="btn btn-white date-range-btn" href="javascript:void(0)" id="daterange-btn">
+                                            <svg class="header-icon2 me-3" x="1008" y="1248" viewBox="0 0 24 24" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <path d="M5 8h14V6H5z" opacity=".3"/><path d="M7 11h2v2H7zm12-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-4 3h2v2h-2zm-4 0h2v2h-2z"/>
+                                                </svg> <span>Select Date
+                                                <i class="fa fa-caret-down"></i></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!--Row-->
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col mb-lg-4 mb-xl-0">
+                                                    <div class="mb-2 fs-18 text-muted">
+                                                        Nombre de ventes
+                                                    </div>
+                                                    <div id="vente"><h1 class="font-weight-bold mb-1">{{ventes}}</h1></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col mb-lg-4 mb-xl-0">
+                                                    <div class="mb-2 fs-18 text-muted">
+                                                        Revenus
+                                                    </div>
+                                                    <div id="revenue">
+                                                    <h1 class="font-weight-bold mb-1">{{revenue}} Ar</h1>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col mb-lg-4 mb-xl-0">
+                                                    <div class="mb-2 fs-18 text-muted">
+                                                        Nombre de vues
+                                                    </div>
+                                                    <div id="vues">
+                                                    <h1 class="font-weight-bold mb-1">{{vues}}</h1>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--End Row-->
+
+                            <div class="row row-deck">
+                                <div class="col-xl-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title">Publication lié à cette vidéo</h3>
+                                        </div>
+                                        <div class="row" id="publication">
+                                            {%for publication in publications%}
+                                            <div class="col-md-6">
+                                            <iframe src="{{publication.facebook}}" width="500" height="712" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                                            </div>
+                                            {%endfor%}
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+        {% endblock %}
+
+    {% block scripts %}
+    <script>
+        var id={{video.id}}
+        const loading=
+        `<div class="sk-circle">
+            <div class="sk-circle1 sk-child"></div>
+            <div class="sk-circle2 sk-child"></div>
+            <div class="sk-circle3 sk-child"></div>
+            <div class="sk-circle4 sk-child"></div>
+            <div class="sk-circle5 sk-child"></div>
+            <div class="sk-circle6 sk-child"></div>
+            <div class="sk-circle7 sk-child"></div>
+            <div class="sk-circle8 sk-child"></div>
+            <div class="sk-circle9 sk-child"></div>
+            <div class="sk-circle10 sk-child"></div>
+            <div class="sk-circle11 sk-child"></div>
+            <div class="sk-circle12 sk-child"></div>
+        </div>`
+        function load_data_premier(start,end){
+            const revenue=document.getElementById('revenue');
+            const vues=document.getElementById('vues');
+            const vente=document.getElementById('vente');
+            const publication=document.getElementById('publication');
+            revenue.innerHTML=loading;
+            vues.innerHTML=loading;
+            vente.innerHTML=loading;
+            publication.innerHTML=loading;
+            fetch(`/video_statistique_load/`+id+`?debut=`+start+`&fin=`+end, {
+                method: "GET"
+            })
+            .then(response => response.json())
+            .then(data => {
+                revenue.innerHTML=data.revenue;
+                vues.innerHTML=data.vues;
+                vente.innerHTML=data.ventes;
+                publication.innerHTML=data.publication;
+
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }
+        function filtrerparDate(start,end){
+            load_data_premier(start,end);
+        }
+    </script>
+
+        <!--Moment js-->
+        <script src="{% static 'interface_administration/assets/plugins/moment/moment.js' %}"></script>
+
+        <!-- Daterangepicker js-->
+        <script src="{% static 'interface_administration/assets/plugins/bootstrap-daterangepicker/daterangepicker.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/daterange.js' %}"></script>
+
+        <!-- ECharts js-->
+        <script src="{% static 'interface_administration/assets/plugins/echarts/echarts.js' %}"></script>
+
+        <!--Chart js -->
+        <script src="{% static 'interface_administration/assets/plugins/chart/chart.min.js' %}"></script>
+
+        <!-- Index js-->
+        <script src="{% static 'interface_administration/assets/js/index4.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+		
+    {% endblock %}

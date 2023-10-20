@@ -1,0 +1,122 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Transactions</h4>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!-- Row -->
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-3 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Validé</p>
+                                                <h3 class="mb-0 font-weight-bold">{{valide}}</h3>
+                                                <hr/>
+                                                <p>Mvola: {{mvola_valide}}</p>
+                                                <p>Orange Money: {{orange_valide}}</p>
+                                                <p>Stripe: {{stripe_valide}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div >
+                                                <p class="text-muted">Echec</p>
+                                                <h3 class="mb-0 font-weight-bold">{{echec}}</h3>
+                                                <hr/>
+                                                <p>Mvola: {{mvola_echec}}</p>
+                                                <p>Orange Money: {{orange_echec}}</p>
+                                                <p>Stripe: {{stripe_echec}}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row flex-lg-nowrap">
+                                <div class="col-12">
+                                    <div class="row flex-lg-nowrap">
+                                        <div class="col-12 mb-3">
+                                            <div class="e-panel card">
+                                                <div class="card-body">
+                                                    <div class="e-table">
+                                                        <div class="table-responsive table-lg mt-3">
+                                                            <table class="table table-bordered border-top text-nowrap" id="example1">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="border-bottom-0 w-20">Video</th>
+                                                                        <th class="border-bottom-0 w-15">Billet</th>
+                                                                        <th class="border-bottom-0 w-30">Date &Heure</th>
+                                                                        <th class="border-bottom-0 w-30">Mode de paiement</th>
+                                                                        <th class="border-bottom-0 w-30">Status</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for transaction in transactions%}
+                                                                    <tr>
+                                                                        <td class="font-weight-bold"><img class="w-7 h-7 rounded shadow me-3" src="{% static 'interface_administration/assets/images/fb/pub1.jpg' %}" alt="media1"> {{transaction.billet.video.titre}}</td>
+                                                                        <td>{{transaction.billet.slug}}</td>
+                                                                        <td>{{transaction.date|date:"d F Y, H:i"}}</td>
+                                                                        <td class="font-weight-bold">{{transaction.mode.nom }}</td>
+                                                                        {% if transaction.valide %}
+                                                                        <td><span class="badge bg-success rounded-pill">Valide</span></td>
+                                                                        {%else%}
+                                                                        <td><span class="badge bg-danger rounded-pill">Non Valide</span></td>
+                                                                        {%endif%}
+                                                                    </tr>
+                                                                    {%endfor%}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+        
+        {% endblock %}
+
+    {% block scripts %}
+
+        <!-- Data tables -->
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jquery.dataTables.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.bootstrap5.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/dataTables.buttons.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/jszip.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/pdfmake.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/pdfmake/vfs_fonts.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.html5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.print.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/js/buttons.colVis.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/datatable/responsive.bootstrap5.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/datatables.js' %}"></script>
+
+        <!-- Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js' %}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

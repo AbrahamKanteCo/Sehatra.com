@@ -1,0 +1,43 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Mes Vidéos</h4>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+
+                            <!--Row-->
+                            <div class="row">
+                                {%for video in videos%}
+                                <div class="col-md-6 col-lg-4">
+                                    <div class="card overflow-hidden">
+                                        <img src="/media/assets/images/upload/{{ video.photo_de_couverture }}" alt="image" class="img-height">
+                                        <div class="card-body">
+                                            <h5 class="card-title mb-3">{{video.titre}}</h5>
+                                            <p class="card-text">{{video.date_sortie}}</p>
+                                            <p class="card-text">Duree: {{video.duree}}</p>
+                                            <a href="statistique-video-artiste/{{video.id}}" class="btn btn-primary">Statistiques</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                {%endfor%}
+                            </div>
+                            <!-- End Row-->
+
+        {% endblock %}
+
+    {% block scripts %}
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js' %}"></script>
+
+    {% endblock %}

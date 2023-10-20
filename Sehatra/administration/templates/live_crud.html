@@ -1,0 +1,454 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-leftheader">
+                                    <h4 class="page-title">Live</h4>
+                                </div>
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+                            <div class="row">
+                                <div class="col mb-4">
+                                    <a class="btn btn-primary"  data-bs-target="#form-live-create" data-bs-toggle="modal" href="javascript:void(0)">
+                                        <i class="fe fe-plus"></i>Nouveau live
+                                    </a>
+                                </div>
+                                <div class="col col-auto mb-4">
+                                    <div class="mb-3 w-100">
+                                        <form method="GET" action="{% url 'administration:recherche-live' %}">
+                                            {% csrf_token %}
+                                            <div class="input-icon">
+                                            <span class="input-icon-addon">
+                                                    <i class="fe fe-search"></i>
+                                                </span>
+                                                <input id="search-input" type="text" class="form-control" placeholder="Rechercher live" {% if search != "" %} value="{{ search }}" {% endif %} name="search">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card crypto-header-section">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-xl-4 col-lg-12 mt-4 pt-2">
+                                         <h2><i class="fe fe-repeat"></i> Récapitulatif</h2>
+                                        </div>
+                                        <div class="col-xl-2 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total des lives</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div class="border-lg-end">
+                                                <p class="text-muted">Total des lives actifs</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_live_en_ligne}}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-3 col-lg-4 mt-3">
+                                            <div>
+                                                <p class="text-muted">Total des lives actifs et qui ont déjà débuté</p>
+                                                <h3 class="mb-0 font-weight-bold">{{total_live_en_ligne_debut}}</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Container -->
+                            <div class="container">
+                                <div class="row">
+                                    {% for live in lives%}
+                                    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+                                        <div class="card p-3">
+                                            <div class="float-end ms-auto">
+                                                <div class="btn-group ms-3 mb-0">
+                                                    <a href="javascript:void(0)" class="option-dots" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="javascript:void(0)" onclick="detail({{live.id}})"><i class="fe fe-edit me-2"></i> Modifier</a>
+                                                        <a class="dropdown-item" href="javascript:void(0)" onclick="supprimerlive({{live.id}})"><i class="fe fe-trash me-2"></i> Supprimer</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="tx-16 text-center font-weight-semibold">
+                                                    <h4>{{live.titre}}  <i class="zmdi zmdi-cast-connected"></i></h4>
+                                                </div>
+                                                <div class="tx-14 text-center text-muted mb-3">
+                                                   <small>{{live.date}} à {{live.heure}}</small>
+                                                </div>
+                                                <div class="text-center">
+                                                    {%if live.en_ligne%}
+                                                    <p class="text-muted"> <i class="fa fa-check text-success"></i>En ligne </p>
+                                                    {%else%}
+                                                    <p class="text-muted"> <i class="fa fa-times text-warning"></i> En ligne </p>
+                                                    {%endif%}
+                                                    {%if live.debut%}
+                                                    <p class="text-muted"><i class="fa fa-check text-success"></i>   Debut </p>
+                                                    {%else%}
+                                                    <p class="text-muted"><i class="fa fa-times text-warning"></i>   Debut </p>
+                                                    {%endif%}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {%endfor%}
+                                    <nav aria-label="Pagination">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item {% if not lives.has_previous %}disabled{% endif %}">
+                                                <a class="page-link" href="?page=1" tabindex="-1">
+                                                    <i class="fa fa-angle-left"></i>
+                                                    <span class="sr-only">Previous</span>
+                                                </a>
+                                            </li>
+                                        
+                                            {% for num in lives.paginator.page_range %}
+                                                <li class="page-item {% if num == lives.number %}active{% endif %}">
+                                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        
+                                            <li class="page-item {% if not lives.has_next %}disabled{% endif %}">
+                                                <a class="page-link" href="?page={{ lives.paginator.num_pages }}">
+                                                    <i class="fa fa-angle-right"></i>
+                                                    <span class="sr-only">Next</span>
+                                                </a>
+                                            </li>
+                                        </ul>                                                            
+                                    </nav>
+                            </div>
+                            <!-- End Container -->
+                            <div class="modal fade" role="dialog" tabindex="-1" id="form-live-create">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Ajouter un live</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="py-1">
+                                                    {% csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="row">
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Titre</label>
+                                                                        <input class="form-control" type="text" id="titre" name="titre" placeholder="Titre">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Date</label>
+                                                                        <input class="form-control" type="date" id="date" name="date" placeholder="Date de live">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <div class="mb-3">
+                                                                        <label>Heure</label>
+                                                                        <input class="form-control" type="time" id="heure" name="heure" placeholder="Heure">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="custom-control custom-checkbox">
+                                                                    <label class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="debut" name="debut">
+                                                                        <span class="custom-control-label">Début</span>
+                                                                    </label>
+                                                                    <label class="custom-control custom-checkbox">
+                                                                        <input type="checkbox" class="custom-control-input" id="en_ligne" name="en_ligne">
+                                                                        <span class="custom-control-label">En ligne</span>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary" id="add-button" type="submit">Ajouter</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Row -->
+
+                    <!--Modal update-->
+                    <div class="modal fade" role="dialog" tabindex="-1" id="form-live-update">
+                        <div class="modal-dialog modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Modifier</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                            <span aria-hidden="true">×</span>
+                                        </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="py-1">
+                                        {% comment %} <form class="form" novalidate="" method="put"> {% endcomment %}
+                                            {% csrf_token %}
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Titre</label>
+                                                                <input class="form-control" type="text" name="titre" id="update-titre" placeholder="Titre">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Date</label>
+                                                                <input class="form-control" type="date" name="date" id="update-datelive" placeholder="Date de live">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Heure</label>
+                                                                <input class="form-control" type="time" name="heure" id="update-heure" placeholder="Heure">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="custom-control custom-checkbox">
+                                                            <label class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" name="debut" id="update-debut">
+                                                                <span class="custom-control-label">Début</span>
+                                                            </label>
+                                                            <label class="custom-control custom-checkbox">
+                                                                <input type="checkbox" class="custom-control-input" name="en_ligne" id="update-en_ligne">
+                                                                <span class="custom-control-label">En ligne</span>
+                                                                <input type="hidden" name="liveid" id="update-live-id">
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col d-flex justify-content-end">
+                                                    <button class="btn btn-primary" id="update-button" type="submit">Modifier</button>
+                                                </div>
+                                            </div>
+                                        {% comment %} </form> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <!--Fin modal update-->
+
+        {% endblock %}
+
+    {% block scripts %}
+    <script>
+        function afficherAlert(title,message){
+            var message =message;
+            var title =title;
+            swal({
+                title: title,
+                text: message,
+                timer: 3000,
+                showConfirmButton: false
+            });
+        }
+        const titreInput = document.getElementById("update-titre");
+        const dateliveInput = document.getElementById("update-datelive");
+        const heureInput = document.getElementById("update-heure");
+        const debutCheckbox = document.getElementById("update-debut");
+        const enligneCheckbox = document.getElementById("update-en_ligne");
+
+        document.getElementById("add-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("titre", document.getElementById("titre").value);
+            formData.append("date", document.getElementById("date").value);
+            formData.append("heure", document.getElementById("heure").value);
+            formData.append("debut", document.getElementById("debut").checked);
+            formData.append("en_ligne", document.getElementById("en_ligne").checked);
+    
+            const loadingSwal = swal({
+                title: "Ajout",
+                text: "En cours...",
+                icon: "info",
+                buttons: false, 
+                closeOnClickOutside: false, 
+                closeOnEsc: false
+            });
+            fetch(`lives/ajouter/`, {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                afficherAlert("Ajout","Ajout live avec succès !")
+                location.reload()
+            })
+            .catch(error => {
+                swal("Erreur", error, "error");
+            });
+        });
+        document.getElementById("update-button").addEventListener("click", function() {
+            const formData = new FormData();
+            formData.append("titre", titreInput.value);
+            formData.append("date", dateliveInput.value);
+            formData.append("heure", heureInput.value);
+            formData.append("debut", debutCheckbox.checked);
+            formData.append("en_ligne", enligneCheckbox.checked);
+            liveId=document.getElementById('update-live-id').value;
+    
+            const loadingSwal = swal({
+                title: "Update",
+                text: "En cours...",
+                icon: "info",
+                buttons: false, 
+                closeOnClickOutside: false, 
+                closeOnEsc: false
+            });
+            fetch(`/lives/${liveId}/update/`, {
+                method: "PUT",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                afficherAlert("Update","Live mis à jour avec succès !")
+                location.reload()
+            })
+            .catch(error => {
+                swal("Erreur", error, "error");
+            });
+        });
+        function afficherDetailsLive(details) {
+            titreInput.value = details.titre;
+            dateliveInput.value = details.date;
+            heureInput.value = details.heure;
+            enligneCheckbox.checked = details.en_ligne;
+            debutCheckbox.checked = details.debut;
+        }
+        function detail(id){
+        var liveId = id;            
+        fetch(`/lives/${liveId}/detail/`, {
+            method: "GET",
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('update-live-id').value=liveId
+            afficherDetailsLive(data)
+            var modal = new bootstrap.Modal(document.getElementById('form-live-update'));
+            modal.show();
+        });
+
+        }
+        function supprimerlive(id) {
+            var liveid = id;
+        
+            swal({
+                title: "Êtes-vous sûr ?",
+                text: "Voulez-vous vraiment supprimer cet live ?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: 'Supprimer',
+                cancelButtonText: 'Annuler'
+            },
+            function(isConfirm){
+                if (isConfirm) {
+                    fetch(`/lives/${liveid}/delete/`, {
+                        method: "DELETE",
+                    })
+                    .then(response => {
+                        swal("Message", "Live supprimé avec succès", "success");
+                        window.location.href = "/listelive";
+                    });
+                } else {
+                    swal("Message", "Suppression annulée", "info");
+                }
+            });
+        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById("search-input");
+            
+            searchInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    document.querySelector("form").submit();
+                }
+            });
+        });
+    </script>
+        <!--Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+        <!-- Timepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+
+        <!-- Datepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+
+        <!--File-Uploads Js-->
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+
+        <!-- File uploads js -->
+        <script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+
+        <!-- Multiple select js -->
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+
+        <!--Sumoselect js-->
+        <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+
+        <!--intlTelInput js-->
+        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
+
+        <!--jquery transfer js-->
+        <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+
+        <!--multi js-->
+            <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+
+        <!-- Form Advanced Element -->
+        <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+
+
+         <!-- Sweet alert js -->
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js'%}"></script>
+
+    {% endblock %}

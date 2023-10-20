@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from firebase_admin import credentials
+import firebase_admin
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -26,6 +28,8 @@ SECRET_KEY = '!c(gmx8p^40so%%l-4fhs^hnaza4c(!x5@3+=ip!vmrswg^#nf'
 DEBUG = True
 
 ALLOWED_HOSTS=["localhost"]
+GOOGLE_APPLICATION_CREDENTIALS = BASE_DIR / 'sehatra-com-firebase-adminsdk-ztcjt-21cbcfa296.json'
+
 
 # Application definition
 
@@ -50,10 +54,30 @@ INSTALLED_APPS = [
     'plateforme',
     'paiement',
     'corsheaders',
-    'django.contrib.sitemaps'
+    'django.contrib.sitemaps',
+    'rest_framework',
+    'administration',
+    'fcm_django',
+    'background_task'
 ]
+FCM_DJANGO_SETTINGS = {
+    "DEFAULT_FIREBASE_APP": 'Sehatra.com',
+    "APP_VERBOSE_NAME": "FCM Django",
+    "ONE_DEVICE_PER_USER": False,  
+    "DELETE_INACTIVE_DEVICES": False, 
+}
+
+cred = credentials.Certificate(GOOGLE_APPLICATION_CREDENTIALS)
+firebase_admin.initialize_app(cred)
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 MIDDLEWARE = [
+    'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware', 
     'corsheaders.middleware.CorsMiddleware',
     'plateforme.middleware.MyMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -67,9 +91,6 @@ MIDDLEWARE = [
     'django_user_agents.middleware.UserAgentMiddleware'
 ]
 
-# GOOGLE_ANALYTICS = {
-#     'google_analytics_id': 'G-YLTD7Q6QC0',
-# }
 
 ROOT_URLCONF = 'Sehatra.urls'
 
@@ -145,14 +166,17 @@ USE_L10N = True
 
 USE_TZ = True
 
+HTML_MINIFY = False
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 # STATIC_ROOT = 'C:\\Users\\TOLOTRA-MALAGASY\\PycharmProjects\\Sehatra\\static'
 STATIC_URL = '/static/'
-STATIC_ROOT = STATIC_DIR
-# STATICFILES_DIRS = [STATIC_DIR]
+# STATIC_ROOT = STATIC_DIR
+STATICFILES_DIRS = [STATIC_DIR]
 
 DJANGORESIZED_DEFAULT_FORMAT_EXTENSIONS = {'PNG': ".png"}
 
