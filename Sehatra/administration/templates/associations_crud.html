@@ -399,6 +399,7 @@
         const descriptionInput = document.getElementById("update-description");
 
         document.getElementById("add-button").addEventListener("click", function() {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("nom", document.getElementById("nom").value);
             formData.append("user", document.getElementById("user").value);
@@ -420,9 +421,12 @@
                 closeOnEsc: false
             });
     
-            fetch(`associations/ajouter/`, {
+            fetch(`/administration/associations/ajouter/`, {
                 method: "POST",
-                body: formData
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -435,6 +439,7 @@
         });
 
         document.getElementById("update-button").addEventListener("click", function() {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("nom", nomInput.value);
             formData.append("user", userSelect.value);
@@ -457,9 +462,12 @@
                 closeOnEsc: false
             });
     
-            fetch(`/associations/${artisteId}/update/`, {
+            fetch(`/administration/associations/${artisteId}/update/`, {
                 method: "PUT",
-                body: formData
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -495,7 +503,7 @@
         function modifierassociation(id){
         var artisteId = id;
             
-        fetch(`/associations/${artisteId}/detail/`, {
+        fetch(`/administration/associations/${artisteId}/detail/`, {
             method: "GET",
         })
         .then(response => response.json())
@@ -520,7 +528,7 @@
             },
             function(isConfirm){
                 if (isConfirm) {
-                    fetch(`/associations/${associationid}/delete/`, {
+                    fetch(`/administration/associations/${associationid}/delete/`, {
                         method: "DELETE",
                     })
                     .then(response => {

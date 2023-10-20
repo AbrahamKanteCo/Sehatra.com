@@ -809,6 +809,7 @@
         }
 
         document.getElementById("add-button").addEventListener("click", function() {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("titre", document.getElementById("titre").value);
             formData.append("duree", document.getElementById("duree").value);
@@ -843,9 +844,12 @@
                 closeOnEsc: false
             });
 
-            fetch(`/videos/ajouter/`, {
+            fetch(`/administration/videos/ajouter/`, {
                 method: "POST",
-                body: formData
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -858,6 +862,8 @@
             });
         });
         document.getElementById("update-button").addEventListener("click", function() {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+
             const formData = new FormData();
             formData.append("titre", document.getElementById("update_titre").value);
             formData.append("duree", document.getElementById("update_duree").value);
@@ -884,9 +890,12 @@
             formData.append("a_la_une", document.getElementById("update_a_la_une").checked);
             videoId=document.getElementById('update-videos-id').value;
     
-            fetch(`/videos/${videoId}/update/`, {
+            fetch(`/administration/videos/${videoId}/update/`, {
                 method: "PUT",
-                body: formData
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
             })
             .then(response => response.json())
             .then(data => {
@@ -926,7 +935,7 @@
         function modifier(id){
         var videoId = id;
             
-        fetch(`/videos/${videoId}/detail/`, {
+        fetch(`/administration/videos/${videoId}/detail/`, {
             method: "GET",
         })
         .then(response => response.json())
@@ -952,7 +961,7 @@
             },
             function(isConfirm){
                 if (isConfirm) {
-                    fetch(`/videos/${videoId}/delete/`, {
+                    fetch(`/administration/videos/${videoId}/delete/`, {
                         method: "DELETE",
                     })
                     .then(response => {

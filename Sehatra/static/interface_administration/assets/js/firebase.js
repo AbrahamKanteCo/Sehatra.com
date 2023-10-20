@@ -21,7 +21,7 @@ const messaging = getMessaging();
 let count=0
 
 if('serviceWorker' in navigator) { 
-    navigator.serviceWorker.register('static/assets/js/firebase-messaging-sw.js')
+    navigator.serviceWorker.register('../static/interface_administration/assets/js/firebase-messaging-sw.js')
         .then(function(registration) {
              console.log("Service Worker Registered",registration.scope);
              getToken(messaging, { vapidKey: `BEI9C7Cq-Shmxj9qyCDy6SbnbuQKBVOtC-3k4uo49cwcCjSK9DnOjy1aeAjUhOQ3HPxWJOlUtyNC61BYQESA4rY`, serviceWorkerRegistration: registration })

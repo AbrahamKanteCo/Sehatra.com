@@ -1,4 +1,4 @@
-from . import interface_administration
+from . import interface_administration,artiste
 from . import data_load
 from django.urls import path
 from django.conf.urls.static import static
@@ -55,18 +55,10 @@ urlpatterns = [
     path('audiences', interface_administration.audiences, name='audiences'),
     path('compteutilisateur', interface_administration.compteutilisateur, name='compteutilisateur'),
     path('transactions', interface_administration.transactions, name='transactions'),
-    path('transactions-artiste',interface_administration.transactions_artistes,name='transactions-artiste'),
     path('ventes_video', interface_administration.ventes_video, name='ventes_video'),
     path('pages', interface_administration.pages, name='pages'),
-    #artiste
-    path('dashboard-artiste', interface_administration.dashboardartiste, name='dashboard-artiste'),
-    path('artiste-video', interface_administration.artistevideo, name='artiste-video'),
-    path('statistique-video-artiste/<int:video>', interface_administration.statistiquevideoartiste, name='statistique-video-artiste'),
-    path('pages_artiste', interface_administration.pages_artistes, name='pages_artiste'),
-    path('ventes_video_artiste', interface_administration.ventes_video_artiste, name='ventes_video_artiste'),
     #graph
     path('earning-revenue/<int:annee>',interface_administration.statistiques_ventes_json,name='earning-revenue'),
-    path('earning-revenue-artiste/<int:annee>',interface_administration.statistiques_ventes_artiste_json,name='earning-revenue-artiste'),
     #notification
     path('last_notification',interface_administration.listernotification,name='last_notification'),
     #sample_data
@@ -76,7 +68,6 @@ urlpatterns = [
     path('audience_age_sexe',interface_administration.get_age_sexe,name='audience_age_sexe'),
     path('audience_langue',interface_administration.get_langue,name='audience_langue'),
     path('audience_sources',interface_administration.get_sources,name='audience_sources'),
-    path('stats_vue_users',interface_administration.statistiques_vues_nouveaux_utilisateurs_json,name='stats_vue_users'),
 
     #dashboard load data
     path('dashboard_load_data',data_load.dashboard_data,name='dashboard_load_data'),
@@ -87,6 +78,15 @@ urlpatterns = [
     #notification
     path('notifications',interface_administration.notifications,name='notifications'),
     path('test',interface_administration.envoi_notification_administrateur,name='test'),
+     #artiste
+    path('dashboard-artiste', artiste.dashboardartiste, name='dashboard-artiste'),
+    path('artiste-video', artiste.artistevideo, name='artiste-video'),
+    path('statistique-video-artiste/<int:video>', artiste.statistiquevideoartiste, name='statistique-video-artiste'),
+    path('pages_artiste', artiste.pages_artistes, name='pages_artiste'),
+    path('ventes_video_artiste', artiste.ventes_video_artiste, name='ventes_video_artiste'),
+    path('transactions-artiste',artiste.transactions_artistes,name='transactions-artiste'),
+    path('earning-revenue-artiste/<int:annee>',artiste.statistiques_ventes_artiste_json,name='earning-revenue-artiste'),
+    path('stats_vue_users',artiste.statistiques_vues_nouveaux_utilisateurs_json,name='stats_vue_users'),
 
 ]
 

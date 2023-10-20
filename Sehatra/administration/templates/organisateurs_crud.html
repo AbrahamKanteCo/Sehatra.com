@@ -526,6 +526,8 @@
                 });
             }
             document.getElementById("add-button").addEventListener("click", function() {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+
                 const formData = new FormData();
                 formData.append("nom", document.getElementById("nom").value);
                 formData.append("user", document.getElementById("user").value);
@@ -547,9 +549,12 @@
                     closeOnEsc: false
                 });
         
-                fetch(`organisateurs/ajouter/`, {
+                fetch(`/administration/organisateurs/ajouter/`, {
                     method: "POST",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -574,6 +579,7 @@
             const facebookInput = document.getElementById("update-facebook");
             const descriptionInput = document.getElementById("update-description");
             document.getElementById("update-button").addEventListener("click", function() {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
                 const formData = new FormData();
                 formData.append("nom", nomInput.value);
                 formData.append("user", userSelect.value);
@@ -596,9 +602,12 @@
                     closeOnEsc: false
                 });
         
-                fetch(`/organisateurs/${organisateurId}/update/`, {
+                fetch(`/administration/organisateurs/${organisateurId}/update/`, {
                     method: "PUT",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -634,7 +643,7 @@
             function modifierorganisateur(id){
             var organisateurId = id;
                 
-            fetch(`/organisateurs/${organisateurId}/detail/`, {
+            fetch(`/administration/organisateurs/${organisateurId}/detail/`, {
                 method: "GET",
             })
             .then(response => response.json())
@@ -660,7 +669,7 @@
                 },
                 function(isConfirm){
                     if (isConfirm) {
-                        fetch(`/organisateurs/${organisateurid}/delete/`, {
+                        fetch(`/administration/organisateurs/${organisateurid}/delete/`, {
                             method: "DELETE",
                         })
                         .then(response => {
@@ -687,7 +696,7 @@
             });
             function details(id){
                 const detailsOrganisateurs = document.getElementById("details-organisateurs");
-                fetch(`detailorganisateur/?id=`+id, {
+                fetch(`/administration/detailorganisateur/?id=`+id, {
                     method: "GET",
                 })
                 .then(response => response.json())
@@ -805,7 +814,7 @@
                 searchInput.addEventListener("input", function(event) {
                     if(searchInput.value!=""){
                         event.preventDefault();
-                        fetch(`organisateur/recherche?search=`+searchInput.value, {
+                        fetch(`/administration/organisateur/recherche?search=`+searchInput.value, {
                             method: "GET",
                         })
                         .then(response => response.json())

@@ -73,7 +73,7 @@
                                                         <div class="col-xl-4 col-md-6">
                                                             <div class="card border p-0 shadow-none">
                                                                 <div class="d-flex align-items-center p-4">
-                                                                    <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/assets/images/upload/{{artiste.photo_de_profil}}">
+                                                                    <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/{{artiste.photo_de_profil}}">
                                                                         {% if artiste.en_ligne %}
                                                                             <span class="avatar-status bg-green"></span>
                                                                         {% else %}
@@ -116,7 +116,7 @@
                                                                         <div class="media-icon lh-1">
                                                                             <i class="fa fa-image" data-bs-placement="top" data-bs-toggle="tooltip" title="Photo de couverture"></i>
                                                                         </div>
-                                                                        <div class="h6 mb-0 ms-3 mt-1"><img src="/media/assets/images/upload/{{artiste.photo_de_couverture}}" width="500" height="300"></div>
+                                                                        <div class="h6 mb-0 ms-3 mt-1"><img src="/media/{{artiste.photo_de_couverture}}" width="500" height="300"></div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -352,7 +352,10 @@
             const photodeprofilInput = document.getElementById("update-photodeprofil");
             const photodecouvertureInput = document.getElementById("update-photodecouverture");
 
+
             document.getElementById("add-button").addEventListener("click",function(){
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+            
                 const formData = new FormData();
                 formData.append("nom", document.getElementById("nom").value);
                 formData.append("user", document.getElementById("user").value);
@@ -360,7 +363,7 @@
                 formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
                 formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
                 formData.append("en_ligne",document.getElementById("en_ligne").checked);
-
+            
                 const loadingSwal = swal({
                     title: "Ajout",
                     text: "En cours...",
@@ -369,21 +372,26 @@
                     closeOnClickOutside: false, 
                     closeOnEsc: false
                 });
-        
+            
                 fetch(`/administration/artistes/ajouter/`, {
                     method: "POST",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
-                    //afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
-                    //location.reload();
+                    afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
+                    location.reload();
                 })
                 .catch(error => {
                     swal("Erreur", error, "error");
                 });
             })
+            
             document.getElementById("update-button").addEventListener("click", function() {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
                 const formData = new FormData();
                 formData.append("nom", nomInput.value);
                 formData.append("user", userSelect.value);
@@ -405,7 +413,10 @@
         
                 fetch(`/administration/artistes/${artisteId}/update/`, {
                     method: "PUT",
-                    body: formData
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
