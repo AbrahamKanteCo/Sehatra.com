@@ -111,6 +111,7 @@ country_mapping = {
 }
 
 pagination = 10
+prix_ariary_euro=4700
 
 class DashboardView(View):
     def get(self, request):
@@ -137,7 +138,7 @@ def pages(request):
 
     taux_rebond_moyen = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Avg('bouncerate'))['bouncerate__avg']
 
-    notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
+    notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     context = {"pages": pages, "notifications": notifications,"total_vue":total_vues if total_vues is not None else 0,"temps_moyen":format(temps_moyen,'.2f') if temps_moyen is not None else 0.0,"total_nouveaux_utilisateurs":total_nouveaux_utilisateurs if total_nouveaux_utilisateurs is not None else 0,"taux_rebond_moyen":format(taux_rebond_moyen,'.2f') if taux_rebond_moyen is not None else 0.0}
 
     return render(request, "pages.html", context)
@@ -158,7 +159,7 @@ def ventes_video(request):
             ),
         )
     ).values("titre", "nombre_ventes", "photo_de_couverture", "artiste__nom")
-    notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
+    notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     context = {"ventes_video": ventes_par_video, "notifications": notifications}
 
     return render(request, "ventes_video.html", context)
@@ -173,7 +174,7 @@ def compteutilisateur(request):
     total_mois_dernier = User.objects.filter(
         date_joined__range=(last_month, since)
     ).count()
-    notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
+    notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     total_comptes = comptes.count()
     context = {
         "comptes": comptes,
@@ -243,7 +244,7 @@ def transactions(request):
         "stripe_echec": stripe_echec,
         "valide": transactions_valide,
         "echec": transactions_echec,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -251,7 +252,7 @@ def transactions(request):
 
 
 def notifications(request):
-    notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")
+    notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")
     paginator = Paginator(notifications, pagination)
 
     page_number = request.GET.get("page")
@@ -261,7 +262,7 @@ def notifications(request):
 
 
 def listernotification(request):
-    notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
+    notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
 
     notification_list = [
         {
@@ -438,7 +439,7 @@ def dashboard(request):
         "chiffre_affaire": chiffre_affaire,
         "depense": depense,
         "ventes_par_video": ventes_par_video,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
         "annees": list(range(2022, date_actuelle.year + 1)),
@@ -462,7 +463,7 @@ def dashboard(request):
         "chiffre_affaire": chiffre_affaire,
         "depense": depense,
         "ventes_par_video": ventes_par_video,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
         "annees": list(range(2022, date_actuelle.year + 1)),
@@ -488,7 +489,7 @@ def statistiques_ventes_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * 4700),
+                        When(mode=2, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
@@ -510,7 +511,7 @@ def statistiques_ventes_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * 4700),
+                        When(mode=2, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
@@ -552,7 +553,7 @@ def facebook(request):
             "information": pageInformationData(),
             "vue_ensemble": page_vue_ensemble(since, until),
             "contenus": contenu_recent(since, until)["data"],
-            "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
                 :5
             ],
         }
@@ -582,7 +583,7 @@ def audiences(request):
             "ageSexes": agesexe,
             "langues": langues,
             "sources": sources,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
                 :5
             ],
         }
@@ -670,7 +671,7 @@ def ventes_data(request):
     ventes_valides = VenteParPays.objects.filter(
         Q(
             slug__in=Billet.objects.filter(
-                valide=True, video__artiste__user=2
+                valide=True, video__artiste__user=request.user.id
             ).values_list("slug", flat=True)
         )
         & Q(
@@ -798,7 +799,7 @@ def listeartiste(request):
         "utilisateurs": utilisateurs,
         "total":total,
         "total_artiste_actif":total_artiste_actif,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -830,7 +831,7 @@ def rechercheartiste(request):
             "utilisateurs": utilisateurs,
             "total":total,
             "total_artiste_actif":total_artiste_actif,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -839,7 +840,7 @@ def rechercheartiste(request):
             "search": request.GET.get("search"),
             "artistes": paginated_artistes,
             "utilisateurs": utilisateurs,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -874,7 +875,7 @@ def associations(request):
         "utilisateurs": utilisateurs,
         "total":total,
         "total_association_actif":total_association_actif,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -908,7 +909,7 @@ def rechercheassociations(request):
             "utilisateurs": utilisateurs,
             "total":total,
             "total_association_actif":total_association_actif,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -918,7 +919,7 @@ def rechercheassociations(request):
             "utilisateurs": utilisateurs,
             "total":total,
             "total_association_actif":total_association_actif,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1064,7 +1065,7 @@ def listevideos(request):
         "organisateurs": organisateurs,
         "actions": actions,
         "lives": lives,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -1108,7 +1109,7 @@ def recherchevideos(request):
             "organisateurs": organisateurs,
             "actions": actions,
             "lives": lives,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1125,7 +1126,7 @@ def recherchevideos(request):
             "organisateurs": organisateurs,
             "actions": actions,
             "lives": lives,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1150,7 +1151,7 @@ def listeorganisteurs(request):
         "organisateurs": organisateurs,
         "details": details,
         "utilisateurs": utilisateurs,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -1175,7 +1176,7 @@ def rechercheorganisateur(request):
             "organisateurs": organisateurs,
             "details": details,
             "utilisateurs": utilisateurs,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1184,7 +1185,7 @@ def rechercheorganisateur(request):
             "organisateurs": organisateurs,
             "details": details,
             "utilisateurs": utilisateurs,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1262,7 +1263,7 @@ def listelive(request):
         "total":total,
         "total_live_en_ligne":total_live_en_ligne,
         "total_live_en_ligne_debut":total_live_en_ligne_debut,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
@@ -1292,7 +1293,7 @@ def recherchelive(request):
             "total_live_en_ligne_debut":total_live_en_ligne_debut,
             "search": request.GET.get("search"),
             "lives": paginated_lives,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1302,7 +1303,7 @@ def recherchelive(request):
             "total_live_en_ligne":total_live_en_ligne,
             "total_live_en_ligne_debut":total_live_en_ligne_debut,
             "lives": paginated_lives,
-            "notifications": NotificationFCM.objects.filter(user=2).order_by(
+            "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by(
                 "-created_at"
             )[:5],
         }
@@ -1346,7 +1347,7 @@ def artistes(request):
 
     context = {
         "artistes": performances_avec_pourcentage,
-        "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
     }
