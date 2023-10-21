@@ -1,5 +1,7 @@
 {% extends 'components/base.html' %}
 {% load static %}
+{% load humanize %}
+
 
     {% block styles %}
 
@@ -31,6 +33,7 @@
                                                                         <th class="border-bottom-0 w-15">Date d'adhésion</th>
                                                                         <th class="border-bottom-0 w-30">Performance</th>
                                                                         <th class="border-bottom-0 w-30">Total Ventes</th>
+                                                                        <th class="border-bottom-0 w-30">Somme dû( en Ariary)</th>
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
@@ -56,6 +59,9 @@
                                                                         </td>
                                                                         <td>
                                                                             {{artiste.nombre_ventes}}
+                                                                        </td>
+                                                                        <td>
+                                                                            {{artiste.montant|intcomma}}
                                                                         </td>
                                                                     </tr>
                                                                     {%endfor%}

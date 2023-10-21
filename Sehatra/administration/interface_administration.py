@@ -1,11 +1,11 @@
 import datetime
 import locale
 import socket
+from django.db.models import FloatField
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.humanize.templatetags.humanize import intcomma
-from requests import request
 
 from .facebook.facebookdata import (
     AudienceParAgeEtSexe,
@@ -124,21 +124,19 @@ class DashboardView(View):
 
 
 def pages(request):
-    debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
-    since = debut_28.strftime("%Y-%m-%d")
     pages = (
-        PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() ))
+        PageAnalytics.objects
         .values("path", "screenname")
         .annotate(total_vue=Coalesce(Sum("vue"), 0))
         .order_by("-total_vue")
     )
-    total_vues = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Sum('vue'))['vue__sum']
+    total_vues = PageAnalytics.objects.aggregate(Sum('vue'))['vue__sum']
 
-    temps_moyen = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Avg('temps_moyenne'))['temps_moyenne__avg']
+    temps_moyen = PageAnalytics.objects.aggregate(Avg('temps_moyenne'))['temps_moyenne__avg']
 
-    total_nouveaux_utilisateurs = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Sum('nouveauutilisateur'))['nouveauutilisateur__sum']
+    total_nouveaux_utilisateurs = PageAnalytics.objects.aggregate(Sum('nouveauutilisateur'))['nouveauutilisateur__sum']
 
-    taux_rebond_moyen = PageAnalytics.objects.filter(date__range=(since,datetime.datetime.now() )).aggregate(Avg('bouncerate'))['bouncerate__avg']
+    taux_rebond_moyen = PageAnalytics.objects.aggregate(Avg('bouncerate'))['bouncerate__avg']
 
     notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     context = {"pages": pages, "notifications": notifications,"total_vue":total_vues if total_vues is not None else 0,"temps_moyen":format(temps_moyen,'.2f') if temps_moyen is not None else 0.0,"total_nouveaux_utilisateurs":total_nouveaux_utilisateurs if total_nouveaux_utilisateurs is not None else 0,"taux_rebond_moyen":format(taux_rebond_moyen,'.2f') if taux_rebond_moyen is not None else 0.0}
@@ -239,6 +237,9 @@ def transactions(request):
         "transactions": transactions,
         "total": total,
         "mvola_valide": mvola,
+        "total_mvola":mvola+mvola_echec,
+        "total_orange":orange+orange_echec,
+        'total_stripe':stripe+stripe_echec,
         "orange_valide": orange,
         "stripe_valide": stripe,
         "mvola_echec": mvola_echec,
@@ -1365,22 +1366,55 @@ def recherchelive(request):
         }
     return render(request, "live_crud.html", context)
 
+from datetime import date
+from django.db.models import OuterRef,ExpressionWrapper
+from django.db.models.functions import Coalesce
+from django.db.models import Sum, Case, When, F, Value, Count, Q
 
 def artistes(request):
+
+    aujourd_hui = date.today()
     marquer_notification_read(request)
+
+
     performances_artiste = (
-        Artiste.objects.annotate(
-            nombre_ventes=Count(
-                "artiste_video__video_billet__billet_paiement__id",
-                distinct=True,
-                filter=Q(
-                    artiste_video__video_billet__billet_paiement__valide=True,
-                    artiste_video__video_billet__valide=True,
-                    artiste_video__video_billet__gratuit=False,
-                ),
+    Artiste.objects.annotate(
+        montant=ExpressionWrapper(
+            Coalesce(
+                Sum(
+                    Case(
+                        When(
+                            artiste_video__video_billet__billet_paiement__valide=True,
+                            artiste_video__video_billet__gratuit=False,
+                            artiste_video__video_billet__billet_paiement__mode=2,
+                            then=F('artiste_video__video_billet__video__tarif_euro') * 4700
+                        ),
+                        default=F('artiste_video__video_billet__video__tarif_ariary'),
+                        output_field=FloatField()
+                    ),
+                    filter=Q(
+                        artiste_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
+                        artiste_video__video_billet__billet_paiement__date__month=aujourd_hui.month
+                    )
+                ), 0
+            ) * 60 / 100,
+            output_field=FloatField()  
+        )
+    )
+    .annotate(
+        nombre_ventes=Count(
+            "artiste_video__video_billet__billet_paiement",
+            distinct=True,
+            filter=Q(
+                artiste_video__video_billet__billet_paiement__valide=True,
+                artiste_video__video_billet__valide=True,
+                artiste_video__video_billet__gratuit=False
             )
-        ).values("nom", "nombre_ventes", "photo_de_profil", "user__date_joined")
-    ).order_by("-nombre_ventes")
+        )
+    )
+    .values("nom", "nombre_ventes", "montant", "photo_de_profil", "user__date_joined")
+).order_by("-nombre_ventes")
+    
 
     meilleur_artiste = performances_artiste.first()
     if meilleur_artiste:
@@ -1388,7 +1422,6 @@ def artistes(request):
     else:
         nombre_ventes_meilleur_artiste = 0
 
-    # Calculer le pourcentage de performances pour chaque artiste
     performances_avec_pourcentage = []
     for artiste in performances_artiste:
         nombre_ventes_artiste = artiste["nombre_ventes"]
@@ -1400,6 +1433,7 @@ def artistes(request):
             pourcentage_performance=0
         artiste["pourcentage_performance"] = round(pourcentage_performance, 2)
         performances_avec_pourcentage.append(artiste)
+    
 
     context = {
         "artistes": performances_avec_pourcentage,

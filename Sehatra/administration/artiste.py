@@ -95,6 +95,9 @@ def transactions_artistes(request):
     context = {
         "transactions": transactions,
         "total": total,
+        "total_mvola":mvola+mvola_echec,
+        "total_orange":orange+orange_echec,
+        'total_stripe':stripe+stripe_echec,
         "mvola_valide": mvola,
         "orange_valide": orange,
         "stripe_valide": stripe,
