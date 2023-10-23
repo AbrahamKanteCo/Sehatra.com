@@ -399,7 +399,7 @@
         const descriptionInput = document.getElementById("update-description");
 
         document.getElementById("add-button").addEventListener("click", function() {
-            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+            const csrftoken1 = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("nom", document.getElementById("nom").value);
             formData.append("user", document.getElementById("user").value);
@@ -421,11 +421,11 @@
                 closeOnEsc: false
             });
     
-            fetch(`/administration/associations/ajouter/`, {
+            fetch(`associations/ajouter/`, {
                 method: "POST",
                 body: formData,
                 headers: {
-                    'X-CSRFToken': csrftoken
+                    'X-CSRFToken': csrftoken1
                 }
             })
             .then(response => response.json())

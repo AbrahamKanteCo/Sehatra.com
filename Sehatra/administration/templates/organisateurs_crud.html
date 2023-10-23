@@ -73,7 +73,9 @@
                                                 <div class="main-contacts-list" id="mainContactList">
                                                     {%for organisateur in organisateurs%}
                                                     <div class="main-contact-item" id="partienav{{organisateur.id}}">
-                                                        <div class="main-img-user online"><img alt="" src="/media/{{organisateur.photo_de_profil}}" class="avatar avatar-md brround"></div>
+                                                        <div class="main-img-user  {% if organisateur.en_ligne %}
+                                                       online
+                                                    {% endif %}"><img alt="" src="/media/{{organisateur.photo_de_profil}}" class="avatar avatar-md brround"></div>
                                                         <div class="main-contact-body">
                                                             <a href="#" onclick="details({{organisateur.id}});"><h6>{{organisateur.nom}}</h6><span class="phone">{{organisateur.user}}</span></a>
                                                         </div>

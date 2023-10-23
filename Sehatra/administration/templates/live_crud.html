@@ -370,6 +370,7 @@
         }
         function supprimerlive(id) {
             var liveid = id;
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
         
             swal({
                 title: "Êtes-vous sûr ?",
@@ -383,10 +384,13 @@
                 if (isConfirm) {
                     fetch(`/administration/lives/${liveid}/delete/`, {
                         method: "DELETE",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
                     })
                     .then(response => {
                         swal("Message", "Live supprimé avec succès", "success");
-                        window.location.href = "/listelive";
+                        location.reload()
                     });
                 } else {
                     swal("Message", "Suppression annulée", "info");
