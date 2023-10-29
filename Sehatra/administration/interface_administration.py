@@ -960,16 +960,17 @@ def send_notification(url, iduser, titre, message):
     else:
         return False
 
-def enregitrerToken(request, token):
+def enregistrerToken(request, token):
     if request.method == 'GET':
-        token, created = FCMDevice.objects.get_or_create(registration_id=token,user_id=request.user.id)
-        if created:
+        try:
+            FCMDevice.objects.create(registration_id=token, user_id=request.user.id)
             return JsonResponse({'message': 'Token enregistré avec succès.'}, status=201)
-        else:
+        except:
             return JsonResponse({'message': 'Token déjà existant.'}, status=200)
+            
     else:
         return JsonResponse({'error': 'Mauvaise requête.'}, status=400)
-
+    
 def logout(request,token):
     device = FCMDevice.objects.filter(user_id=request.user.id,registration_id=token).first()
     if device:

@@ -11,7 +11,7 @@ app_name = 'administration'
 
 urlpatterns = [
     #token
-    path('enregistrerToken/<str:token>/',interface_administration.enregitrerToken,name="enregistrerToken"), 
+    path('enregistrerToken/<str:token>/',interface_administration.enregistrerToken,name="enregistrerToken"), 
     path('logout/<str:token>/',interface_administration.logout,name="logout"), 
     #ajout
     path('artistes/ajouter/', interface_administration.ArtisteCreate.as_view(), name='artiste-create'),
