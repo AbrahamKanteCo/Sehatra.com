@@ -386,9 +386,9 @@ def AudienceParSexe(since, until):
                 'nb_masculin': nb_masculin,
                 'nb_feminin': nb_feminin,
                 'nb_autre': nb_autre,
-                'm': pourcentage_masculin * 0.01,
-                'f': pourcentage_feminin * 0.01,
-                'u': pourcentage_autre * 0.01
+                'm':format(pourcentage_masculin * 0.01,'.2f'),
+                'f': format(pourcentage_feminin * 0.01,'.2f'),
+                'u': format(pourcentage_autre * 0.01,'.2f')
             }
             return data_element
         else:

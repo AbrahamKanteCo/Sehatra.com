@@ -61,10 +61,7 @@
                             <h1 class="font-weight-bold mb-1">{{ sexe.nb_masculin }}</h1>
                         </div>
                         <div class="col col-auto">
-                            <div class="mx-auto chart-circle chart-circle-md chart-circle-primary mt-sm-0 mb-0" id="chart-circle-primary"
-                                 data-value="{{ sexe.m|floatformat:"2" }}"
-                                 data-thickness="12"
-                                 data-color="">
+                            <div class="mx-auto chart-circle chart-circle-md chart-circle-primary mt-sm-0 mb-0" id="chart-circle-primary" data-value="{{ sexe.m }}" data-thickness="12" data-color="">
                                 <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.masculin|floatformat:"2" }}%</div>
                             </div>
                         </div>
@@ -82,7 +79,7 @@
                         </div>
                         <div class="col col-auto">
                             <div class="mx-auto chart-circle chart-circle-md chart-circle-success mt-sm-0 mb-0"
-                                 data-value="{{ sexe.f|floatformat:"2" }}"
+                                 data-value="{{ sexe.f }}"
                                  data-thickness="12"
                                  data-color="#2dce89">
                                 <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.feminin|floatformat:"2" }}%</div>
@@ -102,7 +99,7 @@
                         </div>
                         <div class="col col-auto">
                             <div class="mx-auto chart-circle chart-circle-md chart-circle-warning mt-sm-0 mb-0"
-                                 data-value="{{ sexe.u|floatformat:"2" }}"
+                                 data-value="{{ sexe.u }}"
                                  data-thickness="12"
                                  data-color="#2dce89">
                                 <div class="mx-auto chart-circle-value text-center fs-20">{{ sexe.autre|floatformat:"2" }}%</div>
