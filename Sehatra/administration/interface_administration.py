@@ -1357,9 +1357,9 @@ from django.db.models.functions import Coalesce
 from django.db.models import Sum, Case, When, F, Value, Count, Q
 
 def artistes(request):
+    marquer_notification_read(request)
 
     aujourd_hui = date.today()
-    marquer_notification_read(request)
 
 
     performances_artiste = (
@@ -1372,7 +1372,7 @@ def artistes(request):
                             artiste_video__video_billet__billet_paiement__valide=True,
                             artiste_video__video_billet__gratuit=False,
                             artiste_video__video_billet__billet_paiement__mode=3,
-                            then=F('artiste_video__video_billet__video__tarif_euro') * 4700
+                            then=F('artiste_video__video_billet__video__tarif_euro') * prix_ariary_euro
                         ),
                         default=F('artiste_video__video_billet__video__tarif_ariary'),
                         output_field=FloatField()
@@ -1389,10 +1389,8 @@ def artistes(request):
     .annotate(
         nombre_ventes=Count(
             "artiste_video__video_billet__billet_paiement",
-            distinct=True,
             filter=Q(
                 artiste_video__video_billet__billet_paiement__valide=True,
-                artiste_video__video_billet__valide=True,
                 artiste_video__video_billet__gratuit=False
             )
         )
