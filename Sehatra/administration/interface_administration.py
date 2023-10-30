@@ -164,15 +164,17 @@ def ventes_video(request):
 
     return render(request, "ventes_video.html", context)
 
+from dateutil.relativedelta import relativedelta
+
 
 def compteutilisateur(request):
-    debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
-    since = debut_28.strftime("%Y-%m-%d")
-    until = datetime.datetime.now().strftime("%Y-%m-%d")
-    last_month = (debut_28 - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
+    today = datetime.datetime.now()
+
+    last_month = today - relativedelta(months=1)
     comptes = User.objects.all().order_by("-date_joined")
     total_mois_dernier = User.objects.filter(
-        date_joined__range=(last_month, since)
+        date_joined__month=last_month.month,
+        date_joined__year=last_month.year
     ).count()
     notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     total_comptes = comptes.count()
@@ -289,6 +291,8 @@ def check_internet_connection(host="8.8.8.8", port=53, timeout=3):
         return False
     
 def dashboard(request):
+    # dataVenteParPays("2022-01-01", "2023-10-30")
+    # pageStatistique("2022-01-01", "2023-10-30")
     marquer_notification_read(request)
     # compte créé
     aujourdhui = datetime.datetime.now().date()
@@ -318,6 +322,7 @@ def dashboard(request):
     until = datetime.datetime.now().strftime("%Y-%m-%d")
     last_month = (debut_28 - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
 
+
     # ventes par pays
     ventes_valides = VenteParPays.objects.filter(
         Q(slug__in=Billet.objects.filter(valide=True).values_list("slug", flat=True))
@@ -336,9 +341,10 @@ def dashboard(request):
         valide=True, billet__gratuit=False, date__date=until
     )
     chiffre_affaire = Paiement.calculer_paiement(ca_aujourdhui)
+    print("Since:"+ since)
     # revenus
     paiements = Paiement.objects.filter(
-        valide=True, billet__gratuit=False, date__gte=since
+        valide=True, billet__gratuit=False, date__range=(since, until)
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
     revenus = somme * 40 / 100
@@ -405,7 +411,7 @@ def dashboard(request):
                 ),
             )
         ).values("titre", "nombre_ventes", "photo_de_couverture", "artiste__nom")
-    )[:4]
+    ).order_by('-nombre_ventes')[:4]
 
     # pages
     # pages=pageStatistique(since,until)
@@ -490,12 +496,12 @@ def statistiques_ventes_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * prix_ariary_euro),
+                        When(mode=3, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
                 )
-                * 60
+                * 40
                 / 100,
             )
             .order_by("mois")
@@ -512,12 +518,12 @@ def statistiques_ventes_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * prix_ariary_euro),
+                        When(mode=3, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
                 )
-                * 60
+                * 40
                 / 100,
             )
             .order_by("mois")
@@ -1387,7 +1393,7 @@ def artistes(request):
                         When(
                             artiste_video__video_billet__billet_paiement__valide=True,
                             artiste_video__video_billet__gratuit=False,
-                            artiste_video__video_billet__billet_paiement__mode=2,
+                            artiste_video__video_billet__billet_paiement__mode=3,
                             then=F('artiste_video__video_billet__video__tarif_euro') * 4700
                         ),
                         default=F('artiste_video__video_billet__video__tarif_ariary'),

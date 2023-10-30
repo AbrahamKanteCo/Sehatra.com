@@ -68,6 +68,7 @@
                                                                     <tr>
                                                                         <th class="border-bottom-0 w-20">Video</th>
                                                                         <th class="border-bottom-0 w-15">Billet</th>
+                                                                        <th class="border-bottom-0 w-15">Montant</th>
                                                                         <th class="border-bottom-0 w-30">Date &Heure</th>
                                                                         <th class="border-bottom-0 w-30">Mode de paiement</th>
                                                                         <th class="border-bottom-0 w-30">Status</th>
@@ -78,6 +79,11 @@
                                                                     <tr>
                                                                         <td class="font-weight-bold"><img class="w-7 h-7 rounded shadow me-3" src="{% static 'interface_administration/assets/images/fb/pub1.jpg' %}" alt="media1"> {{transaction.billet.video.titre}}</td>
                                                                         <td>{{transaction.billet.slug}}</td>
+                                                                        {%if transaction.mode.nom == 'Stripe' %}
+                                                                <td>{{transaction.billet.video.tarif_euro}} euro</td>
+                                                                {%else%}
+                                                                <td>{{transaction.billet.video.tarif_ariary}} Ariary</td>
+                                                                {%endif%}
                                                                         <td>{{transaction.date|date:"d F Y, H:i"}}</td>
                                                                         <td class="font-weight-bold">{{transaction.mode.nom }}</td>
                                                                         {% if transaction.valide %}

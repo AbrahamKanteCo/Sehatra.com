@@ -8,10 +8,51 @@ from google.analytics.data_v1beta.types import Metric
 from google.analytics.data_v1beta.types import RunReportRequest
 from google.analytics.data_v1beta.types import OrderBy
 from google.oauth2.service_account import Credentials
-import json
 from google.auth import exceptions
 
+
 from ..models import PageAnalytics, VenteParPays
+
+from django.apps import apps  
+import json
+# from paiement.models import Paiement,Billet,ModePaiement
+# from plateforme.models import Video
+# from django.contrib.auth.models import User
+
+
+
+# def stockerDonnee():
+#     with open('data-sehatra.json', 'r') as json_file:
+#         data = json.load(json_file)
+
+#     for entry_data in data:
+#         model_name = entry_data["model"]
+#         if model_name=="paiement.paiement":
+#             fields = entry_data["fields"]
+#             billet_id = fields.get("billet", None)
+#             mode_id = fields.get("mode", None)
+
+#             try:
+#                 billet = Billet.objects.get(pk=billet_id)
+#                 mode_paiement = ModePaiement.objects.get(pk=mode_id)
+
+#                 paiement_instance = Paiement(
+#                     id=entry_data["pk"],
+#                     billet=billet,
+#                     date=fields.get("date",None),
+#                     mode=mode_paiement,
+#                     valide=fields.get("valide", False),
+#                     telephone=fields.get("telephone", None),
+#                     token=fields.get("token", None),
+#                     notif_token=fields.get("notif_token", None)
+#                 )
+#                 paiement_instance.save()
+
+#             except Billet.DoesNotExist:
+#                 print(f"Le billet avec l'ID {billet_id} n'a pas été trouvé.")
+
+
+# stockerDonnee()
 
 
 SCOPES = ["https://www.googleapis.com/auth/analytics.readonly"]

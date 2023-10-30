@@ -111,7 +111,7 @@ def dashboard_data (request):
     vente_html=""
     if len(ventes_groupees)>0:
         for ventes_groupee in ventes_groupees:
-            vente_html+="<tr><td class='w-1 text-center ps-5'><i class='flag flag-"+str(ventes_groupee['codepays'])+"'></i></td><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" ventes </span></td></tr>"
+            vente_html+="<tr><td class='w-1 text-center ps-5'></td><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" ventes </span></td></tr>"
     else :
         vente_html+="<tr><td colspan='3'>Aucune vente durant cette période.</td></tr>"
 

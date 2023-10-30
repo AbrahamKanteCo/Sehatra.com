@@ -41,7 +41,10 @@
                                                     <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{revenue_difference|intcomma}}</span></span>
                                                     {%elif revenue_difference < 0%}
                                                     <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{revenue_difference_negative|intcomma}} Ar</span></span>
+                                                    {%else %}
+                                                    <span class="mb-1 text-muted"><span class="text-success">Aucune évolution</span></span>
                                                     {%endif%}
+
                                                     <div class="progress progress-sm mt-3 bg-success-transparent">
                                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{revenue_pourcentage|floatformat:2}}%"></div>
                                                     </div>
@@ -62,6 +65,8 @@
                                                     <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{oeuvre_last_month}}</span></span>
                                                     {%elif oeuvre_last_month < 0%}
                                                     <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{oeuvre_last_month_negative}}</span></span>
+                                                    {%else %}
+                                                    <span class="mb-1 text-muted"><span class="text-danger">Aucune évolution</span></span>
                                                     {%endif%}
                                                     <div class="progress progress-sm mt-3 bg-secondary-transparent">
                                                         <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{oeuvre_pourcentage|floatformat:2}}%"></div>
@@ -260,6 +265,7 @@
                                                             <tr class="bold">
                                                                 <th class="border-bottom-0 w-200 d-block">Video</th>
                                                                 <th class="border-bottom-0">Billet</th>
+                                                                <th class="border-bottom-0">Montant</th>
                                                                 <th class="border-bottom-0">Date &Heure </th>
                                                                 <th class="border-bottom-0">Mode de paiement</th>
                                                                 <th class="border-bottom-0">Status</th>
@@ -270,6 +276,11 @@
                                                             <tr>
                                                                 <td class="font-weight-bold"><img class="w-7 h-7 rounded shadow me-3" src="{% static 'interface_administration/assets/images/fb/pub1.jpg' %}" alt="media1"> {{transaction.billet.video.titre}}</td>
                                                                 <td>{{transaction.billet.slug}}</td>
+                                                                {%if transaction.mode.nom == 'Stripe' %}
+                                                                <td>{{transaction.billet.video.tarif_euro}} euro</td>
+                                                                {%else%}
+                                                                <td>{{transaction.billet.video.tarif_ariary}} Ariary</td>
+                                                                {%endif%}
                                                                 <td>{{transaction.date|date:"d F Y, H:i"}}</td>
                                                                 <td class="font-weight-bold">{{transaction.mode.nom }}</td>
                                                                 {% if transaction.valide %}
