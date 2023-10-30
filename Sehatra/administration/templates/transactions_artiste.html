@@ -86,7 +86,7 @@
                                                                 {%endif%}
                                                                         <td>{{transaction.date|date:"d F Y, H:i"}}</td>
                                                                         <td class="font-weight-bold">{{transaction.mode.nom }}</td>
-                                                                        {% if transaction.valide %}
+                                                                        {% if transaction.valide and transaction.billet.valide %}
                                                                         <td><span class="badge bg-success rounded-pill">Valide</span></td>
                                                                         {%else%}
                                                                         <td><span class="badge bg-danger rounded-pill">Non Valide</span></td>

@@ -135,8 +135,8 @@ def get_credentials():
 
 
 def dataVenteParPays(since, until):
-    since = since.date()
-    until = until.date()
+    # since = since.date()
+    # until = until.date()
 
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
@@ -175,11 +175,14 @@ def dataVenteParPays(since, until):
         row_data = row[1]
         if row_data["pays"] in country_mapping:
             VenteParPays.objects.create(slug=row_data['slug'], pays=row_data['pays'], date_vente=row_data['date'],codepays=country_mapping[row_data["pays"]])
+        
+        else :
+            VenteParPays.objects.create(slug=row_data['slug'], pays=row_data['pays'], date_vente=row_data['date'],codepays=None)
 
 
 def pageStatistique(since,until):
-    since = since.date()
-    until = until.date()
+    # since = since.date()
+    # until = until.date()
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
 

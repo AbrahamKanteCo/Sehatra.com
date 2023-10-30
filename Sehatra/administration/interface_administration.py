@@ -114,6 +114,7 @@ country_mapping = {
 
 pagination = 10
 prix_ariary_euro=4700
+pourcentage_sehatra=40/100
 
 class DashboardView(View):
     def get(self, request):
@@ -189,50 +190,29 @@ def compteutilisateur(request):
 
 def transactions(request):
     transactions = Paiement.objects.filter(billet__gratuit=False).order_by("-date")
-    transactions_valide = Paiement.objects.filter(
-        billet__gratuit=False, billet__valide=True, billet__billet_paiement__valide=True
+    transactions_echec = transactions.filter(
+        valide=False,
+    )
+    transactions_valide = transactions.filter(
+        valide=True
+    )
+    mvola = transactions_valide.filter(
+        mode__nom="Mvola",
     ).count()
-    mvola = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Mvola",
+    orange =transactions_valide.filter(
+        mode__nom="Orange Money",
     ).count()
-    orange = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Orange Money",
+    stripe = transactions_valide.filter(
+        mode__nom="Stripe",
     ).count()
-    stripe = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Stripe",
+    mvola_echec = transactions_echec.filter(
+        mode__nom="Mvola",
     ).count()
-    mvola_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Mvola",
+    orange_echec = transactions_echec.filter(
+        mode__nom="Orange Money",
     ).count()
-    orange_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Orange Money",
-    ).count()
-    stripe_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=False,
-        billet__billet_paiement__valide=False,
-        billet__billet_paiement__mode__nom="Stripe",
-    ).count()
-
-    transactions_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=False,
-        billet__billet_paiement__valide=False,
+    stripe_echec = transactions_echec.filter(
+        mode__nom="Stripe",
     ).count()
     total = transactions.count()
     context = {
@@ -247,8 +227,8 @@ def transactions(request):
         "mvola_echec": mvola_echec,
         "orange_echec": orange_echec,
         "stripe_echec": stripe_echec,
-        "valide": transactions_valide,
-        "echec": transactions_echec,
+        "valide": transactions_valide.count(),
+        "echec": transactions_echec.count(),
         "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
             :5
         ],
@@ -347,12 +327,12 @@ def dashboard(request):
         valide=True, billet__gratuit=False, date__range=(since, until)
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 40 / 100
+    revenus = somme * pourcentage_sehatra
     # revenus last_month
     paiements_last_month = Paiement.objects.filter(
         valide=True, billet__gratuit=False, date__range=(last_month, since)
     ).order_by("-date")
-    revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * 40 / 100
+    revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * pourcentage_sehatra
     difference_revenus = revenus - revenus_last_month
 
     if revenus_last_month > 0:
@@ -501,8 +481,7 @@ def statistiques_ventes_json(request, annee):
                         output_field=IntegerField(),
                     )
                 )
-                * 40
-                / 100,
+                * pourcentage_sehatra,
             )
             .order_by("mois")
         )
@@ -523,8 +502,7 @@ def statistiques_ventes_json(request, annee):
                         output_field=IntegerField(),
                     )
                 )
-                * 40
-                / 100,
+                * pourcentage_sehatra,
             )
             .order_by("mois")
         )
@@ -1010,7 +988,7 @@ def envoi_notification_administrateur():
         valide=True, billet__gratuit=False, date__range=(debut_journee,fin_journee)
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 40 / 100
+    revenus = somme * pourcentage_sehatra
     ventes=paiements.count()
     body1 = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
     body2 = "Il y a eu "+str(comptes)+" crées hier"

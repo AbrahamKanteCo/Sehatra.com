@@ -40,55 +40,55 @@ def transactions_artistes(request):
     id=request.user.id
     transactions = Paiement.objects.filter(billet__gratuit=False,billet__video__artiste__user=id).order_by("-date")
     transactions_valide = Paiement.objects.filter(
-        billet__gratuit=False,billet__video__artiste__user=id,billet__valide=True, billet__billet_paiement__valide=True
+        billet__gratuit=False,billet__video__artiste__user=id,billet__valide=True, valide=True
     ).count()
     mvola = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Mvola",
+        valide=True,
+        mode__nom="Mvola",
         billet__video__artiste__user=id,
     ).count()
     orange = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Orange Money",
+        valide=True,
+        mode__nom="Orange Money",
         billet__video__artiste__user=id
     ).count()
     stripe = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Stripe",
+        valide=True,
+        mode__nom="Stripe",
         billet__video__artiste__user=id
     ).count()
     mvola_echec = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Mvola",
+        valide=True,
+        mode__nom="Mvola",
         billet__video__artiste__user=id
     ).count()
     orange_echec = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=True,
-        billet__billet_paiement__valide=True,
-        billet__billet_paiement__mode__nom="Orange Money",
+        valide=True,
+        mode__nom="Orange Money",
         billet__video__artiste__user=id
     ).count()
     stripe_echec = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=False,
-        billet__billet_paiement__valide=False,
-        billet__billet_paiement__mode__nom="Stripe",
+        valide=False,
+        mode__nom="Stripe",
         billet__video__artiste__user=id
     ).count()
 
     transactions_echec = Paiement.objects.filter(
         billet__gratuit=False,
         billet__valide=False,
-        billet__billet_paiement__valide=False,
+        valide=False,
         billet__video__artiste__user=id
     ).count()
     total = transactions.count()

@@ -113,9 +113,8 @@
                                                                     {% if venteparpays %}
                                                                         {% for venteparpays in venteparpays %}
                                                                             <tr>
-                                                                                <td class="w-1 text-center ps-5"><i class="flag flag-{{venteparpays.codepays}}"></i></td>
                                                                                 <td>{{venteparpays.pays}}</td>
-                                                                                <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} ventes</span></td>
+                                                                                <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} vente(s)</span></td>
                                                                             </tr>
                                                                         {% endfor %}
                                                                     {% else %}

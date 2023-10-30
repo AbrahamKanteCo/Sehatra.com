@@ -44,7 +44,7 @@ class VenteParPays(models.Model):
     slug = models.CharField(max_length=50,unique=True)
     pays = models.TextField()
     date_vente = models.DateTimeField()
-    codepays = models.TextField(max_length=2)
+    codepays = models.TextField(max_length=2,null=True)
 
 
 class PageAnalytics(models.Model):
