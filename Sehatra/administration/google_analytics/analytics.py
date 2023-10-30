@@ -135,8 +135,8 @@ def get_credentials():
 
 
 def dataVenteParPays(since, until):
-    # since = since.date()
-    # until = until.date()
+    since = since.date()
+    until = until.date()
 
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
@@ -181,8 +181,8 @@ def dataVenteParPays(since, until):
 
 
 def pageStatistique(since,until):
-    # since = since.date()
-    # until = until.date()
+    since = since.date()
+    until = until.date()
     credentials = get_credentials()
     client = BetaAnalyticsDataClient(credentials=credentials)
 
@@ -236,8 +236,7 @@ def getUtilisateurActive(datedebut, datefin):
             property='properties/'+AUTH['property_id'],
             dimensions=[Dimension(name="date")],
             metrics=[Metric(name="activeUsers")],
-            date_ranges=[DateRange(start_date=datedebut, end_date=datefin)],
-            order_bys=[OrderBy(dimension={"dimension_name": "date"}, desc=True)],
+            date_ranges=[DateRange(start_date=datedebut, end_date=datefin)]
         )
         response = client.run_report(request)
         total_utilisateur=0
