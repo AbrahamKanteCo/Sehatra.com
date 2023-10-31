@@ -39,58 +39,36 @@ def ventes_video_artiste(request):
 def transactions_artistes(request):
     id=request.user.id
     transactions = Paiement.objects.filter(billet__gratuit=False,billet__video__artiste__user=id).order_by("-date")
-    transactions_valide = Paiement.objects.filter(
-        billet__gratuit=False,billet__video__artiste__user=id,billet__valide=True, valide=True
-    ).count()
-    mvola = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        valide=True,
+    transactions_valide = transactions.filter(
+        billet__gratuit=False, valide=True
+    )
+    mvola = transactions_valide.filter(
         mode__nom="Mvola",
-        billet__video__artiste__user=id,
     ).count()
-    orange = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        valide=True,
+    orange = transactions_valide.filter(
         mode__nom="Orange Money",
-        billet__video__artiste__user=id
     ).count()
-    stripe = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        valide=True,
+    stripe = transactions_valide.filter(
         mode__nom="Stripe",
-        billet__video__artiste__user=id
-    ).count()
-    mvola_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        valide=True,
-        mode__nom="Mvola",
-        billet__video__artiste__user=id
-    ).count()
-    orange_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=True,
-        valide=True,
-        mode__nom="Orange Money",
-        billet__video__artiste__user=id
-    ).count()
-    stripe_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=False,
-        valide=False,
-        mode__nom="Stripe",
-        billet__video__artiste__user=id
     ).count()
 
-    transactions_echec = Paiement.objects.filter(
-        billet__gratuit=False,
-        billet__valide=False,
+    transactions_echec = transactions.filter(
         valide=False,
-        billet__video__artiste__user=id
+        
+    )
+    mvola_echec = transactions_echec.filter(
+        mode__nom="Mvola",
+        
     ).count()
+    orange_echec = transactions_echec.filter(
+        mode__nom="Orange Money",
+        
+    ).count()
+    stripe_echec = transactions_echec.filter(
+        mode__nom="Stripe",
+        
+    ).count()
+
     total = transactions.count()
     context = {
         "transactions": transactions,
@@ -104,8 +82,8 @@ def transactions_artistes(request):
         "mvola_echec": mvola_echec,
         "orange_echec": orange_echec,
         "stripe_echec": stripe_echec,
-        "valide": transactions_valide,
-        "echec": transactions_echec,
+        "valide": transactions_valide.count(),
+        "echec": transactions_echec.count(),
         "notifications": NotificationFCM.objects.filter(user=2).order_by("-created_at")[
             :5
         ],
@@ -373,6 +351,8 @@ def dashboardartiste(request):
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
 
     date_actuelle = datetime.datetime.now()
+    resultats_tries = sorted(resultats, key=lambda x: (x["total_vues"], x["ventes"]), reverse=True)[:2]
+
 
     context = {
         "revenue": revenus,
@@ -380,7 +360,7 @@ def dashboardartiste(request):
         "revenue_last_month": revenus_last_month,
         "revenue_difference": revenus_difference,
         "ventes": ventes,
-        "oeuvres": resultats,
+        "oeuvres": resultats_tries,
         "vente_last_month": ventes_last_month,
         "ventes_difference": ventes_difference,
         "contenues": contenus,
