@@ -13,6 +13,7 @@
         </div>
          <!-- Row-->
          <div class="row">
+            {%if notifications%}
             {%for notification in notifications%}
             <div class="card">
                 <div class="card-status card-status-left {% if not notification.is_read %} bg-blue {%endif%} br-bl-7 br-tl-7"></div>
@@ -23,6 +24,14 @@
                 </div>
             </div>
             {%endfor%}
+            {%else%}
+            <div class="card">
+                <div class="card-status card-status-left bg-grey  br-bl-7 br-tl-7"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Aucune notification</h5>
+                </div>
+            </div>
+            {%endif%}
             <nav aria-label="Pagination">
                 <ul class="pagination justify-content-center">
                     <li class="page-item {% if not notifications.has_previous %}disabled{% endif %}">
