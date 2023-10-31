@@ -463,7 +463,9 @@ def pages_artistes(request):
         )
 
 
-    context = {"pages": resultats,"total_vue":total_vues,"total_ventes":total_ventes}
+    context = {"pages": resultats,"total_vue":total_vues,"total_ventes":total_ventes,"notifications": NotificationFCM.objects.filter(user=id).order_by("-created_at")[
+            :5
+        ],}
     return render(request, "pages-artiste.html", context)
 
 
