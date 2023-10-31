@@ -80,7 +80,7 @@
                                                                     {% for transaction in transactions%}
                                                                     <tr>
                                                                         <td class="font-weight-bold">
-                                                                            {% if video.photo_de_couverture and video.photo_de_couverture|file_exists  %}
+                                                                            {% if transaction.billet.video.photo_de_couverture and transaction.billet.video.video.photo_de_couverture|file_exists  %}
                                                                             <img class="w-7 h-7 rounded shadow me-3" src="/media/{{ transaction.billet.video.photo_de_couverture }}" alt="media1">
                                         {%else%}
                                         <img class="w-7 h-7 rounded shadow me-3" src="{% static 'images/sehatra-2.png' %}" alt="media1">
