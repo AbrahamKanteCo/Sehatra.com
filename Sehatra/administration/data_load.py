@@ -176,7 +176,7 @@ def audiences_admin_data(request):
     return JsonResponse({'homme':homme_html,'femme':femme_html,'autre': autre_html,'countries':countries_html,'agesexe':agesexe_html,'langues':langues_html,'sources':sources_html})
 
 def dashboard_load_artiste (request): 
-    artiste_id = 2
+    artiste_id = request.user.id
     date_debut=datetime.datetime.strptime(request.GET.get('debut'), "%Y-%m-%d")
     date_fin=datetime.datetime.strptime(request.GET.get('fin'), "%Y-%m-%d")
     last_month=(date_debut-datetime.timedelta(days=28)).strftime('%Y-%m-%d')
@@ -250,19 +250,26 @@ def dashboard_load_artiste (request):
         pub_html+= "<small class='mb-1 text-muted'>Aucun évolution</small>"
 
 
-    # Récupérez les ventes valides pour cet artiste
     ventes_valides = VenteParPays.objects.filter(
-        Q(slug__in=Billet.objects.filter(valide=True, user_id=artiste_id).values_list('slug', flat=True)) &
-        Q(slug__in=Paiement.objects.filter(valide=True).values_list('billet__slug', flat=True)),
-        date_vente__range=(date_debut,date_fin))
+        Q(
+            slug__in=Billet.objects.filter(gratuit=False, video__artiste__user=artiste_id).values_list(
+                "slug", flat=True
+            )
+        )
+        & Q(
+            slug__in=Paiement.objects.filter(valide=True).values_list(
+                "billet__slug", flat=True
+            )
+        ),
+        date_vente__range=(date_debut, date_fin),
+    )
 
-    # Groupez les ventes par pays et comptez le nombre de ventes
-    ventes_groupees = ventes_valides.values('pays').annotate(nombre_ventes=Count('id'))
+    ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
 
     ventes_pays_html="<table class='table card-table text-nowrap'><tbody>"
     if len(ventes_groupees):
         for vente_groupe in ventes_groupees:
-            ventes_pays_html+="<tr><td class='w-1'><i class='flag flag-"+str(vente_groupe['codepays'])+"'></i></td><td>"+str(vente_groupe['pays'])+"</td><td class='w-3 text-end'><span class=''>"+str(vente_groupe['nombre_ventes'])+"</span></td></tr>"
+            ventes_pays_html+="<tr><td>"+str(vente_groupe['pays'])+"</td><td class='w-3 text-end'><span class=''>"+str(vente_groupe['nombre_ventes'])+"</span></td></tr>"
         ventes_pays_html+="</tbody></table>"
     else:
         ventes_pays_html+="<tr><td colspan='3'>Aucune vente durant cette période.</td></tr>"

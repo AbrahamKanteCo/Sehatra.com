@@ -257,6 +257,7 @@ def dashboardartiste(request):
     marquer_notification_read(request)
     # 28 derniers jours
     debut_28 = datetime.datetime.now() - datetime.timedelta(days=28)
+    until=datetime.datetime.now().strftime("%Y-%m-%d")
     since = debut_28.strftime("%Y-%m-%d")
     last_month = (debut_28 - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
 
@@ -314,7 +315,7 @@ def dashboardartiste(request):
 
     # nombre de contenues le mois dernier
     videos_last_month = Video.objects.filter(
-        artiste__user=2, date_sortie__range=(last_month, since)
+        artiste__user=id, date_sortie__range=(last_month, since)
     )
     contenus_last_month = len(videos_last_month)
     contenus_difference = contenus - contenus_last_month
@@ -335,7 +336,7 @@ def dashboardartiste(request):
     # Récupérez les ventes valides pour cet artiste
     ventes_valides = VenteParPays.objects.filter(
         Q(
-            slug__in=Billet.objects.filter(valide=True, user_id=id).values_list(
+            slug__in=Billet.objects.filter(gratuit=False, video__artiste__user=id).values_list(
                 "slug", flat=True
             )
         )
@@ -344,11 +345,11 @@ def dashboardartiste(request):
                 "billet__slug", flat=True
             )
         ),
-        date_vente__range=(since, debut_28),
+        date_vente__range=(since, until),
     )
 
-    # Groupez les ventes par pays et comptez le nombre de ventes
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
+
 
     date_actuelle = datetime.datetime.now()
     resultats_tries = sorted(resultats, key=lambda x: (x["total_vues"], x["ventes"]), reverse=True)[:2]
