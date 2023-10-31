@@ -1,4 +1,5 @@
 {% extends 'components/base.html' %}
+{% load custom_tags %}
 {% load static %}
 
     {% block styles %}
@@ -20,7 +21,11 @@
                                 {%for video in videos%}
                                 <div class="col-md-6 col-lg-4">
                                     <div class="card overflow-hidden">
+                                        {% if video.photo_de_couverture and video.photo_de_couverture|file_exists  %}
                                         <img src="/media/{{ video.photo_de_couverture }}" alt="image" class="img-height">
+                                        {%else%}
+                                        <img src="{% static 'images/sehatra-2.png' %}" alt="image" class="img-height">
+                                        {%endif%}
                                         <div class="card-body">
                                             <h5 class="card-title mb-3">{{video.titre}}</h5>
                                             <p class="card-text">{{video.date_sortie}}</p>
