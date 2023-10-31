@@ -1,5 +1,6 @@
 {% extends 'components/base.html' %}
 {% load static %}
+{% load custom_tags %}
 
     {% block styles %}
 
@@ -98,7 +99,11 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-6">
+                    {%if video.photo_de_couverture and video.photo_de_couverture|file_exists%}
                     <img src="/media/{{ video.photo_de_couverture }}" alt="image" class="img-height">
+                    {%else%}
+                    <img src="{% static "images/sehatra-2.png" %}" alt="image" class="img-height">
+                    {%endif%}
                     <hr/>
                     <nav class="nav">
                         {% if video.en_ligne%}

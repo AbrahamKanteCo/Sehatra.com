@@ -1,5 +1,7 @@
 {% extends 'components/base.html' %}
 {% load static %}
+{% load custom_tags %}
+
 
     {% block styles %}
 
@@ -67,7 +69,11 @@
                                 <div class="col-md-12 col-lg-6">
                                     <div class="card ">
                                         <div class="card-header ">
-                                            <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/{{association.photo_de_profil}}">
+                                            {%if association.photo_de_profil and association.photo_de_profil|file_exists%}
+                                                                    <span class="avatar avatar-lg brround d-block cover-image" data-image-src="/media/{{association.photo_de_profil}}">
+                                                                    {%else%}
+                                                                    <span class="avatar avatar-lg brround d-block cover-image" data-image-src="{% static "images/sehatra.png" %}">
+                                                                    {%endif%}
                                                 {% if association.en_ligne %}
                                                     <span class="avatar-status bg-green"></span>
                                                 {% else %}
@@ -92,14 +98,13 @@
                                             <div class="card card-aside">
                                                 <div class="card-body d-flex flex-column">
                                                     <label class="text-muted">Description :</label>
-                                                    <textarea class="form-control mb-4" placeholder="{{association.description}}" readonly rows="3"></textarea>
+                                                    <textarea class="form-control mb-4" placeholder="{{association.description}}" readonly rows="10"></textarea>
                                                     <div class="text-muted">Site web : <a href="{{association.siteweb}}">{{association.siteweb}}</a></div>
                                                     <div class="text-muted">Youtube : <a href="{{association.youtube}}">{{association.youtube}}</a></div>
                                                     <div class="text-muted">Facebook : <a href="{{association.facebook}}">{{association.facebook}}</a></div>
                                                     <div class="text-muted">Slug : <a href="{{association.slug}}">{{association.slug}}</a></div>
                                                     <div class="text-muted">Lien don : <a href="{{association.liendon}}">{{association.lien_don}}</a></div>
                                                 </div>
-                                                <a href="javascript:void(0)" class="card-column br-tr-7 w-50" style="background-image: url('/media/{{association.photo_de_couverture}}')"></a>
                                             </div>
                                         </div>
                                     </div>
