@@ -1369,8 +1369,6 @@ def artistes(request):
                 Sum(
                     Case(
                         When(
-                            artiste_video__video_billet__billet_paiement__valide=True,
-                            artiste_video__video_billet__gratuit=False,
                             artiste_video__video_billet__billet_paiement__mode=3,
                             then=F('artiste_video__video_billet__video__tarif_euro') * prix_ariary_euro
                         ),
@@ -1378,6 +1376,8 @@ def artistes(request):
                         output_field=FloatField()
                     ),
                     filter=Q(
+                        artiste_video__video_billet__billet_paiement__valide=True,
+                        artiste_video__video_billet__gratuit=False,
                         artiste_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
                         artiste_video__video_billet__billet_paiement__date__month=aujourd_hui.month
                     )
