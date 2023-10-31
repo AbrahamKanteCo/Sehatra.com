@@ -291,6 +291,7 @@
             vente_pays.innerHTML=loading;
             publication.innerHTML=loading;
             const pages=document.getElementById('page_ecran');
+            canvasDoughnut(start, end)
             pages.innerHTML=loading;
             fetch(`dashboard_load_artiste?debut=`+start+`&fin=`+end, {
                 method: "GET"
