@@ -47,6 +47,7 @@ urlpatterns = [
     path('artiste/recherche', interface_administration.rechercheartiste, name='recherche-artiste'),
     path('live/recherche', interface_administration.recherchelive, name='recherche-live'),
     path('video/recherche', interface_administration.recherchevideos, name='recherche-videos'),
+    path('video-artiste/recherche', artiste.rechercheartistevideo, name='recherche-videos-artiste'),
     path('association/recherche', interface_administration.rechercheassociations, name='recherche-association'),
     path('organisateur/recherche', interface_administration.searchorganisateur, name='recherche-organisateur'),
     path('detailorganisateur/', interface_administration.detailsorganisateur, name='detailorganisateur'),

@@ -11,10 +11,12 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 from plateforme.models import Artiste, Video
 from django.db.models.functions import TruncMonth
 from django.db.models import Q,Avg
+from django.core.paginator import Paginator
 
 
 prix_ariary_euro=4700
 pourcentage_artiste=60/100
+pagination=10
 
 def ventes_video_artiste(request):
     id=request.user.id
@@ -380,9 +382,35 @@ def dashboardartiste(request):
 def artistevideo(request):
     id=request.user.id
     marquer_notification_read(request)
-    videos = Video.objects.filter(artiste__user=id)
+    videos = Video.objects.filter(artiste__user=id).order_by("-date_sortie")
+    paginator = Paginator(videos, pagination)
+
+    page_number = request.GET.get("page")
+    paginated_video = paginator.get_page(page_number)
     context = {
-        "videos": videos.order_by("-date_sortie"),
+        "videos": paginated_video,
+        "notifications": NotificationFCM.objects.filter(user=id).order_by("-created_at")[
+            :5
+        ],
+    }
+    return render(request, "artiste_videos.html", context)
+
+def rechercheartistevideo(request):
+    id=request.user.id
+    if request.GET.get("search"):
+        keyword = request.GET.get("search")
+        videos = Video.objects.filter(
+            Q(titre__icontains=keyword) | Q(date_sortie__icontains=keyword)
+        )
+    else:
+        videos = Video.objects.filter(artiste__user=id).order_by("-date_sortie")
+
+    paginator = Paginator(videos, pagination)
+
+    page_number = request.GET.get("page")
+    paginated_video = paginator.get_page(page_number)
+    context = {
+        "videos": paginated_video,
         "notifications": NotificationFCM.objects.filter(user=id).order_by("-created_at")[
             :5
         ],
