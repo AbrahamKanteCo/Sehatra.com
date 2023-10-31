@@ -325,8 +325,11 @@ def video_statistique_load(request,video):
     publications=Video_facebook.objects.filter(video=videos.id)
 
     publication_html=""
-    for publication in publications:
-        publication_html+="<div class='col-md-6'><iframe src='"+publication.facebook+"' width='500' height='712' style='border:none;overflow:hidden' scrolling='no' frameborder='0' allowfullscreen='true' allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'></iframe></div>"
+    if publications:
+        for publication in publications:
+            publication_html+="<div class='col-md-6'><iframe src='"+publication.facebook+"' width='500' height='712' style='border:none;overflow:hidden' scrolling='no' frameborder='0' allowfullscreen='true' allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'></iframe></div>"
+    else :
+        publication_html+="<div class='align-items-center'><p  style='text-align:center'>Aucune publication</p></div>"
 
     #nombre de vue
     total_vues = PageAnalytics.objects.filter(path__icontains=videos.slug,date__range=(date_debut,date_fin)).aggregate(total_vues=Sum('vue'))['total_vues'] or 0

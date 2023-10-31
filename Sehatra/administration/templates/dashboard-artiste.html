@@ -29,80 +29,81 @@
 
                             <!--Row-->
                             <hr/>
-                            <div class="row">
-                                <div class="col-xl-3 col-lg-6 col-md-12">
-                                    <div class="card">
+                            <div class="row d-flex">
+                                <div class="col-xl-3 col-lg-6 col-md-12 d-flex">
+                                    <div class="card flex-fill">
                                         <div class="card-body text-center">
                                             <span class="fs-50 icon-muted"><i class="si si-wallet icon-dropshadow-danger text-danger"></i></span>
-                                            <p class=" mb-1 ">Revenue</p>
+                                            <p class="mb-1">Revenue</p>
                                             <div id="revenue">
-                                            <h2 class="mb-1 fs-40 font-weight-bold">{{revenue|intcomma}} Ar</h2>
-                                            {% if revenue_difference > 0%}
-                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
-                                            {%elif revenue_difference < 0%}
-                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
-                                            {%else %}
-                                            <small class="mb-1 text-muted">Aucun évolution</small>
-                                            {%endif%}
+                                                <h2 class="mb-1 fs-40 font-weight-bold">{{revenue|intcomma}} Ar</h2>
+                                                {% if revenue_difference > 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
+                                                {% elif revenue_difference < 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down me-1"></i>{{revenue|intcomma}}</small> vs {{revenue_last_month}} le mois dernier</small>
+                                                {% else %}
+                                                <small class="mb-1 text-muted">Aucun évolution</small>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-lg-6 col-md-12">
-                                    <div class="card">
+                                <div class="col-xl-3 col-lg-6 col-md-12 d-flex">
+                                    <div class="card flex-fill">
                                         <div class="card-body text-center">
                                             <span class="fs-50 icon-muted"><i class="pe-7s-shopbag icon-dropshadow-info text-info"></i></span>
-                                            <p class=" mb-1">Nombre de ventes</p>
+                                            <p class="mb-1">Nombre de ventes</p>
                                             <div id="vente">
-                                            <h2 class="mb-1 fs-40 font-weight-bold">{{ventes}}</h2>
-                                            {% if ventes_difference > 0%}
-                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
-                                            {%elif ventes_difference < 0%}
-                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
-                                            {%else %}
-                                            <small class="mb-1 text-muted">Aucun évolution</small>
-                                            {%endif%}
+                                                <h2 class="mb-1 fs-40 font-weight-bold">{{ventes}}</h2>
+                                                {% if ventes_difference > 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
+                                                {% elif ventes_difference < 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down me-1"></i>{{ventes}}</small> vs {{ventes_last_month}} le mois dernier</small>
+                                                {% else %}
+                                                <small class="mb-1 text-muted">Aucun évolution</small>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-lg-6 col-md-12">
-                                    <div class="card">
+                                <div class="col-xl-3 col-lg-6 col-md-12 d-flex">
+                                    <div class="card flex-fill">
                                         <div class="card-body text-center">
                                             <span class="fs-50 icon-muted"><i class="pe-7s-play icon-dropshadow-danger text-danger"></i></span>
-                                            <p class=" mb-1 ">Nombre de videos</p>
+                                            <p class="mb-1">Nombre de vidéos</p>
                                             <div id="video">
-                                            <h2 class="mb-1 fs-40 font-weight-bold">{{contenues}}</h2>
-                                            {% if contenues_difference > 0%}
-                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
-                                            {%elif contenues_difference < 0%}
-                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
-                                            {%else %}
-                                            <small class="mb-1 text-muted">Aucun évolution</small>
-                                            {%endif%}
+                                                <h2 class="mb-1 fs-40 font-weight-bold">{{contenues}}</h2>
+                                                {% if contenues_difference > 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
+                                                {% elif contenues_difference < 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down me-1"></i>{{contenues_difference}}</small> vs {{contenues_last_month}} le mois dernier</small>
+                                                {% else %}
+                                                <small class="mb-1 text-muted">Aucun évolution</small>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-xl-3 col-lg-6 col-md-12">
-                                    <div class="card">
+                                <div class="col-xl-3 col-lg-6 col-md-12 d-flex">
+                                    <div class="card flex-fill">
                                         <div class="card-body text-center">
                                             <span class="fs-50 icon-muted"><i class="pe-7s-news-paper icon-dropshadow-danger text-danger"></i></span>
-                                            <p class=" mb-1 ">Publications avec Mention</p>
+                                            <p class="mb-1">Publications avec Mention</p>
                                             <div id="publication">
-                                            <h2 class="mb-1 fs-40 font-weight-bold">{{publications}}</h2>
-                                            {% if publications_difference > 0%}
-                                            <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up  me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
-                                            {%elif publications_difference < 0%}
-                                            <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down  me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
-                                            {%else %}
-                                            <small class="mb-1 text-muted">Aucun évolution</small>
-                                            {%endif%}
+                                                <h2 class="mb-1 fs-40 font-weight-bold">{{publications}}</h2>
+                                                {% if publications_difference > 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-success"><i class="fa fa-caret-up me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
+                                                {% elif publications_difference < 0 %}
+                                                <small class="mb-1 text-muted"><small class="text-danger"><i class="fa fa-caret-down me-1"></i>{{publications_difference}}</small> vs {{publications_last_month}} le mois dernier</small>
+                                                {% else %}
+                                                <small class="mb-1 text-muted">Aucun évolution</small>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
                              <div class="page-leftheader">
                                     <h4 class="page-title">Ventes et audiences</h4>
                             </div>

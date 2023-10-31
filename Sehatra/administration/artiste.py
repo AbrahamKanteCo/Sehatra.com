@@ -382,7 +382,7 @@ def artistevideo(request):
     marquer_notification_read(request)
     videos = Video.objects.filter(artiste__user=id)
     context = {
-        "videos": videos,
+        "videos": videos.order_by("-date_sortie"),
         "notifications": NotificationFCM.objects.filter(user=id).order_by("-created_at")[
             :5
         ],

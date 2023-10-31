@@ -90,11 +90,17 @@
                                             <h3 class="card-title">Publication lié à cette vidéo</h3>
                                         </div>
                                         <div class="row" id="publication">
+                                            {%if publications%}
                                             {%for publication in publications%}
                                             <div class="col-md-6">
                                             <iframe src="{{publication.facebook}}" width="500" height="712" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                                             </div>
                                             {%endfor%}
+                                            {%else%}
+                                            <div class="align-items-center">
+                                                <p  style="text-align:center">Aucune publication</p>
+                                            </div>
+                                            {%endif%}
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +134,7 @@
             vues.innerHTML=loading;
             vente.innerHTML=loading;
             publication.innerHTML=loading;
-            fetch(`/video_statistique_load/`+id+`?debut=`+start+`&fin=`+end, {
+            fetch(`/administration/video_statistique_load/`+id+`?debut=`+start+`&fin=`+end, {
                 method: "GET"
             })
             .then(response => response.json())
