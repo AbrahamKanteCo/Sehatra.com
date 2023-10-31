@@ -1380,23 +1380,23 @@ def artistes(request):
 
 
     performances_artiste = (
-    Artiste.objects.annotate(
+    Organisateur.objects.annotate(
         montant=ExpressionWrapper(
             Coalesce(
                 Sum(
                     Case(
                         When(
-                            artiste_video__video_billet__billet_paiement__mode=3,
-                            then=F('artiste_video__video_billet__video__tarif_euro') * prix_ariary_euro
+                            organisateur_video__video_billet__billet_paiement__mode=3,
+                            then=F('organisateur_video__video_billet__video__tarif_euro') * prix_ariary_euro
                         ),
-                        default=F('artiste_video__video_billet__video__tarif_ariary'),
+                        default=F('organisateur_video__video_billet__video__tarif_ariary'),
                         output_field=FloatField()
                     ),
                     filter=Q(
-                        artiste_video__video_billet__billet_paiement__valide=True,
-                        artiste_video__video_billet__gratuit=False,
-                        artiste_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
-                        artiste_video__video_billet__billet_paiement__date__month=aujourd_hui.month
+                        organisateur_video__video_billet__billet_paiement__valide=True,
+                        organisateur_video__video_billet__gratuit=False,
+                        organisateur_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
+                        organisateur_video__video_billet__billet_paiement__date__month=aujourd_hui.month
                     )
                 ), 0
             ) * 60 / 100,
@@ -1405,10 +1405,10 @@ def artistes(request):
     )
     .annotate(
         nombre_ventes=Count(
-            "artiste_video__video_billet__billet_paiement",
+            "organisateur_video__video_billet__billet_paiement",
             filter=Q(
-                artiste_video__video_billet__billet_paiement__valide=True,
-                artiste_video__video_billet__gratuit=False
+                organisateur_video__video_billet__billet_paiement__valide=True,
+                organisateur_video__video_billet__gratuit=False
             )
         )
     )
