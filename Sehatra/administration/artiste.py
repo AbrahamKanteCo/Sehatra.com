@@ -13,7 +13,8 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Q,Avg
 
 
-
+prix_ariary_euro=4700
+pourcentage_artiste=60/100
 
 def ventes_video_artiste(request):
     id=request.user.id
@@ -144,7 +145,7 @@ def statistiques_ventes_artiste_json(request, annee):
             Paiement.objects.filter(
                 valide=True,
                 billet__gratuit=False,
-                billet__video__artiste__user=id,
+                billet__video__artiste__user_id=id,
                 date__year=annee,
                 date__month__lte=date_actuelle.month,
             )
@@ -154,13 +155,12 @@ def statistiques_ventes_artiste_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * 4700),
+                        When(mode=3, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
                 )
-                * 60
-                / 100,
+                * pourcentage_artiste,
             )
             .order_by("mois")
         )
@@ -170,7 +170,7 @@ def statistiques_ventes_artiste_json(request, annee):
             Paiement.objects.filter(
                 valide=True,
                 billet__gratuit=False,
-                billet__video__artiste__user=id,
+                billet__video__artiste__user_id=id,
                 date__year=annee,
             )
             .annotate(mois=TruncMonth("date"))
@@ -179,13 +179,12 @@ def statistiques_ventes_artiste_json(request, annee):
                 nombre_ventes=Count("id"),
                 revenues=Sum(
                     Case(
-                        When(mode=2, then=F("billet__video__tarif_euro") * 4700),
+                        When(mode=3, then=F("billet__video__tarif_euro") * prix_ariary_euro),
                         default=F("billet__video__tarif_ariary"),
                         output_field=IntegerField(),
                     )
                 )
-                * 60
-                / 100,
+                * pourcentage_artiste,
             )
             .order_by("mois")
         )
@@ -292,7 +291,7 @@ def dashboardartiste(request):
         billet__video__artiste__user=id,
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 60 / 100
+    revenus = somme * pourcentage_artiste
 
     # revenu last month
     paiements_last_month = Paiement.objects.filter(
@@ -301,7 +300,7 @@ def dashboardartiste(request):
         date__range=(last_month, since),
         billet__video__artiste__user=id,
     ).order_by("-date")
-    revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * 60 / 100
+    revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * pourcentage_artiste
     revenus_difference = revenus - revenus_last_month
 
     # vente
@@ -333,7 +332,6 @@ def dashboardartiste(request):
 
     # vente par pays
 
-    # Récupérez les ventes valides pour cet artiste
     ventes_valides = VenteParPays.objects.filter(
         Q(
             slug__in=Billet.objects.filter(gratuit=False, video__artiste__user=id).values_list(
@@ -403,7 +401,7 @@ def statistiquevideoartiste(request, video):
         valide=True, billet__gratuit=False, date__range=(since,datetime.datetime.now()), billet__video__id=video
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
-    revenus = somme * 60 / 100
+    revenus = somme * pourcentage_artiste
 
     # publication lié
     publications = Video_facebook.objects.filter(video=videos.id)
