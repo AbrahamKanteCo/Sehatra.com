@@ -119,6 +119,9 @@
                                                                                 <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} vente(s)</span></td>
                                                                             </tr>
                                                                         {% endfor %}
+                                                                        {% if manuelle != 'Aucun' %}
+                                                                        <td style="color:red">Manuelle</td><td  style="color:red" class='text-end'><span class='font-weight-bold'>{{manuelle}} vente(s)</span></td>
+                                                                        {%endif%}
                                                                     {% else %}
                                                                         <tr>
                                                                             <td colspan="3">Aucune vente durant cette période.</td>

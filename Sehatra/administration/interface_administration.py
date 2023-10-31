@@ -303,19 +303,6 @@ def dashboard(request):
     last_month = (debut_28 - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
 
 
-    # ventes par pays
-    ventes_valides = VenteParPays.objects.filter(
-        Q(slug__in=Billet.objects.filter(gratuit=False,valide=True).values_list("slug", flat=True))
-        & Q(
-            slug__in=Paiement.objects.filter(valide=True).values_list(
-                "billet__slug", flat=True
-            )
-        ),
-        date_vente__range=(since, until),
-    )
-    ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
-
-
     # chiffre_affaire
     ca_aujourdhui = Paiement.objects.filter(
         valide=True, billet__gratuit=False, date__date=until
@@ -401,6 +388,26 @@ def dashboard(request):
         .order_by("-total_vue")[:20]
     )
 
+    # ventes par pays
+    ventes_valides = VenteParPays.objects.filter(
+        Q(slug__in=Billet.objects.filter(gratuit=False,valide=True).values_list("slug", flat=True))
+        & Q(
+            slug__in=Paiement.objects.filter(valide=True).values_list(
+                "billet__slug", flat=True
+            )
+        ),
+        date_vente__range=(since, until),
+    )
+    ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
+
+    #billet manuelle
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    total_ventes = somme_ventes.get("somme_ventes", 0)
+    manuelle="Aucun"
+    if(total_ventes< oeuvre_vendu):
+        manuelle=str(oeuvre_vendu-total_ventes)
+
+
     date_actuelle = datetime.datetime.now()
     if check_internet_connection():
         context = {
@@ -430,6 +437,7 @@ def dashboard(request):
         ],
         "annees": list(range(2022, date_actuelle.year + 1)),
         "date_actuelle": date_actuelle,
+        "manuelle":manuelle
         }
     else:
         context = {
@@ -454,6 +462,7 @@ def dashboard(request):
         ],
         "annees": list(range(2022, date_actuelle.year + 1)),
         "date_actuelle": date_actuelle,
+        "manuelle":manuelle
     }
     return render(request, "dashboard.html", context)
 
@@ -1269,18 +1278,27 @@ def searchorganisateur(request):
 def detailsorganisateur(request):
     if request.GET.get("id"):
         idorganisateur = request.GET.get("id")
-        organisateur = Organisateur.objects.filter(id=idorganisateur).first()
+        if idorganisateur!=None:
+            organisateur = Organisateur.objects.filter(id=idorganisateur).first()
+        else:
+            organisateur=Organisateur.objects.filter(nom=request.GET.get("nom")).first()
     else:
         organisateur = Organisateur.objects.all().order_by("id").first()
 
     org_serialized = serializers.serialize("python", [organisateur])
     user_id = org_serialized[0]["fields"].pop("user")
 
-    user = User.objects.get(pk=user_id)
-    user_data = {
-        "id": user.id,
-        "username": user.username,
-    }
+    if user_id is not None:
+        user = User.objects.get(pk=user_id)
+        user_data = {
+            "id": user.id,
+            "username": user.username,
+        }
+    else :
+        user_data={
+            "id":"Inconnu",
+            "username":"Inconnu"
+        }
 
     org_serialized[0]["fields"]["user"] = user_data
     org_serialized[0]["fields"]["id"] = organisateur.id

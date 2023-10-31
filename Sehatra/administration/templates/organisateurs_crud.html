@@ -85,7 +85,7 @@
                                                     {%endif%}
                                                 </div>
                                                         <div class="main-contact-body">
-                                                            <a href="#" onclick="details({{organisateur.id}});"><h6>{{organisateur.nom}}</h6><span class="phone">{{organisateur.user}}</span></a>
+                                                            <a href="#" onclick="details({{organisateur.id}},'{{organisateur.nom}}');"><h6>{{organisateur.nom}}</h6><span class="phone">{{organisateur.user}}</span></a>
                                                         </div>
                                                     </div>
                                                     {%endfor%}
@@ -713,9 +713,9 @@
                     photodecouverturePreview.src = URL.createObjectURL(selectedFile);
                 }
             });
-            function details(id){
+            function details(id,nom){
                 const detailsOrganisateurs = document.getElementById("details-organisateurs");
-                fetch(`/administration/detailorganisateur/?id=`+id, {
+                fetch(`/administration/detailorganisateur/?id=`+id+`&&nom=`+nom, {
                     method: "GET",
                 })
                 .then(response => response.json())
@@ -850,7 +850,7 @@
                                         <img alt="photo_de_profil" src="/media/${data.organisateurs[i].photo_de_profil}" class="avatar avatar-md brround">
                                     </div>
                                     <div class="main-contact-body">
-                                        <a href="#"  onclick="details(${data.organisateurs[i].id});"><h6>${data.organisateurs[i].nom}</h6>
+                                        <a href="#"  onclick="details(${data.organisateurs[i].id},'${data.organisateurs[i].nom}');"><h6>${data.organisateurs[i].nom}</h6>
                                         <span class="phone">${data.organisateurs[i].user.username}</span></a>
                                     </div>
                                 `;
@@ -858,7 +858,7 @@
                             }
                         })
                         .catch(error => {
-                            console.error(error);
+                            console.log(error);
                         });
                     }
                 });

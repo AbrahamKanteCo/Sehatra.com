@@ -349,6 +349,13 @@ def dashboardartiste(request):
     )
 
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
+    #billet manuelle
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    total_ventes = somme_ventes.get("somme_ventes", 0)
+    manuelle="Aucun"
+    if(total_ventes< ventes):
+        manuelle=str(ventes-total_ventes)
+
 
 
     date_actuelle = datetime.datetime.now()
@@ -375,6 +382,7 @@ def dashboardartiste(request):
         ],
         "date_actuelle": date_actuelle,
         "annees": list(range(2022, date_actuelle.year + 1)),
+        "manuelle":manuelle
     }
     return render(request, "dashboard-artiste.html", context)
 
