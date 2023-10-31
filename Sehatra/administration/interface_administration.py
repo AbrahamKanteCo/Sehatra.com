@@ -305,7 +305,7 @@ def dashboard(request):
 
     # ventes par pays
     ventes_valides = VenteParPays.objects.filter(
-        Q(slug__in=Billet.objects.filter(valide=True).values_list("slug", flat=True))
+        Q(slug__in=Billet.objects.filter(gratuit=False,valide=True).values_list("slug", flat=True))
         & Q(
             slug__in=Paiement.objects.filter(valide=True).values_list(
                 "billet__slug", flat=True
@@ -1079,7 +1079,7 @@ class OrganisateurUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
 def listevideos(request):
     marquer_notification_read(request)
-    videos = Video.objects.all().order_by("id")
+    videos = Video.objects.all().order_by("id").order_by("-date_sortie")
     artistes = Artiste.objects.all()
     organisateurs = Organisateur.objects.all()
     actions = Action.objects.all()

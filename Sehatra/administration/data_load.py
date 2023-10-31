@@ -105,7 +105,7 @@ def dashboard_data (request):
 
     #ventes par pays
     ventes_valides = VenteParPays.objects.filter(
-    Q(slug__in=Billet.objects.filter(valide=True).values_list('slug', flat=True)) &
+    Q(slug__in=Billet.objects.filter(valide=True,gratuit=False).values_list('slug', flat=True)) &
     Q(slug__in=Paiement.objects.filter(valide=True).values_list('billet__slug', flat=True)),date_vente__range=(date_debut,date_fin))
     ventes_groupees = ventes_valides.values('pays').annotate(nombre_ventes=Count('id'))
     vente_html=""
