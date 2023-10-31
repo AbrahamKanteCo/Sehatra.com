@@ -321,7 +321,6 @@ def dashboard(request):
         valide=True, billet__gratuit=False, date__date=until
     )
     chiffre_affaire = Paiement.calculer_paiement(ca_aujourdhui)
-    print("Since:"+ since)
     # revenus
     paiements = Paiement.objects.filter(
         valide=True, billet__gratuit=False, date__range=(since, until)

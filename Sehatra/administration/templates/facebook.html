@@ -93,28 +93,28 @@
                                                         <div class="w-3 h-3 bg-primary me-3 mt-1 brround"></div>
                                                         <div>
                                                             <label class="fs-12">Followers</span></label>
-                                                            <h5>{{information.followers_count}} <span class="mb-1 text-muted"><span class="text-success">(<i class="fa fa-caret-up  me-1"></i> {{vue_ensemble.Followers}}</span> than last month)</span></h5>
+                                                            <h5>{{information.followers_count}} <span class="mb-1 text-muted"><span class="text-success">(<i class="fa fa-caret-up  me-1"></i> {{vue_ensemble.Followers}}</span> que le mois dernier)</span></h5>
                                                         </div>
                                                     </li>
                                                     <li class="list-group-item d-flex border-start-0 border-end-0">
                                                         <div class="w-3 h-3 bg-secondary me-3 mt-1 brround"></div>
                                                         <div>
                                                             <label class="fs-12">Mention J'aime</span></label>
-                                                            <h6>{{information.fan_count}}<span class="mb-1 text-muted"><span class="text-success">(<i class="fa fa-caret-up  me-1"></i> {{vue_ensemble.like}}</span> than last month)</span></h6>
+                                                            <h6>{{information.fan_count}}<span class="mb-1 text-muted"><span class="text-success">(<i class="fa fa-caret-up  me-1"></i> {{vue_ensemble.like}}</span> que le mois dernier)</span></h6>
                                                         </div>
                                                     </li>
                                                     <li class="list-group-item d-flex border-start-0 border-end-0">
                                                         <div class="w-3 h-3 bg-success me-3 mt-1 brround"></div>
                                                         <div>
-                                                            <label class="fs-12">Page Post</span></label>
-                                                            <h6>{{ vue_ensemble.page_content_activity_by_action_type_unique }}
+                                                            <label class="fs-12">Nombre de postes</span></label>
+                                                            <h6>{{contenus|length}}
                                                             </h6>
                                                         </div>
                                                     </li>
                                                     <li class="list-group-item d-flex border-start-0 border-end-0">
                                                         <div class="w-3 h-3 bg-warning me-3 mt-1 brround"></div>
                                                         <div>
-                                                            <label class="fs-12">Total Page Views</span></label>
+                                                            <label class="fs-12">Total des vues de la Page</span></label>
                                                             <h6>{{ vue_ensemble.page_views_total }}</h6>
                                                         </div>
                                                     </li>
