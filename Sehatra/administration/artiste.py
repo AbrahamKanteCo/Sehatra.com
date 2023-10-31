@@ -349,15 +349,20 @@ def dashboardartiste(request):
     )
 
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
+
+    paiements_28 = Paiement.objects.filter(
+        valide=True,
+        billet__gratuit=False,
+        billet__video__artiste__user=id,
+        date__range=(since,until)
+    ).order_by("-date")
     #billet manuelle
     somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
     if(total_ventes< ventes):
-        manuelle=str(ventes-total_ventes)
-
-
-
+        manuelle=str(paiements_28.count()-total_ventes)
+    
     date_actuelle = datetime.datetime.now()
     resultats_tries = sorted(resultats, key=lambda x: (x["total_vues"], x["ventes"]), reverse=True)[:2]
 

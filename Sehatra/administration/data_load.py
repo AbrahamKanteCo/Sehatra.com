@@ -108,10 +108,20 @@ def dashboard_data (request):
     Q(slug__in=Billet.objects.filter(valide=True,gratuit=False).values_list('slug', flat=True)) &
     Q(slug__in=Paiement.objects.filter(valide=True).values_list('billet__slug', flat=True)),date_vente__range=(date_debut,date_fin))
     ventes_groupees = ventes_valides.values('pays').annotate(nombre_ventes=Count('id'))
+    #billet manuelle
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    total_ventes = somme_ventes.get("somme_ventes", 0)
+    manuelle="Aucun"
+    if(total_ventes< oeuvre_vendu):
+        manuelle=str(oeuvre_vendu-total_ventes)
     vente_html=""
     if len(ventes_groupees)>0:
         for ventes_groupee in ventes_groupees:
-            vente_html+="<tr><td class='w-1 text-center ps-5'></td><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" ventes </span></td></tr>"
+            vente_html+="<tr><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" ventes </span></td></tr>"
+
+        if(manuelle!='Aucun'):
+            vente_html+="<td style='color:red'>Manuelle</td><td  style='color:red' class='text-end'><span class='font-weight-bold'>"+manuelle+" vente(s)</span></td>"
+        vente_html+="</tbody></table>"
     else :
         vente_html+="<tr><td colspan='3'>Aucune vente durant cette période.</td></tr>"
 
@@ -267,10 +277,19 @@ def dashboard_load_artiste (request):
 
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
 
+    #billet manuelle
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    total_ventes = somme_ventes.get("somme_ventes", 0)
+    manuelle="Aucun"
+    if(total_ventes< ventes):
+        manuelle=str(ventes-total_ventes)
+
     ventes_pays_html="<table class='table card-table text-nowrap'><tbody>"
     if len(ventes_groupees):
         for vente_groupe in ventes_groupees:
             ventes_pays_html+="<tr><td>"+str(vente_groupe['pays'])+"</td><td class='w-3 text-end'><span class=''>"+str(vente_groupe['nombre_ventes'])+"</span></td></tr>"
+        if(manuelle!='Aucun'):
+            ventes_pays_html+="<td style='color:red'>Manuelle</td><td  style='color:red' class='text-end'><span class='font-weight-bold'>"+manuelle+" vente(s)</span></td>"
         ventes_pays_html+="</tbody></table>"
     else:
         ventes_pays_html+="<tr><td colspan='3'>Aucune vente durant cette période.</td></tr>"
