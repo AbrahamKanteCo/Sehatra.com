@@ -302,7 +302,7 @@ def dashboard_load_artiste (request):
         for page in resultats:
             pages_html+=" <tr><td class='font-weight-bold'>"+str(page['titre'])+"</td><td>"+str(page['total_vues'])+"</td><td>"+str(page['ventes'])+"</td></tr>"
     else:
-        pages_html="<p class='text center'>Aucune donnée</p>"
+        pages_html="<td></td><td style='text-align:center'>Aucune donnée</td><td></td>"
 
 
     return JsonResponse({'revenue':revenus_html,'contenue':contenus_html,'ventes': ventes_html,'ventes_pays':ventes_pays_html,'pub':pub_html,"pages":pages_html})

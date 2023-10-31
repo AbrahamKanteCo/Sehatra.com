@@ -235,13 +235,17 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody id="page_ecran">
-                                                            {%for oeuvre in oeuvres%}
-                                                            <tr>
-                                                                <td>{{oeuvre.titre}}</td>
-                                                                <td class="text-center">{{oeuvre.total_vues}}</td>
-                                                                <td class="text-center">{{oeuvre.ventes}}</td>
-                                                            </tr>
-                                                            {%endfor%}
+                                                            {%if oeuvres%}
+                                                                {%for oeuvre in oeuvres%}
+                                                                <tr>
+                                                                    <td>{{oeuvre.titre}}</td>
+                                                                    <td class="text-center">{{oeuvre.total_vues}}</td>
+                                                                    <td class="text-center">{{oeuvre.ventes}}</td>
+                                                                </tr>
+                                                                {%endfor%}
+                                                            {%else%}
+                                                            <td></td><td style='text-align:center'>Aucune donnée</td><td></td>
+                                                            {%endif%}
                                                         </tbody>
                                                     </table>
                                                 </div>
