@@ -779,15 +779,11 @@
 <!--Sumoselect js-->
 <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
 
-<!--intlTelInput js-->
-<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
-<script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
 
 <!--jquery transfer js-->
 <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
 
 <!--multi js-->
-    <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
 
 <!-- Form Advanced Element -->
 <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
@@ -827,6 +823,9 @@
             const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("titre", document.getElementById("titre").value);
+            formData.append("description_longue", document.getElementById("description_longue").value);
+            formData.append("description_courte", document.getElementById("description_courte").value);
+            formData.append("artistes", document.getElementById("artistes").value);
             appendIfValueExists(formData, "duree", "duree");
             appendIfValueExists(formData, "date_sortie", "date_sortie");
             appendIfValueExists(formData, "organisateur", "organisateur");
@@ -834,13 +833,10 @@
             appendIfValueExists(formData, "action", "action");
             appendIfValueExists(formData, "live", "live");
             appendIfValueExists(formData, "artiste", "artiste");
-            appendIfValueExists(formData, "artistes", "artistes");
             appendIfValueExists(formData, "tarif_ariary", "tarif_ariary");
             appendIfValueExists(formData, "tarif_dollar", "tarif_dollar");
             appendIfValueExists(formData, "tarif_euro", "tarif_euro");
             appendIfValueExists(formData, "youtube", "youtube");
-            appendIfValueExists(formData, "description_longue", "description_longue");
-            appendIfValueExists(formData, "description_courte", "description_courte");
             appendIfValueExists(formData, "lien_video", "lien_video");
             if(document.getElementById("photo_de_couverture").files.length>0){
                 formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
@@ -870,6 +866,7 @@
             })
             .then(response => response.json())
             .then(data => {
+                console.log(data)
                 if(data.status==201){
                     afficherAlert("Ajout",data.message,'success')
                     location.reload();

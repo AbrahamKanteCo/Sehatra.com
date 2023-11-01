@@ -1151,7 +1151,6 @@ class LiveCreate(generics.CreateAPIView):
             return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
 
 
-
 class VideosCreate(generics.CreateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
@@ -1161,24 +1160,28 @@ class VideosCreate(generics.CreateAPIView):
         print(serializer)
         
         if serializer.is_valid():
-            print("ato e")
             data = serializer.validated_data
-            print("Gratuit:"+ data.get('gratuit'))
 
-            if data.get('gratuit'):
+            if not data.get('gratuit'):
                 if data.get('tarif_ariary') is None or data.get('tarif_euro') is None or data.get('tarif_dollar') is None:
-                    return JsonResponse({"message": "Les champs tarif sont obligatoires pour une vidéo gratuite.", "status": 400})
+                    return JsonResponse({"message": "Les champs tarif sont obligatoires pour une vidéo payante.", "status": 400})
 
             if data.get('organisateur') is None:
-                data['organisateur'] = 3
+                data['organisateur'] = Organisateur.objects.filter(id=3).first()
 
             if not data.get('titre'):
                 return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
 
+            if not data.get('description_courte') or not data.get('description_longue'):
+                return JsonResponse({"message": "Les champs 'description_courte' et 'description_longue' sont obligatoires.", "status": 400})
+
+            if not data.get('artistes'):
+                return JsonResponse({"message": "Le champ 'artistes' ne peut pas être vide.", "status": 400})
+
             self.perform_create(serializer)
             return JsonResponse({"message": "Ajout d'une vidéo avec succès !", "status": 201})
         else:
-            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
+            return JsonResponse({"message": "Les champs titre,description et artistes sont obligatoires", "status": 400})
 
 
 class AssociationUpdateView(generics.RetrieveUpdateDestroyAPIView):
