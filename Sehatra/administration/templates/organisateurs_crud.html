@@ -228,7 +228,7 @@
                                                                 <div class="col">
                                                                     <div class="mb-3">
                                                                         <label>Nom</label>
-                                                                        <input class="form-control" type="text" id="nom" name="nom" placeholder="John Smith">
+                                                                        <input class="form-control" type="text" id="nom" name="nom" placeholder="Organisateur">
                                                                     </div>
                                                                 </div>
                                                                 <div class="col">
@@ -236,7 +236,7 @@
                                                                         <label> <i class="fe fe-user"></i> User</label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="user" name="user">
-                                                                                <option class="hemant">Choisissez un utilisateur</option>
+                                                                                <option class="hemant" value="">Choisissez un utilisateur</option>
                                                                                 {% for utilisateur in utilisateurs%}
                                                                                 <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
                                                                                 {%endfor%}
@@ -338,7 +338,7 @@
                                                                     <input class="form-control"
                                                                         type="text"
                                                                         name="nom"
-                                                                        placeholder="John Smith"
+                                                                        placeholder="Organisateur"
                                                                         id="update-nom">
                                                                 </div>
                                                             </div>
@@ -347,13 +347,7 @@
                                                                     <label>
                                                                         <i class="fe fe-user"></i> User
                                                                     </label>
-                                                                    <div class="col-md-12">
-                                                                        <select class="search-box" name="user" id="update-user">
-                                                                            <option class="hemant">Choisissez un utilisateur</option>
-                                                                            {% for utilisateur in utilisateurs %}
-                                                                                <option class="hemant" value="{{ utilisateur.id }}">{{ utilisateur.username }}</option>
-                                                                            {% endfor %}
-                                                                        </select>
+                                                                    <div class="col-md-12"  id="update-user">
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -509,13 +503,9 @@
     <script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
     <!--Sumoselect js-->
     <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
-    <!--intlTelInput js-->
-    <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
-    <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
     <!--jquery transfer js-->
     <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
-    <!--multi js-->
-    <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
+   
     <!-- Form Advanced Element -->
     <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
     <script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
@@ -554,8 +544,12 @@
                 formData.append("facebook", document.getElementById("facebook").value);
                 formData.append("siteweb", document.getElementById("siteweb").value);
                 formData.append("description",document.getElementById("description").value);
-                formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
-                formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                if(document.getElementById("photo_de_profil").files.length> 0){
+                    formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+                    }
+                    if(document.getElementById("photo_de_couverture").files.length>0){
+                    formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                    }
                 formData.append("en_ligne", document.getElementById("en_ligne").checked);
                 formData.append("is_association", document.getElementById("is_association").checked);
         
@@ -577,11 +571,16 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                        afficherAlert("Ajout","Ajout organisateur avec succès !",'success')
+                    if(data.status==201){
+                        afficherAlert("Ajout",data.message,'success')
                         location.reload();
+                    }
+                    else{
+                        swal("Erreur", data.message, "error");
+                    }
                 })
                 .catch(error => {
-                        swal("Erreur", error, "error");
+                    swal("Erreur", error, "error");
                 });
             });
             const nomInput = document.getElementById("update-nom");
@@ -601,13 +600,18 @@
                 const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
                 const formData = new FormData();
                 formData.append("nom", nomInput.value);
-                formData.append("user", userSelect.value);
+                formData.append("user",document.getElementById("select_user").value);
                 formData.append("youtube", youtubeInput.value);
                 formData.append("facebook", facebookInput.value);
                 formData.append("siteweb", sitewebInput.value);
                 formData.append("description", descriptionInput.value);
-                formData.append("photo_de_profil", photodeprofilInput.files[0]);
-                formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+                if (photodeprofilInput.files.length > 0) {
+                    formData.append("photo_de_profil", photodeprofilInput.files[0]);
+                }
+            
+                if (photodecouvertureInput.files.length > 0) {
+                    formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+                }
                 formData.append("en_ligne", enligneCheckbox.checked);
                 formData.append("is_association", associationCheckbox.checked);
                 organisateurId=document.getElementById('update-organisateur-id').value;
@@ -630,34 +634,60 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                        afficherAlert("Update","Organisateur mis à jour avec succès !",'success')
+                    console.log(data)
+                    if (data.status == 201) {
+                        afficherAlert("Update", data.message, 'success')
                         location.reload();
+                    } else {
+                        swal("Erreur", data.message, "error");
+                    }
                 })
                 .catch(error => {
-                        swal("Erreur", error, "error");
+                    swal("Erreur", error, "error");
                 });
             });
             function afficherDetailsArtiste(details) {
-                nomInput.value = details.nom;
-                userSelect.value = details.user;
-                youtubeInput.value = details.youtube;
-                slugInput.value = details.slug;
-                facebookInput.value = details.facebook;
-                descriptionInput.value = details.description;
-                descriptionInput.placeholder = details.description;
-                sitewebInput.value = details.siteweb;
-                enligneCheckbox.checked = details.en_ligne;
-                associationCheckbox.checked = details.is_assocation;
-                photodeprofil.src=details.photo_de_profil;
-                photodecouverture.src=details.photo_de_couverture
-    
-                for (let i = 0; i < userSelect.options.length; i++) {
-                    if (details.user == userSelect.options[i].value ) {
-                        userSelect.options[i].value = details.user.toString();
-                        userSelect.options[i].selected = true;
-                        break;
+                nomInput.value = details.organisateur.nom;
+                userSelect.value = details.organisateur.user;
+                youtubeInput.value = details.organisateur.youtube;
+                slugInput.value = details.organisateur.slug;
+                facebookInput.value = details.organisateur.facebook;
+                descriptionInput.value = details.organisateur.description;
+                descriptionInput.placeholder = details.organisateur.description;
+                sitewebInput.value = details.organisateur.siteweb;
+                enligneCheckbox.checked = details.organisateur.en_ligne;
+                associationCheckbox.checked = details.organisateur.is_assocation;
+                if(details.organisateur.photo_de_profil!=null){
+                    photodeprofil.src=details.organisateur.photo_de_profil;
                     }
-                }
+                    if(details.organisateur.photo_de_couverture!=null){
+                    photodecouverture.src=details.organisateur.photo_de_couverture
+                    }
+                    var select = document.createElement("select");
+                    select.className = "search-box";
+                    select.name = "user";
+                    select.id="select_user";
+                    
+                    var defaultOption = document.createElement("option");
+                    defaultOption.className = "hemant";
+                    defaultOption.text = "Choisissez un utilisateur";
+                    select.appendChild(defaultOption);
+                    
+                    for (let i = 0; i < details.users.length; i++) {
+                        var option = document.createElement("option");
+                        option.className = "hemant";
+                        option.value = details.users[i].id;
+                        option.text = details.users[i].username;
+                    
+                        if (details.users[i].id == details.organisateur.user) {
+                            option.selected = true;
+                        }
+                    
+                        select.appendChild(option);
+                    }
+                    userSelect.innerHTML = "";
+                    userSelect.appendChild(select);
+                    $(select).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
             }
             function modifierorganisateur(id){
             var organisateurId = id;
@@ -676,6 +706,7 @@
     
             }
             function supprimerorganisateur(id) {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
                 var organisateurid = id;
             
                 swal({
@@ -690,6 +721,9 @@
                     if (isConfirm) {
                         fetch(`/administration/organisateurs/${organisateurid}/delete/`, {
                             method: "DELETE",
+                            headers: {
+                                'X-CSRFToken': csrftoken
+                            }
                         })
                         .then(response => {
                             swal("Message", "Organisateur supprimé avec succès", "success");
@@ -847,7 +881,7 @@
                                 div.id="partienav"+data.organisateurs[i].id;
                                 div.innerHTML = `
                                     <div class="main-img-user online">
-                                        <img alt="photo_de_profil" src="/media/${data.organisateurs[i].photo_de_profil}" class="avatar avatar-md brround">
+                                        ${data.organisateurs[i].photo_de_profil && data.organisateurs[i].photo_de_profil.file_exists ? `<img src="/media/${data.organisateurs[i].photo_de_profil}" alt="photo_de_profil" class="avatar avatar-md brround">` : `<img src="{% static "images/sehatra.png" %}" alt="photo_de_profil" class="avatar avatar-md brround">`}
                                     </div>
                                     <div class="main-contact-body">
                                         <a href="#"  onclick="details(${data.organisateurs[i].id},'${data.organisateurs[i].nom}');"><h6>${data.organisateurs[i].nom}</h6>

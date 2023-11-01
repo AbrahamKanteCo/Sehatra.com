@@ -1117,6 +1117,18 @@ class AssociationCreate(generics.CreateAPIView):
 class OrganisateurCreate(generics.CreateAPIView):
     queryset = Organisateur.objects.all()
     serializer_class = OrganisteurSerializer
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            print("Zety")
+            if 'nom' in serializer.validated_data:
+                self.perform_create(serializer)
+                return JsonResponse({"message": "Ajout d'un organisateur avec succès !", "status": 201})
+            else:
+                return JsonResponse({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+        else:
+            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
 
 
 class LiveCreate(generics.CreateAPIView):
@@ -1237,6 +1249,48 @@ class OrganisateurUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Organisateur.objects.all()
     serializer_class = OrganisteurSerializer
     lookup_field = "pk"
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        artiste_serializer = self.get_serializer(instance)
+
+        users = User.objects.all()
+        user_serializer = UserSerializer(users, many=True)
+
+        artiste_data = artiste_serializer.data
+        users_data = user_serializer.data
+
+        return JsonResponse({
+            "organisateur": artiste_data,
+            "users": users_data
+        })
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            data_to_update = {}
+            for key, value in request.data.items():
+                if key == 'nom' and not value:
+                    return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+                if value: 
+                    data_to_update[key] = value
+
+            if 'nom' not in data_to_update:
+                return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+
+            if data_to_update:
+                serializer = OrganisteurSerializer(instance, data=data_to_update, partial=True)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"message": "Mise à jour d'un organisateur avec succès !", "status": 201})
+                else:
+                    return Response({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
+            else:
+                return Response({"message": "Aucune donnée à mettre à jour.", "status": 400})
+        else:
+            return Response({"message": "L'artiste n'existe pas.", "status": 400})
+
 
 
 def listevideos(request):
@@ -1415,12 +1469,17 @@ def searchorganisateur(request):
         org_data["id"] = entry["pk"]
 
         user_id = org_data.pop("user")
-
-        user = User.objects.get(pk=user_id)
-        user_data = {
-            "id": user.id,
-            "username": user.username,
-        }
+        if user_id is not None:
+            user = User.objects.get(pk=user_id)
+            user_data = {
+                "id": user.id,
+                "username": user.username,
+            }
+        else :
+            user_data={
+                "id":None,
+                "username":None
+            }
 
         org_data["user"] = user_data
         organisateurs_data.append(org_data)
