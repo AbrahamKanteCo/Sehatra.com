@@ -268,13 +268,8 @@
                                                                 <div class="col">
                                                                     <div class="mb-3">
                                                                         <label> <i class="fe fe-user"></i> User</label>
-                                                                        <div class="col-md-12">
-                                                                            <select class="search-box" name="user" id="update-user">
-                                                                                <option class="hemant">Choisissez un utilisateur</option>
-                                                                                {% for utilisateur in utilisateurs%}
-                                                                                <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
-                                                                                {%endfor%}
-                                                                            </select>
+                                                                        <div class="col-md-12"  id="update-user">
+                                                                          
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -457,25 +452,44 @@
                 });
             });
             function afficherDetailsArtiste(details) {
-                nomInput.value = details.nom;
-                userSelect.value = details.user;
-                youtubeInput.value = details.youtube;
-                slugInput.value = details.slug;
-                enligneCheckbox.checked = details.en_ligne;
-                if(details.photo_de_profil!=null){
-                photodeprofil.src=details.photo_de_profil;
+                nomInput.value = details.artiste.nom;
+                userSelect.value = details.artiste.user;
+                youtubeInput.value = details.artiste.youtube;
+                slugInput.value = details.artiste.slug;
+                enligneCheckbox.checked = details.artiste.en_ligne;
+                if(details.artiste.photo_de_profil!=null){
+                photodeprofil.src=details.artiste.photo_de_profil;
                 }
-                if(details.photo_de_couverture!=null){
-                photodecouverture.src=details.photo_de_couverture
+                if(details.artiste.photo_de_couverture!=null){
+                photodecouverture.src=details.artiste.photo_de_couverture
                 }
-
-                for (let i = 0; i < userSelect.options.length; i++) {
-                    if (details.user == userSelect.options[i].value ) {
-                        userSelect.options[i].value = details.user.toString();
-                        userSelect.options[i].selected = true;
-                        break;
+                var mm = document.createElement("select");
+                mm.className = "search-box";
+                mm.name = "user";
+                
+                var defaultOption = document.createElement("option");
+                defaultOption.className = "hemant";
+                defaultOption.text = "Choisissez un utilisateur";
+                mm.appendChild(defaultOption);
+                
+                for (let i = 0; i < details.users.length; i++) {
+                    var option = document.createElement("option");
+                    option.className = "hemant";
+                    option.value = details.users[i].id;
+                    option.text = details.users[i].username;
+                
+                    if (details.users[i].id == details.artiste.user) {
+                        option.selected = true;
                     }
+                
+                    mm.appendChild(option);
                 }
+                // Maintenant, ajoutez le nouveau select à l'élément parent existant
+                userSelect.innerHTML = "";
+                userSelect.appendChild(mm);
+                $(mm).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+                                       
+                
             }
             function detail(id){
             var artisteId = id;
@@ -582,15 +596,8 @@
         <!--Sumoselect js-->
         <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
 
-        <!--intlTelInput js-->
-        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
-        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
-
         <!--jquery transfer js-->
         <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
-
-        <!--multi js-->
-            <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
 
         <!-- Form Advanced Element -->
         <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>

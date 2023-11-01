@@ -37,6 +37,7 @@ from .serializers import (
     AssociationSerializer,
     LiveSerializer,
     OrganisteurSerializer,
+    UserSerializer,
     VideoSerializer,
 )
 from django.db.models import Q,Avg
@@ -865,6 +866,21 @@ class ArtisteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Artiste.objects.all()
     serializer_class = ArtisteSerializer
     lookup_field = "pk"
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        artiste_serializer = self.get_serializer(instance)
+
+        users = User.objects.all()
+        user_serializer = UserSerializer(users, many=True)
+
+        artiste_data = artiste_serializer.data
+        users_data = user_serializer.data
+
+        return JsonResponse({
+            "artiste": artiste_data,
+            "users": users_data
+        })
+    
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
 
