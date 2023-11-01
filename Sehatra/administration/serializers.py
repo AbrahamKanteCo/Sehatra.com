@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from plateforme.models import Association, Live, Organisateur, Artiste, Video
+from plateforme.models import Action, Association, Live, Organisateur, Artiste, Video
 from django.contrib.auth.models import User
 
 
@@ -32,4 +32,10 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = '__all__'
+
+class ActionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Action
+        fields = '__all__'
+
 

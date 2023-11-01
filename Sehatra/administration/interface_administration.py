@@ -7,6 +7,8 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.contrib.humanize.templatetags.humanize import intcomma
 
+from plateforme.models import Organisateur
+
 from .facebook.facebookdata import (
     AudienceParAgeEtSexe,
     AudienceParSexe,
@@ -33,6 +35,7 @@ from paiement.models import  Billet,Paiement
 
 
 from .serializers import (
+    ActionSerializer,
     ArtisteSerializer,
     AssociationSerializer,
     LiveSerializer,
@@ -1153,6 +1156,30 @@ class VideosCreate(generics.CreateAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        print(serializer)
+        
+        if serializer.is_valid():
+            print("ato e")
+            data = serializer.validated_data
+            print("Gratuit:"+ data.get('gratuit'))
+
+            if data.get('gratuit'):
+                if data.get('tarif_ariary') is None or data.get('tarif_euro') is None or data.get('tarif_dollar') is None:
+                    return JsonResponse({"message": "Les champs tarif sont obligatoires pour une vidéo gratuite.", "status": 400})
+
+            if data.get('organisateur') is None:
+                data['organisateur'] = 3
+
+            if not data.get('titre'):
+                return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+
+            self.perform_create(serializer)
+            return JsonResponse({"message": "Ajout d'une vidéo avec succès !", "status": 201})
+        else:
+            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
+
 
 class AssociationUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Association.objects.all()
@@ -1243,6 +1270,74 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Video.objects.all()
     serializer_class = VideoSerializer
     lookup_field = "pk"
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        artiste_serializer = self.get_serializer(instance)
+
+        users = User.objects.all()
+        user_serializer = UserSerializer(users, many=True)
+        action_serializer=ActionSerializer(Action.objects.all(),many=True)
+        organisateur_serializer=OrganisteurSerializer(Organisateur.objects.all(),many=True)
+        artiste_serializer=ArtisteSerializer(Artiste.objects.all(),many=True)
+
+        artiste_data = artiste_serializer.data
+        users_data = user_serializer.data
+        action_data=action_serializer.data
+        organisateur_data=organisateur_serializer.data
+        artiste_data_select=artiste_serializer.data
+
+
+        return JsonResponse({
+            "artiste": artiste_data,
+            "users": users_data,
+            "organisateur":organisateur_data,
+            "action":action_data,
+            "artiste_select":artiste_data_select
+        })
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            data_to_update = {}
+            for key, value in request.data.items():
+                if key == 'titre' and not value:
+                    return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+
+                if key == 'gratuit' and value:
+                    if (
+                        'tarif_ariary' not in request.data
+                        or 'tarif_euro' not in request.data
+                        or 'tarif_dollar' not in request.data
+                    ):
+                        return JsonResponse(
+                            {
+                                "message": "Les champs tarif sont obligatoires pour une vidéo gratuite.",
+                                "status": 400,
+                            }
+                        )
+
+                if not value:
+                    data_to_update[key] = value
+
+            if 'titre' not in data_to_update:
+                return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+
+            if 'organisateur' not in data_to_update:
+                data_to_update['organisateur'] = 3 
+
+            if data_to_update:
+                serializer = VideoSerializer(instance, data=data_to_update, partial=True)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return JsonResponse({"message": "Mise à jour d'une vidéo avec succès !", "status": 201})
+                else:
+                    return JsonResponse({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
+            else:
+                return JsonResponse({"message": "Aucune donnée à mettre à jour.", "status": 400})
+        else:
+            return JsonResponse({"message": "La vidéo n'existe pas.", "status": 400})
 
 
 class OrganisateurUpdateView(generics.RetrieveUpdateDestroyAPIView):

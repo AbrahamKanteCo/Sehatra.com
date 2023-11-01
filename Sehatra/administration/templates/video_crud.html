@@ -340,7 +340,7 @@
                                                                         <label>Artiste</label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="artiste" name="artiste">
-                                                                                <option class="hemant">Choisissez une artiste</option>
+                                                                                <option class="hemant" value="">Choisissez une artiste</option>
                                                                                 {% for artiste in artistes%}
                                                                                 <option class="hemant" value="{{artiste.id}}">{{artiste.nom}}</option>
                                                                                 {%endfor%}
@@ -353,7 +353,7 @@
                                                                         <label>Organisateur </label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="organisateur" name="organisateur">
-                                                                                <option class="hemant">Choisissez un organisateur</option>
+                                                                                <option class="hemant" value="">Choisissez un organisateur</option>
                                                                                 {% for organisateur in organisateurs%}
                                                                                 <option class="hemant" value="{{organisateur.id}}">{{organisateur.nom}}</option>
                                                                                 {%endfor%}
@@ -366,7 +366,7 @@
                                                                         <label>Live </label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="live" name="live">
-                                                                                <option class="hemant">Choisissez un live</option>
+                                                                                <option class="hemant" value="">Choisissez un live</option>
                                                                                 {% for live in lives%}
                                                                                 <option class="hemant" value="{{live.id}}">{{live.titre}}</option>
                                                                                 {%endfor%}
@@ -395,7 +395,7 @@
                                                                         <label>Action</label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="action" name="action">
-                                                                                <option class="hemant">Choisissez une action</option>
+                                                                                <option class="hemant" value="">Choisissez une action</option>
                                                                                 {% for action in actions%}
                                                                                 <option class="hemant" value="{{action.id}}">{{action.titre}}</option>
                                                                                 {%endfor%}
@@ -556,11 +556,8 @@
                                                     </div>
                                                     <div class="mb-0">
                                                         <label class="form-label">Artistes</label>
-                                                        <select class="form-control select2" data-placeholder="Choose artistes" id="update_artistes" name="artistes" multiple>
-                                                                {% for artiste in artistes%}
-                                                                <option value="{{artiste.id}}">{{artiste.nom}}</option>
-                                                                {%endfor%}
-                                                            </select>
+                                                        <div id="update_artistes">
+                                                        </div>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
@@ -818,27 +815,36 @@
                 showConfirmButton: false
             });
         }
+        function appendIfValueExists(formData, id, fieldName) {
+            const element = document.getElementById(id);
+            const value = element.value;
+            if (value) {
+                formData.append(fieldName, value);
+            }
+        }
 
         document.getElementById("add-button").addEventListener("click", function() {
             const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("titre", document.getElementById("titre").value);
-            formData.append("duree", document.getElementById("duree").value);
-            formData.append("date_sortie", document.getElementById("date_sortie").value);
-            formData.append("organisateur", document.getElementById("organisateur").value);
-            formData.append("stripe_price_id", document.getElementById("stripe_price_id").value);
-            formData.append("action", document.getElementById("action").value);
-            formData.append("live", document.getElementById("live").value);
-            formData.append("artiste", document.getElementById("artiste").value);
-            formData.append("artistes", document.getElementById("artistes").value);
-            formData.append("tarif_ariary", document.getElementById("tarif_ariary").value);
-            formData.append("tarif_dollar", document.getElementById("tarif_dollar").value);
-            formData.append("tarif_euro", document.getElementById("tarif_euro").value);
-            formData.append("youtube", document.getElementById("youtube").value);
-            formData.append("description_longue",document.getElementById("description_longue").value);
-            formData.append("description_courte",document.getElementById("description_courte").value);
-            formData.append("lien_video", document.getElementById("lien_video").value);
-            formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+            appendIfValueExists(formData, "duree", "duree");
+            appendIfValueExists(formData, "date_sortie", "date_sortie");
+            appendIfValueExists(formData, "organisateur", "organisateur");
+            appendIfValueExists(formData, "stripe_price_id", "stripe_price_id");
+            appendIfValueExists(formData, "action", "action");
+            appendIfValueExists(formData, "live", "live");
+            appendIfValueExists(formData, "artiste", "artiste");
+            appendIfValueExists(formData, "artistes", "artistes");
+            appendIfValueExists(formData, "tarif_ariary", "tarif_ariary");
+            appendIfValueExists(formData, "tarif_dollar", "tarif_dollar");
+            appendIfValueExists(formData, "tarif_euro", "tarif_euro");
+            appendIfValueExists(formData, "youtube", "youtube");
+            appendIfValueExists(formData, "description_longue", "description_longue");
+            appendIfValueExists(formData, "description_courte", "description_courte");
+            appendIfValueExists(formData, "lien_video", "lien_video");
+            if(document.getElementById("photo_de_couverture").files.length>0){
+                formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+            }
             formData.append("en_ligne", document.getElementById("en_ligne").checked);
             formData.append("levee_de_fond", document.getElementById("levee_de_fond").checked);
             formData.append("gratuit", document.getElementById("gratuit").checked);
@@ -864,9 +870,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                afficherAlert("Ajout","Videos mis à jour avec succès !",'success')
-                location.reload()
-
+                if(data.status==201){
+                    afficherAlert("Ajout",data.message,'success')
+                    location.reload();
+                }
+                else{
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
                 swal("Erreur", error, "error");
@@ -892,7 +902,9 @@
             formData.append("description_longue",document.getElementById("update_description_longue").value);
             formData.append("description_courte",document.getElementById("update_description_courte").value);
             formData.append("lien_video", document.getElementById("update_lien_video").value);
-            formData.append("photo_de_couverture", document.getElementById("update_photo_de_couverture").files[0]);
+            if (document.getElementById("update_photo_de_couverture").files.length > 0) {
+                formData.append("photo_de_couverture", document.getElementById("update_photo_de_couverture").files[0]);
+            }
             formData.append("en_ligne", document.getElementById("update_en_ligne").checked);
             formData.append("levee_de_fond", document.getElementById("update_levee_de_fond").checked);
             formData.append("gratuit", document.getElementById("update_gratuit").checked);
@@ -910,8 +922,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                afficherAlert("Update","Videos mis à jour avec succès !",'success')
-                location.reload()
+                console.log(data)
+                if (data.status == 201) {
+                    afficherAlert("Update", data.message, 'success')
+                    location.reload();
+                } else {
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
                 swal("Erreur", error, "error");
@@ -960,6 +977,7 @@
 
         }
         function supprimer(id) {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             var videoId = id;
         
             swal({
@@ -974,6 +992,9 @@
                 if (isConfirm) {
                     fetch(`/administration/videos/${videoId}/delete/`, {
                         method: "DELETE",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
                     })
                     .then(response => {
                         swal("Message", "Vidéo supprimé avec succès", "success");
