@@ -1,6 +1,7 @@
 {% extends 'components/base.html' %}
 {% load static %}
 {% load humanize %}
+{% load custom_tags %}
 
 
     {% block styles %}
@@ -42,7 +43,11 @@
                                                                        
                                                                         <td class="align-middle">
                                                                             <div class="d-flex">
+                                                                                {%if artiste.photo_de_profil and artiste.photo_de_profil|file_exists %}
                                                                                 <span class="avatar brround avatar-md d-block" style="background-image: url('/media/{{ artiste.photo_de_profil }}')"></span>
+                                                                                {%else%}
+                                                                                <span class="avatar brround avatar-md d-block" style="background-image: url('{% static "images/sehatra.png" %}')"></span>
+                                                                                {%endif%}
                                                                                 <div class="ms-3 mt-1">
                                                                                     <h6 class="mb-0 font-weight-bold">{{artiste.nom}}</h6>
                                                                                 </div>
