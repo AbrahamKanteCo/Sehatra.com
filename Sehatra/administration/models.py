@@ -9,14 +9,14 @@ from django_countries.fields import CountryField
 from django.utils.text import slugify
 import uuid
 
-from plateforme.models import Artiste, Video
+from plateforme.models import Organisateur, Video
 
 def is_artist(self):
         if self.is_authenticated:
             try:
-                artiste = Artiste.objects.get(user=self, en_ligne=True)
+                artiste = Organisateur.objects.get(user=self, en_ligne=True)
                 return True
-            except Artiste.DoesNotExist:
+            except Organisateur.DoesNotExist:
                 return False
         return False
 

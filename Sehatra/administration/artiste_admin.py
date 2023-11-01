@@ -8,7 +8,7 @@ from administration.interface_administration import marquer_notification_read, s
 from administration.models import NotificationFCM, PageAnalytics, VenteParPays, Video_facebook
 from paiement.models import Billet, Paiement
 from django.contrib.humanize.templatetags.humanize import intcomma
-from plateforme.models import Artiste, Organisateur, Video
+from plateforme.models import Artiste, Video
 from django.db.models.functions import TruncMonth
 from django.db.models import Q,Avg
 from django.core.paginator import Paginator
@@ -31,17 +31,17 @@ def ventes_video_artiste(request):
                 video_billet__valide=True,
                 video_billet__gratuit=False,
                 video_billet__billet_paiement__date__gte=since,
-                organisateur__user=id,
+                artiste__user=id,
             ),
         )
-    ).values("titre", "nombre_ventes", "photo_de_couverture", "organisateur__nom")
+    ).values("titre", "nombre_ventes", "photo_de_couverture", "artiste__nom")
     notifications = NotificationFCM.objects.filter(user=2).order_by("-created_at")[:5]
     context = {"ventes_video": ventes_par_video, "notifications": notifications}
 
     return render(request, "ventes_video_artiste.html", context)
 def transactions_artistes(request):
     id=request.user.id
-    transactions = Paiement.objects.filter(billet__gratuit=False,billet__video__organisateur__user=id).order_by("-date")
+    transactions = Paiement.objects.filter(billet__gratuit=False,billet__video__artiste__user=id).order_by("-date")
     transactions_valide = transactions.filter(
         billet__gratuit=False, valide=True
     )
@@ -97,7 +97,7 @@ def statistiques_vues_nouveaux_utilisateurs_json(request):
     id=request.user.id
     date_actuelle = datetime.datetime.now()
 
-    videos = Video.objects.filter(organisateur__user=id)
+    videos = Video.objects.filter(artiste__user=id)
     conditions = [Q(path__icontains=video.slug) for video in videos]
 
     filtre_pages = Q()
@@ -147,7 +147,7 @@ def statistiques_ventes_artiste_json(request, annee):
             Paiement.objects.filter(
                 valide=True,
                 billet__gratuit=False,
-                billet__video__organisateur__user_id=id,
+                billet__video__artiste__user_id=id,
                 date__year=annee,
                 date__month__lte=date_actuelle.month,
             )
@@ -172,7 +172,7 @@ def statistiques_ventes_artiste_json(request, annee):
             Paiement.objects.filter(
                 valide=True,
                 billet__gratuit=False,
-                billet__video__organisateur__user_id=id,
+                billet__video__artiste__user_id=id,
                 date__year=annee,
             )
             .annotate(mois=TruncMonth("date"))
@@ -225,11 +225,11 @@ def envoi_notification_artiste():
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
 
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
-    artistes = Organisateur.objects.filter(user__is_active=True, en_ligne=True)
+    artistes = Artiste.objects.filter(user__is_active=True, en_ligne=True)
     for artiste in artistes:
         user = artiste.user
         paiements = Paiement.objects.filter(
-            valide=True, billet__gratuit=False,billet__video__organisateur__user=user.id,date__range=(debut_journee,fin_journee)
+            valide=True, billet__gratuit=False,billet__video__artiste__user=user.id,date__range=(debut_journee,fin_journee)
         ).order_by("-date")
         somme = Paiement.calculer_paiement(paiements)
         revenus = somme * 40 / 100
@@ -263,7 +263,8 @@ def dashboardartiste(request):
     last_month = (debut_28 - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
 
     # oeuvre
-    videos = Video.objects.filter(organisateur__user=id)
+    videos = Video.objects.filter(artiste__user=id)
+
     resultats = []
 
     for video in videos:
@@ -289,7 +290,7 @@ def dashboardartiste(request):
     paiements = Paiement.objects.filter(
         valide=True,
         billet__gratuit=False,
-        billet__video__organisateur__user=id,
+        billet__video__artiste__user=id,
     ).order_by("-date")
     somme = Paiement.calculer_paiement(paiements)
     revenus = somme * pourcentage_artiste
@@ -299,7 +300,7 @@ def dashboardartiste(request):
         valide=True,
         billet__gratuit=False,
         date__range=(last_month, since),
-        billet__video__organisateur__user=id,
+        billet__video__artiste__user=id,
     ).order_by("-date")
     revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * pourcentage_artiste
     revenus_difference = revenus - revenus_last_month
@@ -310,23 +311,23 @@ def dashboardartiste(request):
     ventes_difference = ventes - ventes_last_month
 
     # nombre de contenues
-    videos = Video.objects.filter(organisateur__user=id)
+    videos = Video.objects.filter(artiste__user=id)
     contenus = len(videos)
 
     # nombre de contenues le mois dernier
     videos_last_month = Video.objects.filter(
-        organisateur__user=id, date_sortie__range=(last_month, since)
+        artiste__user=id, date_sortie__range=(last_month, since)
     )
     contenus_last_month = len(videos_last_month)
     contenus_difference = contenus - contenus_last_month
     # publications
-    publications = Video_facebook.objects.filter(video__organisateur__user=id)
+    publications = Video_facebook.objects.filter(video__artiste__user=id)
     pub = len(publications)
 
     # publication le mois dernier
 
     publications_last_month = Video_facebook.objects.filter(
-        video__organisateur__user=id, date_publication__range=(last_month, since)
+        video__artiste__user=id, date_publication__range=(last_month, since)
     )
     pub_last_month = len(publications_last_month)
     pub_difference = pub - pub_last_month
@@ -335,7 +336,7 @@ def dashboardartiste(request):
 
     ventes_valides = VenteParPays.objects.filter(
         Q(
-            slug__in=Billet.objects.filter(gratuit=False, video__organisateur__user=id).values_list(
+            slug__in=Billet.objects.filter(gratuit=False, video__artiste__user=id).values_list(
                 "slug", flat=True
             )
         )
@@ -352,14 +353,14 @@ def dashboardartiste(request):
     paiements_28 = Paiement.objects.filter(
         valide=True,
         billet__gratuit=False,
-        billet__video__organisateur__user=id,
+        billet__video__artiste__user=id,
         date__range=(since,until)
     ).order_by("-date")
     #billet manuelle
     somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
-    if(total_ventes < ventes):
+    if(total_ventes< ventes):
         manuelle=str(paiements_28.count()-total_ventes)
     
     date_actuelle = datetime.datetime.now()
@@ -394,7 +395,7 @@ def dashboardartiste(request):
 def artistevideo(request):
     id=request.user.id
     marquer_notification_read(request)
-    videos = Video.objects.filter(organisateur__user=id).order_by("-date_sortie")
+    videos = Video.objects.filter(artiste__user=id).order_by("-date_sortie")
     paginator = Paginator(videos, pagination)
 
     page_number = request.GET.get("page")
@@ -415,7 +416,7 @@ def rechercheartistevideo(request):
             Q(titre__icontains=keyword) | Q(date_sortie__icontains=keyword)
         )
     else:
-        videos = Video.objects.filter(organisateur__user=id).order_by("-date_sortie")
+        videos = Video.objects.filter(artiste__user=id).order_by("-date_sortie")
 
     paginator = Paginator(videos, pagination)
 
@@ -475,7 +476,7 @@ def pages_artistes(request):
     since = debut_28.strftime("%Y-%m-%d")
 
     # oeuvre
-    videos = Video.objects.filter(organisateur__user=id)
+    videos = Video.objects.filter(artiste__user=id)
 
     resultats = []
     total_vues = 0

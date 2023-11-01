@@ -159,7 +159,7 @@ def ventes_video(request):
                 video_billet__billet_paiement__date__range=(since,datetime.datetime.now()),
             ),
         )
-    ).values("titre", "nombre_ventes", "photo_de_couverture", "artiste__nom")
+    ).values("titre", "nombre_ventes", "photo_de_couverture", "organisateur__nom")
     notifications = NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[:5]
     context = {"ventes_video": ventes_par_video, "notifications": notifications}
 
@@ -376,7 +376,7 @@ def dashboard(request):
                     video_billet__billet_paiement__date__gte=since,
                 ),
             )
-        ).values("titre", "nombre_ventes", "photo_de_couverture", "artiste__nom")
+        ).values("titre", "nombre_ventes", "photo_de_couverture", "organisateur__nom")
     ).order_by('-nombre_ventes')[:4]
 
     # pages
@@ -664,7 +664,7 @@ def ventes_data(request):
     ventes_valides = VenteParPays.objects.filter(
         Q(
             slug__in=Billet.objects.filter(
-                valide=True, video__artiste__user=request.user.id
+                valide=True, video__organisateur__user=request.user.id
             ).values_list("slug", flat=True)
         )
         & Q(

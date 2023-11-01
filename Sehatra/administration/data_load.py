@@ -117,7 +117,7 @@ def dashboard_data (request):
     vente_html=""
     if len(ventes_groupees)>0:
         for ventes_groupee in ventes_groupees:
-            vente_html+="<tr><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" ventes </span></td></tr>"
+            vente_html+="<tr><td>"+str(ventes_groupee['pays'])+"</td><td class='text-end'><span class='font-weight-bold'>"+str(ventes_groupee['nombre_ventes'])+" vente(s)</span></td></tr>"
 
         if(manuelle!='Aucun'):
             vente_html+="<td style='color:red'>Manuelle</td><td  style='color:red' class='text-end'><span class='font-weight-bold'>"+manuelle+" vente(s)</span></td>"
@@ -194,12 +194,12 @@ def dashboard_load_artiste (request):
   
 
     #revenue
-    paiements = Paiement.objects.filter(valide=True,billet__gratuit=False,date__range=(date_debut,date_fin),billet__video__artiste__user=artiste_id).order_by("-date")
+    paiements = Paiement.objects.filter(valide=True,billet__gratuit=False,date__range=(date_debut,date_fin),billet__video__organisateur__user=artiste_id).order_by("-date")
     somme=Paiement.calculer_paiement(paiements)
     revenus = somme * 60 / 100
 
     #revenu last month
-    paiements_last_month = Paiement.objects.filter(valide=True,billet__gratuit=False,date__range=(last_month,date_debut),billet__video__artiste__user=artiste_id).order_by("-date")
+    paiements_last_month = Paiement.objects.filter(valide=True,billet__gratuit=False,date__range=(last_month,date_debut),billet__video__organisateur__user=artiste_id).order_by("-date")
     revenus_last_month=(Paiement.calculer_paiement(paiements_last_month))* 60 / 100
     revenus_difference=revenus-revenus_last_month
 
@@ -225,11 +225,11 @@ def dashboard_load_artiste (request):
         ventes_html+= "<small class='mb-1 text-muted'>Aucun évolution</small>"
 
     #nombre de contenues
-    videos=Video.objects.filter(artiste__user=2)
+    videos=Video.objects.filter(organisateur__user=artiste_id)
     contenus=len(videos)
 
     #nombre de contenues le mois dernier
-    videos_last_month=Video.objects.filter(artiste__user=2,date_sortie__range=(last_month,date_debut))
+    videos_last_month=Video.objects.filter(organisateur__user=artiste_id,date_sortie__range=(last_month,date_debut))
     contenus_last_month=len(videos_last_month)
     contenus_difference=contenus-contenus_last_month
 
@@ -243,12 +243,12 @@ def dashboard_load_artiste (request):
         contenus_html+= "<small class='mb-1 text-muted'>Aucun évolution</small>"
 
     #publications
-    publications=Video_facebook.objects.filter(video__artiste__user=2,date_publication__range=(date_debut,date_fin))
+    publications=Video_facebook.objects.filter(video__organisateur__user=artiste_id,date_publication__range=(date_debut,date_fin))
     pub=len(publications)
 
     #publication le mois dernier
 
-    publications_last_month=Video_facebook.objects.filter(video__artiste__user=2,date_publication__range=(last_month,date_debut))
+    publications_last_month=Video_facebook.objects.filter(video__organisateur__user=artiste_id,date_publication__range=(last_month,date_debut))
     pub_last_month=len(publications_last_month)
     pub_difference=pub-pub_last_month
 
@@ -263,7 +263,7 @@ def dashboard_load_artiste (request):
 
     ventes_valides = VenteParPays.objects.filter(
         Q(
-            slug__in=Billet.objects.filter(gratuit=False, video__artiste__user=artiste_id).values_list(
+            slug__in=Billet.objects.filter(gratuit=False, video__organisateur__user=artiste_id).values_list(
                 "slug", flat=True
             )
         )
@@ -281,20 +281,20 @@ def dashboard_load_artiste (request):
     somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
-    if(total_ventes< ventes):
+    if total_ventes is not None and total_ventes < ventes:
         manuelle=str(ventes-total_ventes)
 
     ventes_pays_html="<table class='table card-table text-nowrap'><tbody>"
     if len(ventes_groupees):
         for vente_groupe in ventes_groupees:
-            ventes_pays_html+="<tr><td>"+str(vente_groupe['pays'])+"</td><td class='w-3 text-end'><span class=''>"+str(vente_groupe['nombre_ventes'])+"</span></td></tr>"
+            ventes_pays_html+="<tr><td>"+str(vente_groupe['pays'])+"</td><td class='w-3 text-end'><span class=''>"+str(vente_groupe['nombre_ventes'])+" vente(s)</span></td></tr>"
         if(manuelle!='Aucun'):
             ventes_pays_html+="<td style='color:red'>Manuelle</td><td  style='color:red' class='text-end'><span class='font-weight-bold'>"+manuelle+" vente(s)</span></td>"
         ventes_pays_html+="</tbody></table>"
     else:
         ventes_pays_html+="<tr><td colspan='3'>Aucune vente durant cette période.</td></tr>"
 
-    videos = Video.objects.filter(artiste__user=2)
+    videos = Video.objects.filter(organisateur__user=artiste_id)
 
     resultats = []
 
@@ -316,10 +316,11 @@ def dashboard_load_artiste (request):
             resultats.append(
                 {"titre": video.titre, "total_vues": total_vues, "ventes": len(nb_ventes)}
             )
+    resultats_tries = sorted(resultats, key=lambda x: (x["total_vues"], x["ventes"]), reverse=True)[:2]
 
     pages_html=""
-    if len(resultats)>0:
-        for page in resultats:
+    if len(resultats_tries)>0:
+        for page in resultats_tries:
             pages_html+=" <tr><td class='font-weight-bold'>"+str(page['titre'])+"</td><td>"+str(page['total_vues'])+"</td><td>"+str(page['ventes'])+"</td></tr>"
     else:
         pages_html="<td></td><td style='text-align:center'>Aucune donnée</td><td></td>"
