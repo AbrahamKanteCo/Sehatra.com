@@ -1368,7 +1368,7 @@ def recherchelive(request):
         }
     return render(request, "live_crud.html", context)
 
-from datetime import date
+from datetime import date, timedelta
 from django.db.models import OuterRef,ExpressionWrapper
 from django.db.models.functions import Coalesce
 from django.db.models import Sum, Case, When, F, Value, Count, Q
@@ -1377,6 +1377,7 @@ def artistes(request):
     marquer_notification_read(request)
 
     aujourd_hui = date.today()
+    date_hier = aujourd_hui - timedelta(days=1)
 
 
     performances_artiste = (
@@ -1395,8 +1396,8 @@ def artistes(request):
                     filter=Q(
                         organisateur_video__video_billet__billet_paiement__valide=True,
                         organisateur_video__video_billet__gratuit=False,
-                        organisateur_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
-                        organisateur_video__video_billet__billet_paiement__date__month=aujourd_hui.month
+                        organisateur_video__video_billet__billet_paiement__date__year=date_hier.year,
+                        organisateur_video__video_billet__billet_paiement__date__month=date_hier.month
                     )
                 ), 0
             ) * 60 / 100,
