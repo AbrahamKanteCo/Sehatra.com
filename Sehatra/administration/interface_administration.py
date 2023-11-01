@@ -850,15 +850,17 @@ class ArtisteCreate(generics.CreateAPIView):
     serializer_class = ArtisteSerializer
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+        print(serializer)
         
         if serializer.is_valid():
             if 'nom' in serializer.validated_data:
                 self.perform_create(serializer)
-                return JsonResponse({"message":"Ajout d'un artiste avec succès !","status":201})
+                return JsonResponse({"message": "Ajout d'un artiste avec succès !", "status": 201})
             else:
-                return JsonResponse({"message": "Le champ 'nom' est obligatoire.","status":400})
+                return JsonResponse({"message": "Le champ 'nom' est obligatoire.", "status": 400})
         else:
-            return JsonResponse({"message": "Le champ nom est obligatoire","status":400})
+            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
+
 
 
 
@@ -885,16 +887,26 @@ class ArtisteUpdateView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
 
         if instance:
-            if 'nom' in request.data:
-                serializer = ArtisteSerializer(instance, data=request.data, partial=True)
+            data_to_update = {}
+            for key, value in request.data.items():
+                if key == 'nom' and not value:
+                    return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+                if value: 
+                    data_to_update[key] = value
+
+            if 'nom' not in data_to_update:
+                return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+
+            if data_to_update:
+                serializer = ArtisteSerializer(instance, data=data_to_update, partial=True)
 
                 if serializer.is_valid():
                     serializer.save()
                     return Response({"message": "Mise à jour d'un artiste avec succès !", "status": 201})
                 else:
-                    return Response({"message": "Le champ 'nom' est obligatoire.", "status":400})
+                    return Response({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
             else:
-                return Response({"message": "Le champ 'nom' est obligatoire.", "status":400})
+                return Response({"message": "Aucune donnée à mettre à jour.", "status": 400})
         else:
             return Response({"message": "L'artiste n'existe pas.", "status": 400})
 

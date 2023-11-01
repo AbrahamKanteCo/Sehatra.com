@@ -187,7 +187,7 @@
                                                                                 <label> <i class="fe fe-user"></i> User</label>
                                                                                 <div class="col-md-12">
                                                                                     <select class="search-box" name="user" id="user">
-                                                                                        <option class="hemant">Choisissez un utilisateur</option>
+                                                                                        <option class="hemant" value="">Choisissez un utilisateur</option>
                                                                                         {% for utilisateur in utilisateurs%}
                                                                                         <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
                                                                                         {%endfor%}
@@ -365,8 +365,12 @@
                 formData.append("nom", document.getElementById("nom").value);
                 formData.append("user", document.getElementById("user").value);
                 formData.append("youtube", document.getElementById("youtube").value);
+                if(document.getElementById("photo_de_profil").files.length> 0){
                 formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+                }
+                if(document.getElementById("photo_de_couverture").files.length>0){
                 formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                }
                 formData.append("en_ligne",document.getElementById("en_ligne").checked);
             
                 const loadingSwal = swal({
@@ -405,11 +409,10 @@
                 const formData = new FormData();
             
                 formData.append("nom", nomInput.value);
-                formData.append("user", userSelect.value);
+                formData.append("user", document.getElementById("select_user").value);
                 formData.append("youtube", youtubeInput.value);
                 formData.append("slug", slugInput.value);
             
-                // Vérifiez si les champs de fichier ne sont pas vides avant de les ajouter au formulaire
                 if (photodeprofilInput.files.length > 0) {
                     formData.append("photo_de_profil", photodeprofilInput.files[0]);
                 }
@@ -466,6 +469,7 @@
                 var select = document.createElement("select");
                 select.className = "search-box";
                 select.name = "user";
+                select.id="select_user";
                 
                 var defaultOption = document.createElement("option");
                 defaultOption.className = "hemant";
