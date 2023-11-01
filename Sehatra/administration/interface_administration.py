@@ -840,16 +840,48 @@ def rechercheartiste(request):
     return render(request, "artistes_crud.html", context)
 
 # from django.contrib.auth.decorators import permission_required
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework import generics
 
 class ArtisteCreate(generics.CreateAPIView):
     queryset = Artiste.objects.all()
     serializer_class = ArtisteSerializer
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            if 'nom' in serializer.validated_data:
+                self.perform_create(serializer)
+                return JsonResponse({"message":"Ajout d'un artiste avec succès !","status":201})
+            else:
+                return JsonResponse({"message": "Le champ 'nom' est obligatoire.","status":400})
+        else:
+            return JsonResponse({"message": "Le champ nom est obligatoire","status":400})
+
 
 
 class ArtisteUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Artiste.objects.all()
     serializer_class = ArtisteSerializer
     lookup_field = "pk"
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            if 'nom' in request.data:
+                serializer = ArtisteSerializer(instance, data=request.data, partial=True)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"message": "Mise à jour d'un artiste avec succès !", "status": 201})
+                else:
+                    return Response({"message": "Le champ 'nom' est obligatoire.", "status":400})
+            else:
+                return Response({"message": "Le champ 'nom' est obligatoire.", "status":400})
+        else:
+            return Response({"message": "L'artiste n'existe pas.", "status": 400})
+
 
 
 def associations(request):

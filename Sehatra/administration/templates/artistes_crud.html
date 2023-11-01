@@ -179,7 +179,7 @@
                                                                         <div class="col">
                                                                             <div class="mb-3">
                                                                                 <label>Nom</label>
-                                                                                <input class="form-control" type="text" id="nom" name="nom" placeholder="John Smith">
+                                                                                <input class="form-control" type="text" id="nom" name="nom" placeholder="Samoela">
                                                                             </div>
                                                                         </div>
                                                                         <div class="col">
@@ -392,8 +392,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    afficherAlert("Ajout","Ajout d'un artiste avec succès !",'success')
-                    location.reload();
+                    if(data.status==201){
+                        afficherAlert("Ajout",data.message,'success')
+                        location.reload();
+                    }
+                    else{
+                        swal("Erreur", data.message, "error");
+                    }
                 })
                 .catch(error => {
                     swal("Erreur", error, "error");
@@ -403,24 +408,33 @@
             document.getElementById("update-button").addEventListener("click", function() {
                 const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
                 const formData = new FormData();
+            
                 formData.append("nom", nomInput.value);
                 formData.append("user", userSelect.value);
                 formData.append("youtube", youtubeInput.value);
                 formData.append("slug", slugInput.value);
-                formData.append("photo_de_profil", photodeprofilInput.files[0]);
-                formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+            
+                // Vérifiez si les champs de fichier ne sont pas vides avant de les ajouter au formulaire
+                if (photodeprofilInput.files.length > 0) {
+                    formData.append("photo_de_profil", photodeprofilInput.files[0]);
+                }
+            
+                if (photodecouvertureInput.files.length > 0) {
+                    formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+                }
+            
                 formData.append("en_ligne", enligneCheckbox.checked);
-                artisteId=document.getElementById('update-artiste-id').value;
-
+                artisteId = document.getElementById('update-artiste-id').value;
+            
                 const loadingSwal = swal({
                     title: "Modification",
                     text: "En cours...",
                     icon: "info",
-                    buttons: false, 
-                    closeOnClickOutside: false, 
+                    buttons: false,
+                    closeOnClickOutside: false,
                     closeOnEsc: false
                 });
-        
+            
                 fetch(`/administration/artistes/${artisteId}/update/`, {
                     method: "PUT",
                     body: formData,
@@ -430,8 +444,13 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    afficherAlert("Update","Artiste mis à jour avec succès !",'success')
-                    location.reload();
+                    console.log(data)
+                    if (data.status == 201) {
+                        afficherAlert("Update", data.message, 'success')
+                        location.reload();
+                    } else {
+                        swal("Erreur", data.message, "error");
+                    }
                 })
                 .catch(error => {
                     swal("Erreur", error, "error");
@@ -443,8 +462,12 @@
                 youtubeInput.value = details.youtube;
                 slugInput.value = details.slug;
                 enligneCheckbox.checked = details.en_ligne;
+                if(details.photo_de_profil!=null){
                 photodeprofil.src=details.photo_de_profil;
+                }
+                if(details.photo_de_couverture!=null){
                 photodecouverture.src=details.photo_de_couverture
+                }
 
                 for (let i = 0; i < userSelect.options.length; i++) {
                     if (details.user == userSelect.options[i].value ) {
@@ -470,6 +493,8 @@
 
             }
             function supprimerartiste(id) {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+                
                 var artisteId = id;
             
                 swal({
@@ -482,12 +507,15 @@
                 },
                 function(isConfirm){
                     if (isConfirm) {
-                        fetch(`administration/artistes/${artisteId}/delete/`, {
+                        fetch(`/administration/artistes/${artisteId}/delete/`, {
                             method: "DELETE",
+                            headers: {
+                                'X-CSRFToken': csrftoken
+                            }
                         })
                         .then(response => {
                             swal("Message", "Artiste supprimé avec succès", "success");
-                            window.location.href = "/listeartiste";
+                            location.reload()
                         });
                     } else {
                         swal("Message", "Suppression annulée", "info");

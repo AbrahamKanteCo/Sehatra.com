@@ -1,5 +1,5 @@
 import datetime
-from . import interface_administration,artiste
+from . import artiste, interface_administration
 from . import data_load
 from django.urls import path
 from django.conf.urls.static import static

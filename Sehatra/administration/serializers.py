@@ -1,6 +1,7 @@
 # serializers.py
 from rest_framework import serializers
 from plateforme.models import Association, Live, Organisateur, Artiste, Video
+from django.contrib.auth.models import User
 
 
 class ArtisteSerializer(serializers.ModelSerializer):
