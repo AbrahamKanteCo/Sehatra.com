@@ -1275,7 +1275,7 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = "pk"
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        artiste_serializer = self.get_serializer(instance)
+        video_serializer = self.get_serializer(instance)
 
         users = User.objects.all()
         user_serializer = UserSerializer(users, many=True)
@@ -1283,7 +1283,7 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
         organisateur_serializer=OrganisteurSerializer(Organisateur.objects.all(),many=True)
         artiste_serializer=ArtisteSerializer(Artiste.objects.all(),many=True)
 
-        artiste_data = artiste_serializer.data
+        video_data = video_serializer.data
         users_data = user_serializer.data
         action_data=action_serializer.data
         organisateur_data=organisateur_serializer.data
@@ -1291,7 +1291,7 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
 
         return JsonResponse({
-            "artiste": artiste_data,
+            "video": video_data,
             "users": users_data,
             "organisateur":organisateur_data,
             "action":action_data,
@@ -1307,7 +1307,7 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
                 if key == 'titre' and not value:
                     return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
 
-                if key == 'gratuit' and value:
+                if not key == 'gratuit' and value:
                     if (
                         'tarif_ariary' not in request.data
                         or 'tarif_euro' not in request.data
@@ -1327,7 +1327,7 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
                 return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
 
             if 'organisateur' not in data_to_update:
-                data_to_update['organisateur'] = 3 
+                data_to_update['organisateur'] = Organisateur.objects.filter(id=3)
 
             if data_to_update:
                 serializer = VideoSerializer(instance, data=data_to_update, partial=True)

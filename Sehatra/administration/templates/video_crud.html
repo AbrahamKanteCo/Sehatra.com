@@ -556,8 +556,11 @@
                                                     </div>
                                                     <div class="mb-0">
                                                         <label class="form-label">Artistes</label>
-                                                        <div id="update_artistes">
-                                                        </div>
+                                                        <select class="form-control select2" data-placeholder="Choose artistes" id="artistes" name="artistes" multiple>
+                                                            {% for artiste in artistes%}
+                                                            <option value="{{artiste.id}}">{{artiste.nom}}</option>
+                                                            {%endfor%}
+                                                        </select>
                                                     </div>
                                                     <div class="row">
                                                         <div class="col">
@@ -932,29 +935,29 @@
             });
         });
         function afficherDetailsArtiste(details) {
-            document.getElementById("update_titre").value=details.titre;
-            document.getElementById("update_duree").value=details.duree;
-            document.getElementById("update_date_sortie").value=details.date_sortie;
-            document.getElementById("update_organisateur").value=details.organisateur;
-            document.getElementById("update_stripe_price_id").value=details.stripe_price_id;
-            document.getElementById("update_action").value=details.action;
-            document.getElementById("update_live").value=details.live;
-            document.getElementById("update_artiste").value=details.artiste;
-            document.getElementById("update_artistes").value=details.artistes;
-            document.getElementById("update_tarif_ariary").value=details.tarif_ariary;
-            document.getElementById("update_tarif_dollar").value=details.tarif_dollar;
-            document.getElementById("update_tarif_euro").value=details.tarif_euro;
-            document.getElementById("update_youtube").value=details.youtube;
-            document.getElementById("update_description_longue").value=details.description_longue;
-            document.getElementById("update_description_courte").value=details.description_courte;
-            document.getElementById("update_lien_video").value=details.lien_video;
-            document.getElementById("update_photo_de_couverture").files[0]=details.photo_de_couverture;
-            document.getElementById("update_en_ligne").checked=details.en_ligne;
-            document.getElementById("update_levee_de_fond").checked=details.levee_de_fond;
-            document.getElementById("update_gratuit").checked=details.gratuit;
-            document.getElementById("update_is_live").checked=details.is_live;
-            document.getElementById("update_is_film").checked=details.is_film;
-            document.getElementById("update_a_la_une").checked=details.a_la_une;
+            document.getElementById("update_titre").value=details.video.titre;
+            document.getElementById("update_duree").value=details.video.duree;
+            document.getElementById("update_date_sortie").value=details.video.date_sortie;
+            document.getElementById("update_organisateur").value=details.video.organisateur;
+            document.getElementById("update_stripe_price_id").value=details.video.stripe_price_id;
+            document.getElementById("update_action").value=details.video.action;
+            document.getElementById("update_live").value=details.video.live;
+            document.getElementById("update_artiste").value=details.video.artiste;
+            document.getElementById("update_artistes").value=details.video.artistes;
+            document.getElementById("update_tarif_ariary").value=details.video.tarif_ariary;
+            document.getElementById("update_tarif_dollar").value=details.video.tarif_dollar;
+            document.getElementById("update_tarif_euro").value=details.video.tarif_euro;
+            document.getElementById("update_youtube").value=details.video.youtube;
+            document.getElementById("update_description_longue").value=details.video.description_longue;
+            document.getElementById("update_description_courte").value=details.video.description_courte;
+            document.getElementById("update_lien_video").value=details.video.lien_video;
+            document.getElementById("update_photo_de_couverture").files[0]=details.video.photo_de_couverture;
+            document.getElementById("update_en_ligne").checked=details.video.en_ligne;
+            document.getElementById("update_levee_de_fond").checked=details.video.levee_de_fond;
+            document.getElementById("update_gratuit").checked=details.video.gratuit;
+            document.getElementById("update_is_live").checked=details.video.is_live;
+            document.getElementById("update_is_film").checked=details.video.is_film;
+            document.getElementById("update_a_la_une").checked=details.video.a_la_une;
 
         }
         function modifier(id){
