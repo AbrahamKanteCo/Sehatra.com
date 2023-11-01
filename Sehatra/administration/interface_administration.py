@@ -1102,6 +1102,17 @@ def programmerRecuperation():
 class AssociationCreate(generics.CreateAPIView):
     queryset = Association.objects.all()
     serializer_class = AssociationSerializer
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            if 'nom' in serializer.validated_data:
+                self.perform_create(serializer)
+                return JsonResponse({"message": "Ajout d'une association avec succès !", "status": 201})
+            else:
+                return JsonResponse({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+        else:
+            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
 
 
 class OrganisateurCreate(generics.CreateAPIView):
@@ -1126,6 +1137,49 @@ class AssociationUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Association.objects.all()
     serializer_class = AssociationSerializer
     lookup_field = "pk"
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        artiste_serializer = self.get_serializer(instance)
+
+        users = User.objects.all()
+        user_serializer = UserSerializer(users, many=True)
+
+        artiste_data = artiste_serializer.data
+        users_data = user_serializer.data
+
+        return JsonResponse({
+            "association": artiste_data,
+            "users": users_data
+        })
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            data_to_update = {}
+            for key, value in request.data.items():
+                if key == 'nom' and not value:
+                    return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+                if value: 
+                    data_to_update[key] = value
+
+            if 'nom' not in data_to_update:
+                return Response({"message": "Le champ 'nom' est obligatoire.", "status": 400})
+
+            if data_to_update:
+                serializer = AssociationSerializer(instance, data=data_to_update, partial=True)
+                print(serializer)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"message": "Mise à jour d'une association avec succès !", "status": 201})
+                else:
+                    return Response({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
+            else:
+                return Response({"message": "Aucune donnée à mettre à jour.", "status": 400})
+        else:
+            return Response({"message": "L'organisation n'existe pas.", "status": 400})
+
 
 
 class LiveUpdateView(generics.RetrieveUpdateDestroyAPIView):

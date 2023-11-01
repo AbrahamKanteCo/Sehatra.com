@@ -161,7 +161,7 @@
                                                                         <label> <i class="fe fe-user"></i> User</label>
                                                                         <div class="col-md-12">
                                                                             <select class="search-box" id="user" name="user">
-                                                                                <option class="hemant">Choisissez un utilisateur</option>
+                                                                                <option class="hemant" value="">Choisissez un utilisateur</option>
                                                                                 {% for utilisateur in utilisateurs%}
                                                                                 <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
                                                                                 {%endfor%}
@@ -274,13 +274,8 @@
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <label> <i class="fe fe-user"></i> User</label>
-                                                                <div class="col-md-12">
-                                                                    <select class="search-box" name="user" id="update-user">
-                                                                        <option class="hemant">Choisissez un utilisateur</option>
-                                                                        {% for utilisateur in utilisateurs%}
-                                                                        <option class="hemant" value="{{utilisateur.id}}">{{utilisateur.username}}</option>
-                                                                        {%endfor%}
-                                                                    </select>
+                                                                <div class="col-md-12" id="update-user">
+                                                                    
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -413,8 +408,12 @@
             formData.append("siteweb", document.getElementById("siteweb").value);
             formData.append("description",document.getElementById("description").value);
             formData.append("lien_don", document.getElementById("lien_don").value);
-            formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
-            formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+            if(document.getElementById("photo_de_profil").files.length> 0){
+                formData.append("photo_de_profil", document.getElementById("photo_de_profil").files[0]);
+                }
+                if(document.getElementById("photo_de_couverture").files.length>0){
+                formData.append("photo_de_couverture", document.getElementById("photo_de_couverture").files[0]);
+                }
             formData.append("en_ligne", document.getElementById("en_ligne").checked);
     
             const loadingSwal = swal({
@@ -435,11 +434,16 @@
             })
             .then(response => response.json())
             .then(data => {
-                    afficherAlert("Ajout","Ajout association avec succès !",'success')
+                if(data.status==201){
+                    afficherAlert("Ajout",data.message,'success')
                     location.reload();
+                }
+                else{
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
-                    swal("Erreur", error, "error");
+                swal("Erreur", error, "error");
             });
         });
 
@@ -447,14 +451,19 @@
             const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             const formData = new FormData();
             formData.append("nom", nomInput.value);
-            formData.append("user", userSelect.value);
+            formData.append("user", document.getElementById("select_user").value);
             formData.append("youtube", youtubeInput.value);
             formData.append("facebook", facebookInput.value);
             formData.append("siteweb", sitewebInput.value);
             formData.append("description", descriptionInput.value);
             formData.append("lien_don", liendonInput.value);
-            formData.append("photo_de_profil", photodeprofilInput.files[0]);
-            formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+            if (photodeprofilInput.files.length > 0) {
+                formData.append("photo_de_profil", photodeprofilInput.files[0]);
+            }
+        
+            if (photodecouvertureInput.files.length > 0) {
+                formData.append("photo_de_couverture", photodecouvertureInput.files[0]);
+            }
             formData.append("en_ligne", enligneCheckbox.checked);
             artisteId=document.getElementById('update-association-id').value;
     
@@ -476,34 +485,61 @@
             })
             .then(response => response.json())
             .then(data => {
-                    afficherAlert("Update","Association mis à jour avec succès !",'success')
+                console.log(data)
+                if (data.status == 201) {
+                    afficherAlert("Update", data.message, 'success')
                     location.reload();
+                } else {
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
-                    swal("Erreur", error, "error");
+                swal("Erreur", error, "error");
             });
         });
         function afficherDetailsArtiste(details) {
-            nomInput.value = details.nom;
-            userSelect.value = details.user;
-            youtubeInput.value = details.youtube;
-            slugInput.value = details.slug;
-            facebookInput.value = details.facebook;
-            descriptionInput.value = details.description;
-            descriptionInput.placeholder = details.description;
-            sitewebInput.value = details.siteweb;
-            liendonInput.value = details.lien_don;
-            enligneCheckbox.checked = details.en_ligne;
-            photodeprofil.src=details.photo_de_profil;
-            photodecouverture.src=details.photo_de_couverture
-
-            for (let i = 0; i < userSelect.options.length; i++) {
-                if (details.user == userSelect.options[i].value ) {
-                    userSelect.options[i].value = details.user.toString();
-                    userSelect.options[i].selected = true;
-                    break;
+            nomInput.value = details.association.nom;
+            userSelect.value = details.association.user;
+            youtubeInput.value = details.association.youtube;
+            slugInput.value = details.association.slug;
+            facebookInput.value = details.association.facebook;
+            descriptionInput.value = details.association.description;
+            descriptionInput.placeholder = details.association.description;
+            sitewebInput.value = details.association.siteweb;
+            liendonInput.value = details.association.lien_don;
+            enligneCheckbox.checked = details.association.en_ligne;
+            if(details.association.photo_de_profil!=null){
+                photodeprofil.src=details.association.photo_de_profil;
                 }
-            }
+                if(details.association.photo_de_couverture!=null){
+                photodecouverture.src=details.association.photo_de_couverture
+                }
+                var select = document.createElement("select");
+                select.className = "search-box";
+                select.name = "user";
+                select.id="select_user";
+                
+                var defaultOption = document.createElement("option");
+                defaultOption.className = "hemant";
+                defaultOption.text = "Choisissez un utilisateur";
+                select.appendChild(defaultOption);
+                
+                for (let i = 0; i < details.users.length; i++) {
+                    var option = document.createElement("option");
+                    option.className = "hemant";
+                    option.value = details.users[i].id;
+                    option.text = details.users[i].username;
+                
+                    if (details.users[i].id == details.association.user) {
+                        option.selected = true;
+                    }
+                
+                    select.appendChild(option);
+                }
+                userSelect.innerHTML = "";
+                userSelect.appendChild(select);
+                $(select).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+
         }
         function modifierassociation(id){
         var artisteId = id;
@@ -521,6 +557,7 @@
 
         }
         function supprimerassociation(id) {
+            const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
             var associationid = id;
         
             swal({
@@ -535,10 +572,13 @@
                 if (isConfirm) {
                     fetch(`/administration/associations/${associationid}/delete/`, {
                         method: "DELETE",
+                        headers: {
+                            'X-CSRFToken': csrftoken
+                        }
                     })
                     .then(response => {
                         swal("Message", "Association supprimé avec succès", "success");
-                        window.location.href = "/associations";
+                        location.reload()
                     });
                 } else {
                     swal("Message", "Suppression annulée", "info");
