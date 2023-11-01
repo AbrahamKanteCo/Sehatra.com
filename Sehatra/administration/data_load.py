@@ -58,6 +58,8 @@ def dashboard_data (request):
     revenus_html="<p class='mb-1'>Revenue</p><h2 class='mb-1 font-weight-bold'>"+str(intcomma(revenus))+" Ar</h2>"
     if difference_revenus > 0:
         revenus_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(intcomma(difference_revenus))+" </span></span>"
+    elif difference_revenus==0:
+        revenus_html+="<span class='mb-1 text-muted'><span class='text-success'>Aucune évolution</span></span>"
     else:
         revenus_html+="<span class='mb-1 text-muted'><span class='text-danger'><i class='fa fa-caret-down  me-1'></i> "+str(intcomma(difference_revenus*(-1)))+"</span></span>"
     
@@ -95,6 +97,8 @@ def dashboard_data (request):
     oeuvre_html="<p class='mb-1'>Oeuvres vendues </p><h2 class='mb-1 font-weight-bold'>"+str(oeuvre_vendu)+"</h2>"
     if oeuvre_difference > 0:
         oeuvre_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(oeuvre_difference)+" </span></span>"
+    elif oeuvre_difference==0:
+        oeuvre_html+="<span class='mb-1 text-muted'><span class='text-danger'>Aucune évolution</span></span>"
     else:
         oeuvre_html+="<span class='mb-1 text-muted'><span class='text-danger'><i class='fa fa-caret-down  me-1'></i> "+str(oeuvre_difference*(-1))+"</span></span>"
 
@@ -112,7 +116,7 @@ def dashboard_data (request):
     somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
-    if(total_ventes< oeuvre_vendu):
+    if total_ventes is not None and total_ventes < oeuvre_vendu:
         manuelle=str(oeuvre_vendu-total_ventes)
     vente_html=""
     if len(ventes_groupees)>0:
