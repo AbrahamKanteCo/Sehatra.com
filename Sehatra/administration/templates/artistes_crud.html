@@ -463,14 +463,14 @@
                 if(details.artiste.photo_de_couverture!=null){
                 photodecouverture.src=details.artiste.photo_de_couverture
                 }
-                var mm = document.createElement("select");
-                mm.className = "search-box";
-                mm.name = "user";
+                var select = document.createElement("select");
+                select.className = "search-box";
+                select.name = "user";
                 
                 var defaultOption = document.createElement("option");
                 defaultOption.className = "hemant";
                 defaultOption.text = "Choisissez un utilisateur";
-                mm.appendChild(defaultOption);
+                select.appendChild(defaultOption);
                 
                 for (let i = 0; i < details.users.length; i++) {
                     var option = document.createElement("option");
@@ -482,12 +482,11 @@
                         option.selected = true;
                     }
                 
-                    mm.appendChild(option);
+                    select.appendChild(option);
                 }
-                // Maintenant, ajoutez le nouveau select à l'élément parent existant
                 userSelect.innerHTML = "";
-                userSelect.appendChild(mm);
-                $(mm).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+                userSelect.appendChild(select);
+                $(select).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
                                        
                 
             }
