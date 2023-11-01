@@ -1035,7 +1035,6 @@ def logout(request,token):
 
 @background(schedule=60)
 def recupererData():
-    print("Récuperation")
     hier = datetime.datetime.now() - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
@@ -1048,7 +1047,6 @@ def test(request):
 
 @background(schedule=60)
 def envoi_notification_administrateur():
-    print("Notification admin")
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
@@ -1124,7 +1122,6 @@ class OrganisateurCreate(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         
         if serializer.is_valid():
-            print("Zety")
             if 'nom' in serializer.validated_data:
                 self.perform_create(serializer)
                 return JsonResponse({"message": "Ajout d'un organisateur avec succès !", "status": 201})
@@ -1157,7 +1154,6 @@ class VideosCreate(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        print(serializer)
         
         if serializer.is_valid():
             data = serializer.validated_data
@@ -1219,7 +1215,6 @@ class AssociationUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
             if data_to_update:
                 serializer = AssociationSerializer(instance, data=data_to_update, partial=True)
-                print(serializer)
 
                 if serializer.is_valid():
                     serializer.save()
@@ -1254,7 +1249,6 @@ class LiveUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
             if data_to_update:
                 serializer =LiveSerializer(instance, data=data_to_update, partial=True)
-                print(serializer)
 
                 if serializer.is_valid():
                     serializer.save()
@@ -1301,7 +1295,6 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
         if instance:
             serializer = self.get_serializer(instance, data=request.data, partial=True)
-            print(serializer)
             if serializer.is_valid():
                 data = serializer.validated_data
 
