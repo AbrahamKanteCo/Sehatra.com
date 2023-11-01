@@ -796,7 +796,9 @@
         function appendIfValueExists(formData, id, fieldName) {
             const element = document.getElementById(id);
             const value = element.value;
+            console.log(value)
             if (value) {
+                console.log("mISY")
                 formData.append(fieldName, value);
             }
         }
@@ -866,21 +868,22 @@
 
             const formData = new FormData();
             formData.append("titre", document.getElementById("update_titre").value);
-            formData.append("duree", document.getElementById("update_duree").value);
-            formData.append("date_sortie", document.getElementById("update_date_sortie").value);
-            formData.append("organisateur", document.getElementById("update_organisateur").value);
-            formData.append("stripe_price_id", document.getElementById("update_stripe_price_id").value);
-            formData.append("action", document.getElementById("update_action").value);
-            formData.append("live", document.getElementById("update_live").value);
-            formData.append("artiste", document.getElementById("update_artiste").value);
             formData.append("artistes", document.getElementById("update_artistes").value);
-            formData.append("tarif_ariary", document.getElementById("update_tarif_ariary").value);
-            formData.append("tarif_dollar", document.getElementById("update_tarif_dollar").value);
-            formData.append("tarif_euro", document.getElementById("update_tarif_euro").value);
-            formData.append("youtube", document.getElementById("update_youtube").value);
             formData.append("description_longue",document.getElementById("update_description_longue").value);
             formData.append("description_courte",document.getElementById("update_description_courte").value);
-            formData.append("lien_video", document.getElementById("update_lien_video").value);
+
+            appendIfValueExists(formData,"select_organisateur","organisateur");
+            appendIfValueExists(formData,"update_duree","duree");
+            appendIfValueExists(formData,"select_action","action");
+            appendIfValueExists(formData,"select_live","live");
+            appendIfValueExists(formData, "select_artiste","artiste");
+            appendIfValueExists(formData, "update_date_sortie","date_sortie");
+            appendIfValueExists(formData, "update_stripe_price_id","stripe_price_id");
+            appendIfValueExists(formData, "update_tarif_ariary","tarif_ariary");
+            appendIfValueExists(formData, "update_tarif_dollar","tarif_dollar");
+            appendIfValueExists(formData, "update_tarif_euro","tarif_euro");
+            appendIfValueExists(formData, "update_youtube","youtube");
+            appendIfValueExists(formData, "update_lien_video","lien_video");
             if (document.getElementById("update_photo_de_couverture").files.length > 0) {
                 formData.append("photo_de_couverture", document.getElementById("update_photo_de_couverture").files[0]);
             }
@@ -919,8 +922,6 @@
             document.getElementById("update_date_sortie").value=details.video.date_sortie;
             document.getElementById("update_organisateur").value=details.video.organisateur;
             document.getElementById("update_stripe_price_id").value=details.video.stripe_price_id;
-            document.getElementById("update_action").value=details.video.action;
-            document.getElementById("update_live").value=details.video.live;
             document.getElementById("update_artistes").value=details.video.artistes;
             document.getElementById("update_tarif_ariary").value=details.video.tarif_ariary;
             document.getElementById("update_tarif_dollar").value=details.video.tarif_dollar;
@@ -940,21 +941,22 @@
             ///////////1
             var select = document.createElement("select");
                 select.className = "search-box";
-                select.name = "user";
-                select.id="select_user";
+                select.name = "artiste";
+                select.id="select_artiste";
                 
                 var defaultOption = document.createElement("option");
                 defaultOption.className = "hemant";
-                defaultOption.text = "Choisissez un utilisateur";
+                defaultOption.text = "Choisissez une artiste";
+                defaultOption.value=""
                 select.appendChild(defaultOption);
                 
-                for (let i = 0; i < details.users.length; i++) {
+                for (let i = 0; i < details.artiste.length; i++) {
                     var option = document.createElement("option");
                     option.className = "hemant";
-                    option.value = details.users[i].id;
-                    option.text = details.users[i].username;
+                    option.value = details.artiste[i].id;
+                    option.text = details.artiste[i].nom;
                 
-                    if (details.users[i].id == details.video.user) {
+                    if (details.artiste[i].id == details.video.artiste) {
                         option.selected = true;
                     }
                 
@@ -974,6 +976,7 @@
                 var defaultOption1 = document.createElement("option");
                 defaultOption1.className = "hemant";
                 defaultOption1.text = "Choisissez un organisateur";
+                defaultOption1.value=""
                 select1.appendChild(defaultOption1);
                 
                 for (let i = 0; i < details.organisateur.length; i++) {
@@ -998,10 +1001,12 @@
                 select2.className = "search-box";
                 select2.name = "live";
                 select2.id="select_live";
+            
                 
                 var defaultOption2 = document.createElement("option");
                 defaultOption2.className = "hemant";
                 defaultOption2.text = "Choisissez un live";
+                defaultOption2.value=""
                 select2.appendChild(defaultOption2);
                 
                 for (let i = 0; i < details.live.length; i++) {
@@ -1029,6 +1034,7 @@
                  var defaultOption3 = document.createElement("option");
                  defaultOption3.className = "hemant";
                  defaultOption3.text = "Choisissez une action";
+                 defaultOption3.value=""
                  select3.appendChild(defaultOption3);
                  
                  for (let i = 0; i < details.action.length; i++) {

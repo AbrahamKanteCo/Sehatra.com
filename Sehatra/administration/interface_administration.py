@@ -1277,15 +1277,12 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
         instance = self.get_object()
         video_serializer = self.get_serializer(instance)
 
-        users = User.objects.all()
-        user_serializer = UserSerializer(users, many=True)
         action_serializer=ActionSerializer(Action.objects.all(),many=True)
         organisateur_serializer=OrganisteurSerializer(Organisateur.objects.all(),many=True)
         artiste_serializer=ArtisteSerializer(Artiste.objects.all(),many=True)
         live_serializer=LiveSerializer(Live.objects.all(),many=True)
 
         video_data = video_serializer.data
-        users_data = user_serializer.data
         action_data=action_serializer.data
         organisateur_data=organisateur_serializer.data
         artiste_data_select=artiste_serializer.data
@@ -1294,58 +1291,43 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
 
         return JsonResponse({
             "video": video_data,
-            "users": users_data,
             "organisateur":organisateur_data,
             "action":action_data,
-            "artiste_select":artiste_data_select,
+            "artiste":artiste_data_select,
             "live":live_data
         })
-    
     def update(self, request, *args, **kwargs):
-        instance = self.get_object()
+        instance = self.get_object()  
 
         if instance:
-            data_to_update = {}
-            for key, value in request.data.items():
-                if key == 'titre' and not value:
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            print(serializer)
+            if serializer.is_valid():
+                data = serializer.validated_data
+
+                if not data.get('gratuit'):
+                    if data.get('tarif_ariary') is None or data.get('tarif_euro') is None or data.get('tarif_dollar') is None:
+                        return JsonResponse({"message": "Les champs tarif sont obligatoires pour une vidéo gratuite.", "status": 400})
+
+                if data.get('organisateur') is None:
+                    data['organisateur'] = Organisateur.objects.filter(id=3).first()
+
+                if not data.get('titre'):
                     return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
 
-                if not key == 'gratuit' and value:
-                    if (
-                        'tarif_ariary' not in request.data
-                        or 'tarif_euro' not in request.data
-                        or 'tarif_dollar' not in request.data
-                    ):
-                        return JsonResponse(
-                            {
-                                "message": "Les champs tarif sont obligatoires pour une vidéo gratuite.",
-                                "status": 400,
-                            }
-                        )
+                if not data.get('description_courte') or not data.get('description_longue'):
+                    return JsonResponse({"message": "Les champs 'description_courte' et 'description_longue' sont obligatoires.", "status": 400})
 
-                if not value:
-                    data_to_update[key] = value
+                if 'artistes' in data and not data['artistes']:
+                    return JsonResponse({"message": "Le champ 'artistes' ne peut pas être vide.", "status": 400})
 
-            if 'titre' not in data_to_update:
-                return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
-
-            if 'organisateur' not in data_to_update:
-                data_to_update['organisateur'] = Organisateur.objects.filter(id=3)
-
-            if data_to_update:
-                serializer = VideoSerializer(instance, data=data_to_update, partial=True)
-
-                if serializer.is_valid():
-                    serializer.save()
-                    return JsonResponse({"message": "Mise à jour d'une vidéo avec succès !", "status": 201})
-                else:
-                    return JsonResponse({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
+                serializer.save()
+                return JsonResponse({"message": "Mise à jour d'une vidéo avec succès !", "status": 201})
             else:
-                return JsonResponse({"message": "Aucune donnée à mettre à jour.", "status": 400})
+                return JsonResponse({"message": "Les champs titre,description et artistes sont obligatoires", "status": 400})
         else:
             return JsonResponse({"message": "La vidéo n'existe pas.", "status": 400})
-
-
+    
 class OrganisateurUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Organisateur.objects.all()
     serializer_class = OrganisteurSerializer
