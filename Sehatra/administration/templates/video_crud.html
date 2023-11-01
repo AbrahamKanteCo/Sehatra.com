@@ -566,39 +566,23 @@
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <label>Artiste</label>
-                                                                <div class="col-md-12">
-                                                                    <select class="search-box" id="update_artiste" name="artiste">
-                                                                        <option class="hemant">Choisissez une artiste</option>
-                                                                        {% for artiste in artistes%}
-                                                                        <option class="hemant" value="{{artiste.id}}">{{artiste.nom}}</option>
-                                                                        {%endfor%}
-                                                                    </select>
+                                                                <div class="col-md-12" id="update_artiste">
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <label>Organisateur </label>
-                                                                <div class="col-md-12">
-                                                                    <select class="search-box" id="update_organisateur" name="organisateur">
-                                                                        <option class="hemant">Choisissez un organisateur</option>
-                                                                        {% for organisateur in organisateurs%}
-                                                                        <option class="hemant" value="{{organisateur.id}}">{{organisateur.nom}}</option>
-                                                                        {%endfor%}
-                                                                    </select>
+                                                                <div class="col-md-12" id="update_organisateur">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <label>Live </label>
-                                                                <div class="col-md-12">
-                                                                    <select class="search-box" id="update_live" name="live">
-                                                                        <option class="hemant">Choisissez un live</option>
-                                                                        {% for live in lives%}
-                                                                        <option class="hemant" value="{{live.id}}">{{live.titre}}</option>
-                                                                        {%endfor%}
-                                                                    </select>
+                                                                <div class="col-md-12" id="update_live">
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -621,13 +605,8 @@
                                                         <div class="col">
                                                             <div class="mb-3">
                                                                 <label>Action</label>
-                                                                <div class="col-md-12">
-                                                                    <select class="search-box" id="update_action" name="action">
-                                                                        <option class="hemant">Choisissez une action</option>
-                                                                        {% for action in actions%}
-                                                                        <option class="hemant" value="{{action.id}}">{{action.nomaction}}</option>
-                                                                        {%endfor%}
-                                                                    </select>
+                                                                <div class="col-md-12" id="update_action">
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -942,7 +921,6 @@
             document.getElementById("update_stripe_price_id").value=details.video.stripe_price_id;
             document.getElementById("update_action").value=details.video.action;
             document.getElementById("update_live").value=details.video.live;
-            document.getElementById("update_artiste").value=details.video.artiste;
             document.getElementById("update_artistes").value=details.video.artistes;
             document.getElementById("update_tarif_ariary").value=details.video.tarif_ariary;
             document.getElementById("update_tarif_dollar").value=details.video.tarif_dollar;
@@ -958,6 +936,120 @@
             document.getElementById("update_is_live").checked=details.video.is_live;
             document.getElementById("update_is_film").checked=details.video.is_film;
             document.getElementById("update_a_la_une").checked=details.video.a_la_une;
+
+            ///////////1
+            var select = document.createElement("select");
+                select.className = "search-box";
+                select.name = "user";
+                select.id="select_user";
+                
+                var defaultOption = document.createElement("option");
+                defaultOption.className = "hemant";
+                defaultOption.text = "Choisissez un utilisateur";
+                select.appendChild(defaultOption);
+                
+                for (let i = 0; i < details.users.length; i++) {
+                    var option = document.createElement("option");
+                    option.className = "hemant";
+                    option.value = details.users[i].id;
+                    option.text = details.users[i].username;
+                
+                    if (details.users[i].id == details.video.user) {
+                        option.selected = true;
+                    }
+                
+                    select.appendChild(option);
+                }
+                const userSelect=document.getElementById("update_artiste")
+                userSelect.innerHTML = "";
+                userSelect.appendChild(select);
+
+                //////2
+
+                var select1 = document.createElement("select");
+                select1.className = "search-box";
+                select1.name = "organisateur";
+                select1.id="select_organisateur";
+                
+                var defaultOption1 = document.createElement("option");
+                defaultOption1.className = "hemant";
+                defaultOption1.text = "Choisissez un organisateur";
+                select1.appendChild(defaultOption1);
+                
+                for (let i = 0; i < details.organisateur.length; i++) {
+                    var option = document.createElement("option");
+                    option.className = "hemant";
+                    option.value = details.organisateur[i].id;
+                    option.text = details.organisateur[i].nom;
+                
+                    if (details.organisateur[i].id == details.video.organisateur) {
+                        option.selected = true;
+                    }
+                
+                    select1.appendChild(option);
+                }
+                const userSelect1=document.getElementById("update_organisateur")
+                userSelect1.innerHTML = "";
+                userSelect1.appendChild(select1);
+
+
+                /////////////////////////3
+                var select2 = document.createElement("select");
+                select2.className = "search-box";
+                select2.name = "live";
+                select2.id="select_live";
+                
+                var defaultOption2 = document.createElement("option");
+                defaultOption2.className = "hemant";
+                defaultOption2.text = "Choisissez un live";
+                select2.appendChild(defaultOption2);
+                
+                for (let i = 0; i < details.live.length; i++) {
+                    var option = document.createElement("option");
+                    option.className = "hemant";
+                    option.value = details.live[i].id;
+                    option.text = details.live[i].titre;
+                
+                    if (details.live[i].id == details.video.live) {
+                        option.selected = true;
+                    }
+                
+                    select2.appendChild(option);
+                }
+                const userSelect2=document.getElementById("update_live")
+                userSelect2.innerHTML = "";
+                userSelect2.appendChild(select2);
+
+                 /////////////////////////4
+                 var select3 = document.createElement("select");
+                 select3.className = "search-box";
+                 select3.name = "action";
+                 select3.id="select_action";
+                 
+                 var defaultOption3 = document.createElement("option");
+                 defaultOption3.className = "hemant";
+                 defaultOption3.text = "Choisissez une action";
+                 select3.appendChild(defaultOption3);
+                 
+                 for (let i = 0; i < details.action.length; i++) {
+                     var option = document.createElement("option");
+                     option.className = "hemant";
+                     option.value = details.action[i].id;
+                     option.text = details.action[i].titre;
+                 
+                     if (details.action[i].id == details.video.action) {
+                         option.selected = true;
+                     }
+                 
+                     select3.appendChild(option);
+                 }
+                 const userSelect3=document.getElementById("update_action")
+                 userSelect3.innerHTML = "";
+                 userSelect3.appendChild(select3);
+                $(select).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+                $(select1).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+                $(select2).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
+                $(select3).SumoSelect({ csvDispCount: 3, search: true, searchText: 'Enter here.' });
 
         }
         function modifier(id){

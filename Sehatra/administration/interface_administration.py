@@ -1282,12 +1282,14 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
         action_serializer=ActionSerializer(Action.objects.all(),many=True)
         organisateur_serializer=OrganisteurSerializer(Organisateur.objects.all(),many=True)
         artiste_serializer=ArtisteSerializer(Artiste.objects.all(),many=True)
+        live_serializer=LiveSerializer(Live.objects.all(),many=True)
 
         video_data = video_serializer.data
         users_data = user_serializer.data
         action_data=action_serializer.data
         organisateur_data=organisateur_serializer.data
         artiste_data_select=artiste_serializer.data
+        live_data=live_serializer.data
 
 
         return JsonResponse({
@@ -1295,7 +1297,8 @@ class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
             "users": users_data,
             "organisateur":organisateur_data,
             "action":action_data,
-            "artiste_select":artiste_data_select
+            "artiste_select":artiste_data_select,
+            "live":live_data
         })
     
     def update(self, request, *args, **kwargs):
