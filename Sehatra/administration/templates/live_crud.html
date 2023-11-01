@@ -297,7 +297,7 @@
                 closeOnClickOutside: false, 
                 closeOnEsc: false
             });
-            fetch(`lives/ajouter/`, {
+            fetch(`/administration/lives/ajouter/`, {
                 method: "POST",
                 body: formData,
                 headers: {
@@ -306,8 +306,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                afficherAlert("Ajout","Ajout live avec succès !")
-                location.reload()
+                if(data.status==201){
+                    afficherAlert("Ajout",data.message,'success')
+                    location.reload();
+                }
+                else{
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
                 swal("Erreur", error, "error");
@@ -340,8 +345,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                afficherAlert("Update","Live mis à jour avec succès !")
-                location.reload()
+                console.log(data)
+                if (data.status == 201) {
+                    afficherAlert("Update", data.message, 'success')
+                    location.reload();
+                } else {
+                    swal("Erreur", data.message, "error");
+                }
             })
             .catch(error => {
                 swal("Erreur", error, "error");
@@ -439,15 +449,9 @@
         <!--Sumoselect js-->
         <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
 
-        <!--intlTelInput js-->
-        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/country-select.js'%}"></script>
-        <script src="{% static 'interface_administration/assets/plugins/intl-tel-input-master/utils.js'%}"></script>
 
         <!--jquery transfer js-->
         <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
-
-        <!--multi js-->
-            <script src="{% static 'interface_administration/assets/plugins/multi/multi.min.js'%}"></script>
 
         <!-- Form Advanced Element -->
         <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>

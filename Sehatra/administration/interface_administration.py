@@ -850,7 +850,6 @@ class ArtisteCreate(generics.CreateAPIView):
     serializer_class = ArtisteSerializer
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        print(serializer)
         
         if serializer.is_valid():
             if 'nom' in serializer.validated_data:
@@ -1124,8 +1123,18 @@ class LiveCreate(generics.CreateAPIView):
     queryset = Live.objects.all()
     serializer_class = LiveSerializer
 
-    def perform_create(self, serializer):
-        instance = serializer.save()
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        
+        if serializer.is_valid():
+            if 'titre' in serializer.validated_data:
+                self.perform_create(serializer)
+                return JsonResponse({"message": "Ajout d'un live avec succès !", "status": 201})
+            else:
+                return JsonResponse({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+        else:
+            return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
+
 
 
 class VideosCreate(generics.CreateAPIView):
@@ -1186,6 +1195,36 @@ class LiveUpdateView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Live.objects.all()
     serializer_class = LiveSerializer
     lookup_field = "pk"
+    
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance:
+            data_to_update = {}
+            for key, value in request.data.items():
+                if key == 'titre' and not value:
+                    return Response({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+                if value: 
+                    data_to_update[key] = value
+
+            if 'titre' not in data_to_update:
+                return Response({"message": "Le champ 'titre' est obligatoire.", "status": 400})
+
+            if data_to_update:
+                serializer =LiveSerializer(instance, data=data_to_update, partial=True)
+                print(serializer)
+
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response({"message": "Mise à jour d'un live avec succès !", "status": 201})
+                else:
+                    return Response({"message": "Les données de mise à jour ne sont pas valides.", "status": 400})
+            else:
+                return Response({"message": "Aucune donnée à mettre à jour.", "status": 400})
+        else:
+            return Response({"message": "Ce live n'existe pas.", "status": 400})
+
+
 
 
 class VideosUpdateView(generics.RetrieveUpdateDestroyAPIView):
