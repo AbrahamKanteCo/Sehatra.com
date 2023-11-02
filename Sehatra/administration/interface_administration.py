@@ -1665,7 +1665,6 @@ def artistes(request):
     marquer_notification_read(request)
 
     aujourd_hui = date.today()
-    date_hier = aujourd_hui - timedelta(days=1)
 
 
     performances_artiste = (
@@ -1684,8 +1683,8 @@ def artistes(request):
                     filter=Q(
                         organisateur_video__video_billet__billet_paiement__valide=True,
                         organisateur_video__video_billet__gratuit=False,
-                        organisateur_video__video_billet__billet_paiement__date__year=date_hier.year,
-                        organisateur_video__video_billet__billet_paiement__date__month=date_hier.month
+                        organisateur_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
+                        organisateur_video__video_billet__billet_paiement__date__month=aujourd_hui.month
                     )
                 ), 0
             ) * 60 / 100,
