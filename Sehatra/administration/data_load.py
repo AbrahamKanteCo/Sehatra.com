@@ -54,6 +54,39 @@ def dashboard_data (request):
     else:
         revenus_difference_en_pourcentage = 0
 
+
+     #concert
+    concert=paiements.filter(billet__video__is_film=False).count()
+    #film
+    film = paiements.filter(billet__video__is_film=True).count()
+    #concert et film le mois dernier
+    concert_last_month=paiements_last_month.filter(billet__video__is_film=False).count()
+    film_last_month = paiements_last_month.filter(billet__video__is_film=True).count()
+    difference_concert=concert-concert_last_month
+    difference_film=film- film_last_month
+    #film html
+    film_html="<p class='mb-1'>Film</p><h2 class='mb-1 font-weight-bold'>"+str(film)+" Ar</h2>"
+    if difference_film > 0:
+        film_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(difference_film)+" </span></span>"
+    elif difference_film==0:
+        film_html+="<span class='mb-1 text-muted'><span class='text-success'>Aucune évolution</span></span>"
+    else:
+        film_html+="<span class='mb-1 text-muted'><span class='text-danger'><i class='fa fa-caret-down  me-1'></i> "+str(difference_film*(-1))+"</span></span>"
+
+    #film concert
+    concert_html="<p class='mb-1'>Concert</p><h2 class='mb-1 font-weight-bold'>"+str(concert)+" Ar</h2>"
+    if difference_concert > 0:
+        concert_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(difference_concert)+" </span></span>"
+    elif difference_concert==0:
+        concert_html+="<span class='mb-1 text-muted'><span class='text-success'>Aucune évolution</span></span>"
+    else:
+        concert_html+="<span class='mb-1 text-muted'><span class='text-danger'><i class='fa fa-caret-down  me-1'></i> "+str(difference_concert*(-1))+"</span></span>"
+
+    
+    film_html+="<div class='progress progress-sm mt-3 bg-success-transparent'><div class='progress-bar progress-bar-striped progress-bar-animated bg-success' style='width: "+str(difference_film)+"%'></div></div>"
+    concert_html+="<div class='progress progress-sm mt-3 bg-success-transparent'><div class='progress-bar progress-bar-striped progress-bar-animated bg-success' style='width: "+str(difference_concert)+"%'></div></div>"
+
+
     
     revenus_html="<p class='mb-1'>Revenue</p><h2 class='mb-1 font-weight-bold'>"+str(intcomma(revenus))+" Ar</h2>"
     if difference_revenus > 0:
@@ -148,7 +181,7 @@ def dashboard_data (request):
 
     utilisateurs_html+="<div class='progress progress-sm mt-3 bg-success-transparent'><div class='progress-bar progress-bar-striped progress-bar-animated bg-success' style='width: "+str(utilisateurs_difference_en_pourcentage)+"%'></div></div>"
 
-    return JsonResponse({'utilisateurs':utilisateurs_html,'compte':compte_html,'chiffre_affaire':ca_html,'depense':depense_html,'revenue':revenus_html,'oeuvre':oeuvre_html,'ventes':vente_html,'pages':pages_html})
+    return JsonResponse({'utilisateurs':utilisateurs_html,'compte':compte_html,'chiffre_affaire':ca_html,'depense':depense_html,'revenue':revenus_html,'oeuvre':oeuvre_html,'ventes':vente_html,'pages':pages_html,'film':film_html,'concert':concert_html})
 
     
 def audiences_admin_data(request):

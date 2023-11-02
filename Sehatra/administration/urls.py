@@ -19,6 +19,7 @@ urlpatterns = [
     path('lives/ajouter/', interface_administration.LiveCreate.as_view(), name='lives-create'),
     path('videos/ajouter/', interface_administration.VideosCreate.as_view(), name='videos-create'),
     path('organisateurs/ajouter/', interface_administration.OrganisateurCreate.as_view(), name='organisateur-create'),
+    path('publications/ajouter/', interface_administration.PublicationCreate.as_view(), name='publications-create'),
     #update
     path('artistes/<int:pk>/update/', interface_administration.ArtisteUpdateView.as_view(), name='artiste-update'),
     path('videos/<int:pk>/update/', interface_administration.VideosUpdateView.as_view(), name='videos-update'),
@@ -92,6 +93,8 @@ urlpatterns = [
     path('transactions-artiste',artiste.transactions_artistes,name='transactions-artiste'),
     path('earning-revenue-artiste/<int:annee>',artiste.statistiques_ventes_artiste_json,name='earning-revenue-artiste'),
     path('stats_vue_users',artiste.statistiques_vues_nouveaux_utilisateurs_json,name='stats_vue_users'),
+    #publication
+    path('publications',interface_administration.publications,name='publications'),
 
 ]
 

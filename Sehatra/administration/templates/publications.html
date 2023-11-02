@@ -1,0 +1,175 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+    {% block styles %}
+
+    {% endblock %}
+    
+        {% block content %}
+        
+                            <!--Page header-->
+                            <div class="page-header">
+                                <div class="page-rightheader ms-auto d-lg-flex d-none">
+                                    <ol class="breadcrumb">
+                                        <li class="breadcrumb-item"><a href="/" class="d-flex"><svg class="svg-icon" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm5 15h-2v-6H9v6H7v-7.81l5-4.5 5 4.5V18z"/><path d="M7 10.19V18h2v-6h6v6h2v-7.81l-5-4.5z" opacity=".3"/></svg><span class="breadcrumb-icon"> Vue d'ensemble</span></a></li>
+                                    </ol>
+                                </div>
+                            </div>
+                            <!--End Page header-->
+                            <div class="row">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="card-title">Ajout de publications</h3>
+                                            </div>
+                                            <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Date de publication</label>
+                                                                <input type="date" class="form-control"  id="date_publication" name="date_publication" >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Vidéo</label>
+                                                                <div class="col-md-12">
+                                                                    <select class="search-box" name="video" id="video">
+                                                                        <option class="hemant" value="">Choisissez une vidéo</option>
+                                                                        {% for video in videos%}
+                                                                        <option class="hemant" value="{{video.id}}">{{video.titre}}</option>
+                                                                        {%endfor%}
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <div class="mb-3">
+                                                                <label>Lien facebook</label>
+                                                                <textarea class="form-control" type="text" id="facebook" name="facebook" placeholder="Lien Facebook"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col d-flex justify-content-end">
+                                                            <button class="btn btn-primary"  id="add-button" type="submit">Ajouter</button>
+                                                        </div>
+                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--row closed-->
+    
+                            </div>
+
+        {% endblock %}
+
+    {% block scripts %}
+        <script>
+            function afficherAlert(title,message,etat){
+                var message =message;
+                var title =title;
+                swal({
+                    title: title,
+                    text: message,
+                    timer: 3000,
+                    icon:etat,
+                    showConfirmButton: false
+                });
+            }
+            document.getElementById("add-button").addEventListener("click", function() {
+                const csrftoken = document.cookie.split('; ').find(row => row.startsWith('csrftoken')).split('=')[1];
+                const formData = new FormData();
+                formData.append("date_publication", document.getElementById("date_publication").value);
+                formData.append("video", document.getElementById("video").value);
+                formData.append("facebook", document.getElementById("facebook").value);
+            
+                const loadingSwal = swal({
+                    title: "Ajout",
+                    text: "En cours...",
+                    icon: "info",
+                    buttons: false, 
+                    closeOnClickOutside: false, 
+                    closeOnEsc: false
+                });
+                fetch(`/administration/publications/ajouter/`, {
+                    method: "POST",
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if(data.status==201){
+                        afficherAlert("Ajout",data.message,'success')
+                        location.reload();
+                    }
+                    else{
+                        swal("Erreur", data.message, "error");
+                    }
+                })
+                .catch(error => {
+                    swal("Erreur", error, "error");
+                });
+            });
+            
+        </script>
+
+        <!--Select2 js -->
+        <script src="{% static 'interface_administration/assets/plugins/select2/select2.full.min.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/select2.js'%}"></script>
+
+        <!-- Timepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/jquery.timepicker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/time-picker/toggles.min.js'%}"></script>
+
+        <!-- Datepicker js -->
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/date-picker.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/date-picker/jquery-ui.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/input-mask/jquery.maskedinput.js'%}"></script>
+
+        <!--File-Uploads Js-->
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.ui.widget.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.iframe-transport.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/jquery.fancy-fileupload.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/fancyuploder/fancy-uploader.js'%}"></script>
+
+        <!-- File uploads js -->
+        <script src="{% static 'interface_administration/assets/plugins/fileupload/js/dropify.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/filupload.js'%}"></script>
+
+        <!-- Multiple select js -->
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multiple-select.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/plugins/multipleselect/multi-select.js'%}"></script>
+
+        <!--Sumoselect js-->
+        <script src="{% static 'interface_administration/assets/plugins/sumoselect/jquery.sumoselect.js'%}"></script>
+
+
+        <!--jquery transfer js-->
+        <script src="{% static 'interface_administration/assets/plugins/jQuerytransfer/jquery.transfer.js'%}"></script>
+
+        <!-- Form Advanced Element -->
+        <script src="{% static 'interface_administration/assets/js/formelementadvnced.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/form-elements.js'%}"></script>
+        <script src="{% static 'interface_administration/assets/js/file-upload.js'%}"></script>
+
+
+         <!-- Sweet alert js -->
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/jquery.sweet-modal.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/plugins/sweet-alert/sweetalert.min.js' %}"></script>
+         <script src="{% static 'interface_administration/assets/js/sweet-alert.js' %}"></script>
+
+        <!-- Color Theme js -->
+        <script src="{% static 'interface_administration/assets/js/themeColors.js'%}"></script>
+
+    {% endblock %}

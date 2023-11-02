@@ -1,5 +1,6 @@
 import datetime
 import locale
+import re
 import socket
 from django.db.models import FloatField
 from django.http import JsonResponse
@@ -40,6 +41,7 @@ from .serializers import (
     AssociationSerializer,
     LiveSerializer,
     OrganisteurSerializer,
+    PublicationSerializer,
     UserSerializer,
     VideoSerializer,
 )
@@ -312,16 +314,34 @@ def dashboard(request):
         valide=True, billet__gratuit=False, date__date=until
     )
     chiffre_affaire = Paiement.calculer_paiement(ca_aujourdhui)
+
+
     # revenus
     paiements = Paiement.objects.filter(
         valide=True, billet__gratuit=False, date__range=(since, until)
     ).order_by("-date")
+
+
+    #concert
+    concert=paiements.filter(billet__video__is_film=False).count()
+
+    #film
+    film = paiements.filter(billet__video__is_film=True).count()
+
     somme = Paiement.calculer_paiement(paiements)
     revenus = somme * pourcentage_sehatra
     # revenus last_month
     paiements_last_month = Paiement.objects.filter(
         valide=True, billet__gratuit=False, date__range=(last_month, since)
     ).order_by("-date")
+
+    #concert et film le mois dernier
+    concert_last_month=paiements_last_month.filter(billet__video__is_film=False).count()
+    film_last_month = paiements_last_month.filter(billet__video__is_film=True).count()
+    difference_concert=concert-concert_last_month
+    difference_film=film- film_last_month
+
+
     revenus_last_month = (Paiement.calculer_paiement(paiements_last_month)) * pourcentage_sehatra
     difference_revenus = revenus - revenus_last_month
 
@@ -419,6 +439,12 @@ def dashboard(request):
     if check_internet_connection():
         context = {
         "utilisateur": utilisateurs,
+        "concert":concert,
+        "difference_concert":difference_concert,
+        "difference_film":difference_film,
+        "difference_film_negative":difference_film*(-1),
+        "difference_concert_negative":difference_concert*(-1),
+        "film":film,
         "utilisateur_last_month": utilisateurs_difference_en_pourcentage,
         "utilisateur_last_month_negative": utilisateurs_difference_en_pourcentage
         * (-1),
@@ -686,7 +712,7 @@ def ventes_data(request):
     total = 0
     mada = 0
     international = 0
-    for ventes in ventes_groupees:
+    for ventes in ventes_groupees:  
         total = total + ventes["nombre_ventes"]
         if ventes["pays"] == "Madagascar":
             mada = mada + ventes["nombre_ventes"]
@@ -780,6 +806,15 @@ def get_langue(request):
         sample_data[langue] = users
 
     return JsonResponse(sample_data)
+
+
+
+def publications(request):
+    videos=Video.objects.all()
+    context={
+        "videos":videos
+    }
+    return render(request, "publications.html",context)
 
 
 def listeartiste(request):
@@ -1133,6 +1168,52 @@ class OrganisateurCreate(generics.CreateAPIView):
         else:
             return JsonResponse({"message": "Les données ne sont pas valides.", "status": 400})
 
+
+class PublicationCreate(generics.CreateAPIView):
+    queryset = Video_facebook.objects.all()
+    serializer_class = PublicationSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            data = serializer.validated_data
+            video_id = data.get('video')
+            video = Video.objects.get(titre=video_id)
+
+            if video:
+                facebook_url = data.get('facebook')
+                
+                facebook_processed = extrairesrc(facebook_url)
+
+                data_to_create = {
+                    'video': video.id,
+                    'facebook': facebook_processed,
+                    'date_publication': data.get('date_publication')
+                }
+
+                new_serializer = PublicationSerializer(data=data_to_create)
+
+                if new_serializer.is_valid():
+                    new_serializer.save()
+                    return JsonResponse({"message": "Ajout de la publication avec succès !", "status": 201})
+                else:
+                    return JsonResponse({"message": "Les données de la publication ne sont pas valides.", "status": 400})
+            else:
+                return JsonResponse({"message": "La vidéo associée n'existe pas.", "status": 400})
+        else:
+            return JsonResponse({"message": serializer.errors, "status": 400})
+
+def extrairesrc(html):
+        src_pattern = r'src="([^"]*)"'
+        match = re.search(src_pattern, html)
+
+        if match:
+            src = match.group(1)
+            return src
+        else:
+            return None
+    
 
 class LiveCreate(generics.CreateAPIView):
     queryset = Live.objects.all()

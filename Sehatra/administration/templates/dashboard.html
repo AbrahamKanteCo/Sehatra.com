@@ -98,6 +98,45 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/film.svg" %}">
+                                                    <div id="film">
+                                                    <p class=" mb-1 ">Film</p>
+                                                    <h2 class="mb-1 font-weight-bold">{{film}}</h2>
+                                                    {%if difference_film > 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_film}}</span></span>
+                                                    {%elif difference_film < 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_film_negative}} </span></span>
+                                                    {%endif%}
+                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_film}}%"></div>
+                                                    </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/concert.svg" %}">
+                                                    <div id="concert">
+                                                    <p class=" mb-1 ">Concert</p>
+                                                    <h2 class="mb-1 font-weight-bold">{{concert}}</h2>
+                                                    {%if difference_concert > 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_concert}}</span></span>
+                                                    {%elif difference_concert < 0 %}
+                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_concert_negative}}</span></span>
+                                                    {%endif%}
+                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_concert}}%"></div>
+                                                    </div>                                
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-xl-12 col-md-12 col-lg-12">
                                             <div class="card overflow-hidden">
                                                 <div class="row">
@@ -410,6 +449,8 @@
                 const depense=document.getElementById('depense');
                 const utilisateurs=document.getElementById('utilisateurs');
                 const pages=document.getElementById('page_ecran');
+                const film=document.getElementById('film');
+                const concert=document.getElementById('concert');
                 compte.innerHTML=loading;
                 revenue.innerHTML=loading;
                 oeuvre_vendu.innerHTML=loading;
@@ -418,6 +459,8 @@
                 depense.innerHTML=loading;
                 utilisateurs.innerHTML=loading;
                 pages.innerHTML=loading;
+                film.innerHTML=loading;
+                concert.innerHTML=loading;
                 fetch(`dashboard_load_data?debut=`+start+`&fin=`+end, {
                     method: "GET"
                 })
@@ -426,12 +469,15 @@
                     compte.innerHTML=data.compte;
                     revenue.innerHTML=data.revenue;
                     oeuvre_vendu.innerHTML=data.oeuvre;
+                    film.innerHTML=data.film;
+                    concert.innerHTML=data.concert;
                     vectormap(start,end);
                     vente_pays.innerHTML=data.ventes;
                     chiffre_affaire.innerHTML=data.chiffre_affaire;
                     depense.innerHTML=data.depense;
                     utilisateurs.innerHTML=data.utilisateurs;
                     pages.innerHTML=data.pages;
+
     
                 })
                 .catch(error => {

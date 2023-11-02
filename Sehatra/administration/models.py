@@ -23,8 +23,8 @@ def is_artist(self):
 User.add_to_class("is_artist", is_artist)
 class Video_facebook(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="liens_facebook")
-    facebook = models.URLField()
-    date_publication=models.DateTimeField()
+    facebook = models.TextField()
+    date_publication=models.DateField()
 
 class NotificationFCM(models.Model):
     title = models.CharField(max_length=255)
