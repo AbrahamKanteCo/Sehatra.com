@@ -126,7 +126,7 @@ class DashboardView(View):
     def get(self, request):
         if request.user.is_superuser==True:
             return redirect("/administration/dashboard")
-        elif request.user.is_artist :
+        elif request.user.is_organisateur :
             return redirect("/administration/dashboard-artiste")
 
 
