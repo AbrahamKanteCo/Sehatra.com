@@ -30,174 +30,177 @@
     
                             <!--Row-->
                             <div class="row">
-                                <div class="col-xl-9 col-md-12 col-lg-12">
-                                    <div class="row d-flex">
-                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <a href="{%url 'administration:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
-                                                    <div id="revenue">
-                                                    <p class="mb-1"> Revenue</p>                                           
-                                                    <h2 class="mb-1 font-weight-bold">{{revenue|intcomma}} Ar</h2>
-                                                    {%if revenue_difference > 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{revenue_difference|intcomma}}</span></span>
-                                                    {%elif revenue_difference < 0%}
-                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{revenue_difference_negative|intcomma}} Ar</span></span>
-                                                    {%else %}
-                                                    <span class="mb-1 text-muted"><span class="text-success">Aucune évolution</span></span>
-                                                    {%endif%}
-
-                                                    <div class="progress progress-sm mt-3 bg-success-transparent">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{revenue_pourcentage|floatformat:2}}%"></div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <a href="{%url 'administration:ventes_video'%}"><svg class=" svg-icon card-custom-icon text-secondary icon-dropshadow-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
-                                                            <path d="M18.175,4.142H1.951C1.703,4.142,1.5,4.344,1.5,4.592v10.816c0,0.247,0.203,0.45,0.451,0.45h16.224c0.247,0,0.45-0.203,0.45-0.45V4.592C18.625,4.344,18.422,4.142,18.175,4.142 M4.655,14.957H2.401v-1.803h2.253V14.957zM4.655,12.254H2.401v-1.803h2.253V12.254z M4.655,9.549H2.401V7.747h2.253V9.549z M4.655,6.846H2.401V5.043h2.253V6.846zM14.569,14.957H5.556V5.043h9.013V14.957z M17.724,14.957h-2.253v-1.803h2.253V14.957z M17.724,12.254h-2.253v-1.803h2.253V12.254zM17.724,9.549h-2.253V7.747h2.253V9.549z M17.724,6.846h-2.253V5.043h2.253V6.846z"></path></a>
-                                                    </svg>
-                                                    <div id="oeuvre_vendu">
-                                                    <p class="mb-1">Oeuvres vendues</p>
-                                                    <h2 class="mb-1 font-weight-bold">{{oeuvre}}</h2>                                                    
-                                                    {%if oeuvre_last_month > 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{oeuvre_last_month}}</span></span>
-                                                    {%elif oeuvre_last_month < 0%}
-                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{oeuvre_last_month_negative}}</span></span>
-                                                    {%else %}
-                                                    <span class="mb-1 text-muted"><span class="text-danger">Aucune évolution</span></span>
-                                                    {%endif%}
-                                                    <div class="progress progress-sm mt-3 bg-secondary-transparent">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{oeuvre_pourcentage|floatformat:2}}%"></div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <svg class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
-                                                            <path d="M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z"></path>
-                                                    </svg>
-                                                    <div id="utilisateurs">
-                                                    <p class=" mb-1 ">Utilisateurs actifs</p>
-                                                    <h2 class="mb-1 font-weight-bold">{{utilisateur}}</h2>
-                                                    {%if utilisateur_last_month > 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{utilisateur_last_month|floatformat:2}}</span></span>
-                                                    {%elif utilisateur_last_month < 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{utilisateur_last_month_negative|floatformat:2}} %</span></span>
-                                                    {%endif%}
-                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{utilisateur_last_month|floatformat:2}}%"></div>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/film.svg" %}">
-                                                    <div id="film">
-                                                    <p class=" mb-1 ">Film</p>
-                                                    <h2 class="mb-1 font-weight-bold">{{film}}</h2>
-                                                    {%if difference_film > 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_film}}</span></span>
-                                                    {%elif difference_film < 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_film_negative}} </span></span>
-                                                    {%endif%}
-                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_film}}%"></div>
-                                                    </div>
-                                                        
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 col-lg-4 col-md-12 d-flex flex-column">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/concert.svg" %}">
-                                                    <div id="concert">
-                                                    <p class=" mb-1 ">Concert</p>
-                                                    <h2 class="mb-1 font-weight-bold">{{concert}}</h2>
-                                                    {%if difference_concert > 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_concert}}</span></span>
-                                                    {%elif difference_concert < 0 %}
-                                                    <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_concert_negative}}</span></span>
-                                                    {%endif%}
-                                                    <div class="progress progress-sm mt-3 bg-primary-transparent">
-                                                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_concert}}%"></div>
-                                                    </div>                                
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-12 col-md-12 col-lg-12">
-                                            <div class="card overflow-hidden">
-                                                <div class="row">
-                                                    <div class="col-xl-8 col-md-12 col-lg-7 pb-5">
-                                                        <div class="card-header pb-50  border-0">
-                                                            <h4 class="card-title">Ventes par pays</h4>
-                                                        </div>
-                                                        <div id="vmap" class="vmap-width"></div>
-                                                    </div>
-                                                    <div class="col-xl-4 col-md-12 col-lg-5 pt-3 country-profit">
-    
-                                                        <div class="countryscroll">
-                                                            <table class="table countrytable">
-                                                                <tbody id="vente_pays">
-                                                                    {% if venteparpays %}
-                                                                        {% for venteparpays in venteparpays %}
-                                                                            <tr>
-                                                                                <td>{{venteparpays.pays}}</td>
-                                                                                <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} vente(s)</span></td>
-                                                                            </tr>
-                                                                        {% endfor %}
-                                                                        {% if manuelle != 'Aucun' %}
-                                                                        <td style="color:red">Manuelle</td><td  style="color:red" class='text-end'><span class='font-weight-bold'>{{manuelle}} vente(s)</span></td>
-                                                                        {%endif%}
-                                                                    {% else %}
-                                                                        <tr>
-                                                                            <td colspan="3">Aucune vente durant cette période.</td>
-                                                                        </tr>
-                                                                    {% endif %}
-
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-    
-                                <div class="col-xl-3 col-md-12 col-lg-6">
+                                <div class="col-xl-4 col-md-12 col-lg-12">
                                     <div class="card">
-                                        <div class="d-block mt-4 card-header border-0 text-center">
-                                            <h2 class="text-center"></b></h2>
-                                        </div>
                                         <div class="card-body">
-                                            <div class="row text-center">
-                                                <div class="col-md-12">
-                                                    <img src="{% static 'interface_administration/assets/images/fb/fbicone.png' %}" height="200px" alt="img" class="sales-img">
-                                                    {% if facebook == 'Erreur dans la connexion sur la page Facebook' %}
-                                                    <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold"> <small style="font-size: 12px">{{facebook}}</small> </h2>
-                                                    {%else%}
-                                                    <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold">{{facebook.followers_count}} <small style="font-size: 12px">followers</small> </h2>
-                                                    {%endif%}
-                                                    <hr/>
-                                                    <p><a href="{% url 'administration:facebook' %}">Voir plus</a></p>                                                    
+                                            <a href="{%url 'administration:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
+                                            <div id="revenue">
+                                            <p class="mb-1"> Revenue</p>                                           
+                                            <h2 class="mb-1 font-weight-bold">{{revenue|intcomma}} Ar</h2>
+                                            {%if revenue_difference > 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{revenue_difference|intcomma}}</span></span>
+                                            {%elif revenue_difference < 0%}
+                                            <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{revenue_difference_negative|intcomma}} Ar</span></span>
+                                            {%else %}
+                                            <span class="mb-1 text-muted"><span class="text-success">Aucune évolution</span></span>
+                                            {%endif%}
+
+                                            <div class="progress progress-sm mt-3 bg-success-transparent">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: {{revenue_pourcentage|floatformat:2}}%"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <a href="{%url 'administration:ventes_video'%}"><svg class=" svg-icon card-custom-icon text-secondary icon-dropshadow-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <path d="M18.175,4.142H1.951C1.703,4.142,1.5,4.344,1.5,4.592v10.816c0,0.247,0.203,0.45,0.451,0.45h16.224c0.247,0,0.45-0.203,0.45-0.45V4.592C18.625,4.344,18.422,4.142,18.175,4.142 M4.655,14.957H2.401v-1.803h2.253V14.957zM4.655,12.254H2.401v-1.803h2.253V12.254z M4.655,9.549H2.401V7.747h2.253V9.549z M4.655,6.846H2.401V5.043h2.253V6.846zM14.569,14.957H5.556V5.043h9.013V14.957z M17.724,14.957h-2.253v-1.803h2.253V14.957z M17.724,12.254h-2.253v-1.803h2.253V12.254zM17.724,9.549h-2.253V7.747h2.253V9.549z M17.724,6.846h-2.253V5.043h2.253V6.846z"></path></a>
+                                            </svg>
+                                            <div id="oeuvre_vendu">
+                                            <p class="mb-1">Oeuvres vendues</p>
+                                            <h2 class="mb-1 font-weight-bold">{{oeuvre}}</h2>                                                    
+                                            {%if oeuvre_last_month > 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{oeuvre_last_month}}</span></span>
+                                            {%elif oeuvre_last_month < 0%}
+                                            <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down  me-1"></i> {{oeuvre_last_month_negative}}</span></span>
+                                            {%else %}
+                                            <span class="mb-1 text-muted"><span class="text-danger">Aucune évolution</span></span>
+                                            {%endif%}
+                                            <div class="progress progress-sm mt-3 bg-secondary-transparent">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-secondary" style="width: {{oeuvre_pourcentage|floatformat:2}}%"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <svg class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false">
+                                                    <path d="M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z"></path>
+                                            </svg>
+                                            <div id="utilisateurs">
+                                            <p class=" mb-1 ">Utilisateurs actifs</p>
+                                            <h2 class="mb-1 font-weight-bold">{{utilisateur}}</h2>
+                                            {%if utilisateur_last_month > 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{utilisateur_last_month|floatformat:2}}</span></span>
+                                            {%elif utilisateur_last_month < 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{utilisateur_last_month_negative|floatformat:2}} %</span></span>
+                                            {%endif%}
+                                            <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{utilisateur_last_month|floatformat:2}}%"></div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xl-4 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/film.svg" %}">
+                                            <div id="film">
+                                            <p class=" mb-1 ">Film</p>
+                                            <h2 class="mb-1 font-weight-bold">{{film}}</h2>
+                                            {%if difference_film > 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_film}}</span></span>
+                                            {%elif difference_film < 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_film_negative}} </span></span>
+                                            {%endif%}
+                                            <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_film}}%"></div>
+                                            </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-12 col-lg-12">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <img class=" svg-icon card-custom-icon text-primary icon-dropshadow-primary" x="1008" y="1248" viewBox="0 0 20 20" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false" src="{% static "images/concert.svg" %}">
+                                            <div id="concert">
+                                            <p class=" mb-1 ">Concert</p>
+                                            <h2 class="mb-1 font-weight-bold">{{concert}}</h2>
+                                            {%if difference_concert > 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{difference_concert}}</span></span>
+                                            {%elif difference_concert < 0 %}
+                                            <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{difference_concert_negative}}</span></span>
+                                            {%endif%}
+                                            <div class="progress progress-sm mt-3 bg-primary-transparent">
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" style="width: {{difference_concert}}%"></div>
+                                            </div>                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="row">
+                                    <div class="col-xl-8 col-md-12 col-lg-7 d-flex">
+                                        <div class="card overflow-hidden">
+                                            <div class="row">
+                                                <div class="col-xl-8 col-md-12 col-lg-7 pb-5">
+                                                    <div class="card-header pb-50  border-0">
+                                                        <h4 class="card-title">Ventes par pays</h4>
+                                                    </div>
+                                                    <div id="vmap" class="vmap-width"></div>
+                                                </div>
+                                                <div class="col-xl-4 col-md-12 col-lg-5 pt-3 country-profit">
+                                                    <div class="countryscroll">
+                                                        <table class="table countrytable">
+                                                            <tbody id="vente_pays">
+                                                                {% if venteparpays %}
+                                                                    {% for venteparpays in venteparpays %}
+                                                                        <tr>
+                                                                            <td>{{venteparpays.pays}}</td>
+                                                                            <td class="text-end"><span class="font-weight-bold">{{venteparpays.nombre_ventes}} vente(s)</span></td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                    {% if manuelle != 'Aucun' %}
+                                                                    <tr>
+                                                                        <td style="color:red">Manuelle</td>
+                                                                        <td style="color:red" class='text-end'><span class='font-weight-bold'>{{manuelle}} vente(s)</span></td>
+                                                                    </tr>
+                                                                    {%endif%}
+                                                                {% else %}
+                                                                    <tr>
+                                                                        <td colspan="3">Aucune vente durant cette période.</td>
+                                                                    </tr>
+                                                                {% endif %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-4 col-md-12 col-lg-5">
+                                        <div class="card">
+                                            <div class="d-block mt-4 card-header border-0 text-center">
+                                                <h2 class="text-center"></b></h2>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row text-center">
+                                                    <div class="col-md-12">
+                                                        <img src="{% static 'interface_administration/assets/images/fb/fbicone.png' %}" height="200px" alt="img" class="sales-img">
+                                                        {% if facebook == 'Erreur dans la connexion sur la page Facebook' %}
+                                                        <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold"> <small style="font-size: 12px">{{facebook}}</small> </h2>
+                                                        {%else%}
+                                                        <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold">{{facebook.followers_count}} <small style="font-size: 12px">followers</small> </h2>
+                                                        {%endif%}
+                                                        <hr/>
+                                                        <p><a href="{% url 'administration:facebook' %}">Voir plus</a></p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                
     
                                 <div class="col-xl-12 col-lg-6">
                                     <div class="row">
