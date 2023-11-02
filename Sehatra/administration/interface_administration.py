@@ -812,7 +812,9 @@ def get_langue(request):
 def publications(request):
     videos=Video.objects.all()
     context={
-        "videos":videos
+        "videos":videos,
+        "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
+            :5]
     }
     return render(request, "publications.html",context)
 
