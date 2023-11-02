@@ -11,16 +11,16 @@ import uuid
 
 from plateforme.models import Organisateur, Video
 
-def is_artist(self):
+def is_organisateur(self):
         if self.is_authenticated:
             try:
-                artiste = Organisateur.objects.get(user=self, en_ligne=True)
+                organisateur = Organisateur.objects.get(user=self)
                 return True
             except Organisateur.DoesNotExist:
                 return False
         return False
 
-User.add_to_class("is_artist", is_artist)
+User.add_to_class("is_organisateur", is_organisateur)
 class Video_facebook(models.Model):
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name="liens_facebook")
     facebook = models.TextField()
