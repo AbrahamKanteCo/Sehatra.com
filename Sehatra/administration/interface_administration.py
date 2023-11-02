@@ -359,7 +359,10 @@ def dashboard(request):
             utilisateurs_difference_en_pourcentage = 0
         
         #facebook
-        facebook = pageInformationData()
+        try: 
+            facebook = pageInformationData()
+        except :
+            facebook="Erreur dans la connexion sur la page Facebook"
 
 
     # transactions
@@ -542,7 +545,7 @@ def statistiques_ventes_json(request, annee):
 
 
 def facebook(request):
-    if check_internet_connection():
+    try:
         marquer_notification_read(request)
         since = (datetime.datetime.now() - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
         until = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -554,9 +557,9 @@ def facebook(request):
                 :5
             ],
         }
-    else:
+    except:
         context={
-            "erreur":"Un problème de connexion"
+            "erreur":"Un problème est survenu"
         }
     return render(request, "facebook.html", context)
 

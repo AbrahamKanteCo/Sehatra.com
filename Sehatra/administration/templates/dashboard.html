@@ -147,7 +147,11 @@
                                             <div class="row text-center">
                                                 <div class="col-md-12">
                                                     <img src="{% static 'interface_administration/assets/images/fb/fbicone.png' %}" height="200px" alt="img" class="sales-img">
+                                                    {% if facebook == 'Erreur dans la connexion sur la page Facebook' %}
+                                                    <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold"> <small style="font-size: 12px">{{facebook}}</small> </h2>
+                                                    {%else%}
                                                     <h2 class="mb-0 mt-4 fs-40 counter font-weight-bold">{{facebook.followers_count}} <small style="font-size: 12px">followers</small> </h2>
+                                                    {%endif%}
                                                     <hr/>
                                                     <p><a href="{% url 'administration:facebook' %}">Voir plus</a></p>                                                    
                                                 </div>
