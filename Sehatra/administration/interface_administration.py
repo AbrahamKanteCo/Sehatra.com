@@ -1071,8 +1071,8 @@ def logout(request,token):
 
 
 
-@background(schedule=60)
-def recupererData():
+# @background(schedule=60)
+def recupererData(request):
     hier = datetime.datetime.now() - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
@@ -1083,8 +1083,8 @@ def recupererData():
 def test(request):
     print("Zety")
 
-@background(schedule=60)
-def envoi_notification_administrateur():
+# @background(schedule=60)
+def envoi_notification_administrateur(request):
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
@@ -1118,24 +1118,22 @@ def envoi_notification_administrateur():
         )
 
 
-def programmerNotification():
-    now = datetime.datetime.now()
-    midnight = now.replace(hour=17, minute=20, second=0)
-    if now > midnight:
-        midnight += datetime.timedelta(days=1)
+# def programmerNotification():
+#     now = datetime.datetime.now()
+#     midnight = now.replace(hour=17, minute=20, second=0)
+#     if now > midnight:
+#         midnight += datetime.timedelta(days=1)
 
-    envoi_notification_administrateur(repeat=60*24, repeat_until=None)
+#     envoi_notification_administrateur(repeat=60*24, repeat_until=None)
 
-def programmerRecuperation():
-    now = datetime.datetime.now()
-    midnight = now.replace(hour=17, minute=20, second=0)
-    if now > midnight:
-        midnight += datetime.timedelta(days=1)
+# def programmerRecuperation():
+#     now = datetime.datetime.now()
+#     midnight = now.replace(hour=17, minute=20, second=0)
+#     if now > midnight:
+#         midnight += datetime.timedelta(days=1)
 
-    recupererData(repeat=60*24, repeat_until=None)
+#     recupererData(repeat=60*24, repeat_until=None)
 
-# programmerNotification()
-# programmerRecuperation()
 
 class AssociationCreate(generics.CreateAPIView):
     queryset = Association.objects.all()

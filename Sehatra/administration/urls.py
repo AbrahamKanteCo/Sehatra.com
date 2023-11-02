@@ -96,6 +96,11 @@ urlpatterns = [
     #publication
     path('publications',interface_administration.publications,name='publications'),
 
+    #tâche à executer
+    path('recupererDataAnalytics',interface_administration.recupererData,name='recupererDataAnalytics'),# tous les jours à minuit
+    path('envoiNotificationAdmin',interface_administration.envoi_notification_administrateur,name='envoiNotificationAdmin'),#tous les jours à 8
+    path('envoiNotificationOrganisateur',artiste.envoi_notification_artiste,name='envoiNotificationOrganisateur'),# tous les jours à 16 heures
+
 ]
 
 if settings.DEBUG:

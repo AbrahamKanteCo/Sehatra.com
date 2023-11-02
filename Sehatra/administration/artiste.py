@@ -216,8 +216,8 @@ from background_task import background
 
 from django.contrib.auth.models import User
 
-@background(schedule=60)
-def envoi_notification_artiste():
+# @background(schedule=60)
+def envoi_notification_artiste(request):
     print("Notification artiste")
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
@@ -242,15 +242,14 @@ def envoi_notification_artiste():
             body,
         )
         
-def programmerNotificationArtiste():
-    now = datetime.datetime.now()
-    midnight = now.replace(hour=17, minute=20, second=0)
-    if now > midnight:
-        midnight += datetime.timedelta(days=1)
+# def programmerNotificationArtiste():
+#     now = datetime.datetime.now()
+#     midnight = now.replace(hour=17, minute=20, second=0)
+#     if now > midnight:
+#         midnight += datetime.timedelta(days=1)
 
-    envoi_notification_artiste(repeat=60*24, repeat_until=None)
+#     envoi_notification_artiste(repeat=60*24, repeat_until=None)
 
-# programmerNotificationArtiste()
 
 def dashboardartiste(request):
     id=request.user.id
