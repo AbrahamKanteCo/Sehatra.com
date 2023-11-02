@@ -57,58 +57,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row flex-lg-nowrap">
-                                <div class="col-12">
-                                    <div class="row flex-lg-nowrap">
-                                        <div class="col-12 mb-3">
-                                            <div class="e-panel card">
-                                                <div class="card-body">
-                                                    <div class="e-table">
-                                                        <div class="table-responsive table-lg mt-3">
-                                                            <table class="table table-bordered border-top text-nowrap" id="example1">
-                                                                <thead>
-                                                                    <tr>
-                                                                        <th class="border-bottom-0 w-20">Video</th>
-                                                                        <th class="border-bottom-0 w-15">Billet</th>
-                                                                        <th class="border-bottom-0 w-15">Montant</th>
-                                                                        <th class="border-bottom-0 w-30">Date &Heure</th>
-                                                                        <th class="border-bottom-0 w-30">Mode de paiement</th>
-                                                                        <th class="border-bottom-0 w-30">Status</th>
-                                                                    </tr>
-                                                                </thead>
-                                                                <tbody>
-                                                                    {% for transaction in transactions%}
-                                                                    <tr>
-                                                                        <td class="font-weight-bold">
-                                                                            {% if transaction.billet.video.photo_de_couverture and transaction.billet.video.video.photo_de_couverture|file_exists  %}
-                                                                            <img class="w-7 h-7 rounded shadow me-3" src="/media/{{ transaction.billet.video.photo_de_couverture }}" alt="media1">
-                                        {%else%}
-                                        <img class="w-7 h-7 rounded shadow me-3" src="{% static 'images/sehatra-2.png' %}" alt="media1">
-                                        {%endif%}
-                                                                            {{transaction.billet.video.titre}}</td>                                                                        <td>{{transaction.billet.slug}}</td>
-                                                                        {%if transaction.mode.nom == 'Stripe' %}
-                                                                <td>{{transaction.billet.video.tarif_euro}} euro</td>
-                                                                {%else%}
-                                                                <td>{{transaction.billet.video.tarif_ariary}} Ariary</td>
-                                                                {%endif%}
-                                                                        <td>{{transaction.date|date:"d F Y, H:i"}}</td>
-                                                                        <td class="font-weight-bold">{{transaction.mode.nom }}</td>
-                                                                        {% if transaction.valide %}
-                                                                        <td><span class="badge bg-success rounded-pill">Validé</span></td>
-                                                                        {%else%}
-                                                                        <td><span class="badge bg-danger rounded-pill">Non Valide</span></td>
-                                                                        {%endif%}
-                                                                    </tr>
-                                                                    {%endfor%}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
         
         {% endblock %}
 

@@ -74,7 +74,6 @@ def transactions_artistes(request):
 
     total = transactions.count()
     context = {
-        "transactions": transactions,
         "total": total,
         "total_mvola":mvola+mvola_echec,
         "total_orange":orange+orange_echec,

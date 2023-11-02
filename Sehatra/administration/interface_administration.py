@@ -545,21 +545,21 @@ def statistiques_ventes_json(request, annee):
 
 
 def facebook(request):
-    try:
+    if check_internet_connection():
         marquer_notification_read(request)
         since = (datetime.datetime.now() - datetime.timedelta(days=28)).strftime("%Y-%m-%d")
         until = datetime.datetime.now().strftime("%Y-%m-%d")
         context = {
             "information": pageInformationData(),
             "vue_ensemble": page_vue_ensemble(since, until),
-            "contenus": contenu_recent(since, until)["data"],
+            # "contenus": contenu_recent(since, until)["data"],
             "notifications": NotificationFCM.objects.filter(user=request.user.id).order_by("-created_at")[
                 :5
             ],
         }
-    except:
+    else:
         context={
-            "erreur":"Un problème est survenu"
+            "erreur":"Un problème de connexion"
         }
     return render(request, "facebook.html", context)
 
