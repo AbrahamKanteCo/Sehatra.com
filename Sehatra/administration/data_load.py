@@ -65,7 +65,7 @@ def dashboard_data (request):
     difference_concert=concert-concert_last_month
     difference_film=film- film_last_month
     #film html
-    film_html="<p class='mb-1'>Film</p><h2 class='mb-1 font-weight-bold'>"+str(film)+" Ar</h2>"
+    film_html="<p class='mb-1'>Film</p><h2 class='mb-1 font-weight-bold'>"+str(film)+" </h2>"
     if difference_film > 0:
         film_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(difference_film)+" </span></span>"
     elif difference_film==0:
@@ -74,7 +74,7 @@ def dashboard_data (request):
         film_html+="<span class='mb-1 text-muted'><span class='text-danger'><i class='fa fa-caret-down  me-1'></i> "+str(difference_film*(-1))+"</span></span>"
 
     #film concert
-    concert_html="<p class='mb-1'>Concert</p><h2 class='mb-1 font-weight-bold'>"+str(concert)+" Ar</h2>"
+    concert_html="<p class='mb-1'>Concert</p><h2 class='mb-1 font-weight-bold'>"+str(concert)+" </h2>"
     if difference_concert > 0:
         concert_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(difference_concert)+" </span></span>"
     elif difference_concert==0:
