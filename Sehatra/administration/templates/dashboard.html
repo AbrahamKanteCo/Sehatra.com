@@ -35,7 +35,7 @@
                                         <div class="card-body">
                                             <a href="{%url 'administration:transactions'%}"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card card-custom-icon text-success icon-dropshadow-success" viewBox="0 0 16 16" height="100%" width="100%" preserveAspectRatio="xMidYMid meet" focusable="false"> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1H2zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7z"/> <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/> </svg></a>
                                             <div id="revenue">
-                                            <p class="mb-1"> Revenue</p>                                           
+                                            <p class="mb-1"> Revenus</p>                                           
                                             <h2 class="mb-1 font-weight-bold">{{revenue|intcomma}} Ar</h2>
                                             {%if revenue_difference > 0 %}
                                             <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{revenue_difference|intcomma}}</span></span>
@@ -85,7 +85,7 @@
                                             <p class=" mb-1 ">Utilisateurs actifs</p>
                                             <h2 class="mb-1 font-weight-bold">{{utilisateur}}</h2>
                                             {%if utilisateur_last_month > 0 %}
-                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{utilisateur_last_month|floatformat:2}}</span></span>
+                                            <span class="mb-1 text-muted"><span class="text-success"><i class="fa fa-caret-up  me-1"></i> {{utilisateur_last_month|floatformat:2}} %</span></span>
                                             {%elif utilisateur_last_month < 0 %}
                                             <span class="mb-1 text-muted"><span class="text-danger"><i class="fa fa-caret-down me-1"></i> {{utilisateur_last_month_negative|floatformat:2}} %</span></span>
                                             {%endif%}
@@ -209,7 +209,7 @@
                                                 <div class="card-body">
                                                     <div class="row">
                                                         <div class="col" id="chiffre_affaire">
-                                                            <p class="mb-1">CA aujourd'hui</p>
+                                                            <p class="mb-1">Chiffre d'affaires aujourd'hui</p>
                                                             <h2 class="mb-0 font-weight-bold">{{chiffre_affaire|intcomma}} Ar</h2>
                                                         </div>
                                                         <div class="col col-auto">
@@ -273,7 +273,7 @@
                                                     </a>
                                                     <div class="mt-3">
                                                         <h5 class="mb-1 font-weight-semibold">{{vente.titre}}</h5>
-                                                        <small class="text-muted">{{vente.nombre_ventes}} fois    </small>
+                                                        <small class="text-muted">{{vente.nombre_ventes}} fois</small>
                                                     </div>
                                                 </div>
                                                 {%endfor%}
@@ -318,6 +318,7 @@
                                                         <thead>
                                                             <tr class="bold">
                                                                 <th class="border-bottom-0 w-200 d-block">Video</th>
+                                                                <th class="border-bottom-0">Utilisateur</th>
                                                                 <th class="border-bottom-0">Billet</th>
                                                                 <th class="border-bottom-0">Montant</th>
                                                                 <th class="border-bottom-0">Date &Heure </th>
@@ -335,6 +336,7 @@
                                                                     <img class="w-7 h-7 rounded shadow me-3" src="{% static 'images/sehatra-2.png' %}" alt="media1"> 
                                                                     {%endif%}
                                                                     {{transaction.billet.video.titre}}</td>
+                                                                <td>{{transaction.billet.user}}</td>
                                                                 <td>{{transaction.billet.slug}}</td>
                                                                 {%if transaction.mode.nom == 'Stripe' %}
                                                                 <td>{{transaction.billet.video.tarif_euro}} euro</td>

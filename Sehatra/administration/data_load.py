@@ -88,7 +88,7 @@ def dashboard_data (request):
 
 
     
-    revenus_html="<p class='mb-1'>Revenue</p><h2 class='mb-1 font-weight-bold'>"+str(intcomma(revenus))+" Ar</h2>"
+    revenus_html="<p class='mb-1'>Revenus</p><h2 class='mb-1 font-weight-bold'>"+str(intcomma(revenus))+" Ar</h2>"
     if difference_revenus > 0:
         revenus_html+="<span class='mb-1 text-muted'><span class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(intcomma(difference_revenus))+" </span></span>"
     elif difference_revenus==0:
@@ -264,18 +264,21 @@ def dashboard_load_artiste (request):
     #nombre de contenues
     videos=Video.objects.filter(organisateur__user=artiste_id)
     contenus=len(videos)
+    #nombre contenus pendant l'intervalle
+    videos1=Video.objects.filter(organisateur__user=artiste_id,date_sortie__range=(date_debut,date_fin))
+    contenus1=len(videos1)
 
     #nombre de contenues le mois dernier
     videos_last_month=Video.objects.filter(organisateur__user=artiste_id,date_sortie__range=(last_month,date_debut))
     contenus_last_month=len(videos_last_month)
-    contenus_difference=contenus-contenus_last_month
+    contenus_difference=contenus1-contenus_last_month
 
 
     contenus_html="<h2 class='mb-1 fs-40 font-weight-bold'>"+str(contenus)+" </h2>"
     if contenus_difference > 0 :
         contenus_html+="<small class='mb-1 text-muted'><small class='text-success'><i class='fa fa-caret-up  me-1'></i>"+str(contenus)+"</small> vs "+str(contenus_last_month)+" le mois dernier</small>"   
     elif contenus_difference < 0 :
-        contenus_html+= "<small class='mb-1 text-muted'><small class='text-success'><i class='fa fa-caret-down  me-1'></i>"+str(contenus)+"</small> vs "+str(contenus_last_month)+" le mois dernier</small>" 
+        contenus_html+= "<small class='mb-1 text-muted'><small class='text-success'><i class='fa fa-caret-down  me-1'></i>"+str(contenus1)+"</small> vs "+str(contenus_last_month)+" le mois dernier</small>" 
     else:
         contenus_html+= "<small class='mb-1 text-muted'>Aucun évolution</small>"
 
@@ -380,7 +383,7 @@ def video_statistique_load(request,video):
     ventes_html="<h1 class='font-weight-bold mb-1'>"+str(len(paiements))+"</h1>"
 
     #publication lié
-    publications=Video_facebook.objects.filter(video=videos.id)
+    publications=Video_facebook.objects.filter(video=videos.id,date_publication__range=(date_debut,date_fin))
 
     publication_html=""
     if publications:

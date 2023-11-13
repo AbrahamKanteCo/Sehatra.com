@@ -476,6 +476,12 @@ def dashboard(request):
         context = {
         "venteparpays": ventes_groupees,
         "pages": pages,
+        "concert":concert,
+        "difference_concert":difference_concert,
+        "difference_film":difference_film,
+        "difference_film_negative":difference_film*(-1),
+        "difference_concert_negative":difference_concert*(-1),
+        "film":film,
         "compte": nombre_utilisateurs_crees,
         "comptes_recents": comptes_recents,
         "revenue": revenus,
@@ -1767,8 +1773,8 @@ def artistes(request):
                     filter=Q(
                         organisateur_video__video_billet__billet_paiement__valide=True,
                         organisateur_video__video_billet__gratuit=False,
-                        organisateur_video__video_billet__billet_paiement__date__year=aujourd_hui.year,
-                        organisateur_video__video_billet__billet_paiement__date__month=aujourd_hui.month
+                        organisateur_video__video_billet__billet_paiement__date__year=2023,
+                        organisateur_video__video_billet__billet_paiement__date__month=10
                     )
                 ), 0
             ) * 60 / 100,
@@ -1803,7 +1809,7 @@ def artistes(request):
             ) * 100
         else :
             pourcentage_performance=0
-        artiste["pourcentage_performance"] = round(pourcentage_performance, 2)
+        artiste["pourcentage_performance"] =  format(pourcentage_performance ,'.2f')
         performances_avec_pourcentage.append(artiste)
     
 

@@ -111,8 +111,8 @@ def statistiques_vues_nouveaux_utilisateurs_json(request):
         .annotate(mois=TruncMonth("date"))
         .values("mois")
         .annotate(
-            nombre_vues=Count("id"),
-            nombre_nouveaux_utilisateurs=Count("utilisateur", distinct=True),
+            nombre_vues=Sum("vue"),
+            nombre_nouveaux_utilisateurs=Sum("nouveauutilisateur"),
         )
         .order_by("mois")
     )
@@ -442,7 +442,7 @@ def statistiquevideoartiste(request, video):
     revenus = somme * pourcentage_artiste
 
     # publication lié
-    publications = Video_facebook.objects.filter(video=videos.id)
+    publications = Video_facebook.objects.filter(video=videos.id,date_publication__range=(since,datetime.datetime.now()))
 
     # nombre de vue
     total_vues = (

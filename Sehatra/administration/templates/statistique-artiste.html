@@ -1,5 +1,6 @@
 {% extends 'components/base.html' %}
 {% load static %}
+{% load humanize %}
 
     {% block styles %}
 
@@ -57,7 +58,7 @@
                                                         Revenus
                                                     </div>
                                                     <div id="revenue">
-                                                    <h1 class="font-weight-bold mb-1">{{revenue}} Ar</h1>
+                                                    <h1 class="font-weight-bold mb-1">{{revenue|intcomma}} Ar</h1>
                                                     </div>
                                                 </div>
                                             </div>
