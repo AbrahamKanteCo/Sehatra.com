@@ -83,7 +83,6 @@ urlpatterns = [
 
     #notification
     path('notifications',interface_administration.notifications,name='notifications'),
-    path('test',interface_administration.test,name='test'),
     #artiste
     path('dashboard-artiste', artiste.dashboardartiste, name='dashboard-artiste'),
     path('artiste-video', artiste.artistevideo, name='artiste-video'),

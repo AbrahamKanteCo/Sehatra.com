@@ -428,7 +428,7 @@ def dashboard(request):
     ventes_groupees = ventes_valides.values("pays").annotate(nombre_ventes=Count("id"))
 
     #billet manuelle
-    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Coalesce(Sum("nombre_ventes"), 0))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
     if(total_ventes< oeuvre_vendu):
@@ -1088,10 +1088,6 @@ def recupererData(request):
     pageStatistique(debut_journee,fin_journee)
 
 
-def test(request):
-    print("Zety")
-
-# @background(schedule=60)
 def envoi_notification_administrateur(request):
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
@@ -1107,19 +1103,19 @@ def envoi_notification_administrateur(request):
     body1 = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
     body2 = "Il y a eu "+str(comptes)+" crées hier"
     
-    users = User.objects.filter(Q(is_staff=True) | Q(is_superuser=True))
+    users = User.objects.filter(is_superuser=True)
 
     for user in users:
         if(ventes>0) :
             send_notification(
-            "http://localhost:8000/administration/ventes_video",
+            "https://sehatra.com/administration/ventes_video",
             user.id,
             "Ventes",
             body1,
         )
         if(comptes>0) :
             send_notification(
-            "http://localhost:8000/administration/compteutilisateur",
+            "https://sehatra.com/administration/compteutilisateur",
             user.id,
             "Comptes crées",
             body2,

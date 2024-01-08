@@ -9,9 +9,10 @@ from administration.models import NotificationFCM, PageAnalytics, VenteParPays, 
 from paiement.models import Billet, Paiement
 from django.contrib.humanize.templatetags.humanize import intcomma
 from plateforme.models import Artiste, Organisateur, Video
-from django.db.models.functions import TruncMonth
+from django.db.models.functions import TruncMonth,Coalesce
 from django.db.models import Q,Avg
 from django.core.paginator import Paginator
+
 
 
 prix_ariary_euro=4700
@@ -216,15 +217,13 @@ from background_task import background
 
 from django.contrib.auth.models import User
 
-# @background(schedule=60)
 def envoi_notification_artiste(request):
-    print("Notification artiste")
     aujourd_hui = datetime.date.today()
     hier = aujourd_hui - datetime.timedelta(days=1)
     debut_journee = datetime.datetime.combine(hier, datetime.datetime.min.time())
 
     fin_journee = datetime.datetime.combine(hier, datetime.datetime.max.time())
-    artistes = Organisateur.objects.filter(user__is_active=True, en_ligne=True)
+    artistes = Organisateur.objects.filter(en_ligne=True)
     for artiste in artistes:
         user = artiste.user
         paiements = Paiement.objects.filter(
@@ -236,7 +235,7 @@ def envoi_notification_artiste(request):
         body = "Il y a "+str(ventes)+" ventes hier, ce qui fait un revenu de "+str(intcomma(revenus))+"Ariary."
         if(ventes>0) :
             send_notification(
-            "http://localhost:8000/administration/ventes_video_artiste",
+            "https://sehatra.com/administration/ventes_video_artiste",
             user.id,
             "Ventes",
             body,
@@ -354,7 +353,7 @@ def dashboardartiste(request):
         date__range=(since,until)
     ).order_by("-date")
     #billet manuelle
-    somme_ventes = ventes_groupees.aggregate(somme_ventes=Sum("nombre_ventes"))
+    somme_ventes = ventes_groupees.aggregate(somme_ventes=Coalesce(Sum("nombre_ventes"), 0))
     total_ventes = somme_ventes.get("somme_ventes", 0)
     manuelle="Aucun"
     if(total_ventes < ventes):
