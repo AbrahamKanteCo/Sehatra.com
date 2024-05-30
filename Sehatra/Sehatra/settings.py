@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 import os
 from firebase_admin import credentials
@@ -27,7 +28,7 @@ SECRET_KEY = '!c(gmx8p^40so%%l-4fhs^hnaza4c(!x5@3+=ip!vmrswg^#nf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS=["localhost"]
+ALLOWED_HOSTS=["localhost","10.166.2.138","192.168.88.82"]
 GOOGLE_APPLICATION_CREDENTIALS = BASE_DIR / 'sehatra-com-firebase-adminsdk-ztcjt-21cbcfa296.json'
 
 
@@ -57,6 +58,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'django.contrib.sitemaps',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_framework_simplejwt',
     'administration',
     'fcm_django',
     'background_task'
@@ -73,7 +76,20 @@ firebase_admin.initialize_app(cred)
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES':(
+                'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
+    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=30),
 }
 
 MIDDLEWARE = [
@@ -231,3 +247,9 @@ SOCIALACCOUNT_PROVIDERS = {
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'miora.ratsiresy@gmail.com'
+EMAIL_HOST_PASSWORD = 'gonnqkiybyhoidxf'

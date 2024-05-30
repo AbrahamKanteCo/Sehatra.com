@@ -2,8 +2,11 @@ from django.urls import path
 from django.contrib.auth.decorators import login_required
 from django.conf.urls.static import static
 from django.conf import settings
+
+from plateforme.authentification import LoginView
 from .views import *
 from django.contrib.sitemaps.views import sitemap
+from .authentification import AuthenticationUser
 
 
 urlpatterns = [
@@ -29,4 +32,10 @@ urlpatterns = [
     path('video/<slug:slug>/regarder/', login_required(VideoPlayerView.as_view()), name="video-player"),
     path('video/<slug:slug>/regarder-test/', login_required(VideoPlayerTestView.as_view()), name="video-player-test"),
     path('video/<slug:video>/billet/', login_required(billet_create), name="achat-billet"),
+    path("csrf/", HomeView.csrf, name="create_csrf"),
+    path('register/', AuthenticationUser.register, name='register'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('confirmationcode/', AuthenticationUser.activateAccount, name='confirmationcode'),
+
+
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from .action import *
 from .association import *
 from .artiste import *
@@ -8,6 +9,8 @@ from .billet import billet_create
 from .profil import *
 from .administration import AdministrationView
 from .test import TestView
+
+from django.middleware.csrf import get_token
 
 
 class HomeView(TemplateView):
@@ -21,6 +24,10 @@ class HomeView(TemplateView):
         context["title"] = "Sehatra.com - Plateforme de vidéo Vita Malagasy"
         context["image"] = "https://sehatra.com/static/images/couverture.png"
         return context
+    
+    def csrf(request):
+        token = get_token(request)
+        return JsonResponse({'csrfToken': token})
 
 
 class PolitiqueDeConfidentialiteView(TemplateView):
@@ -42,3 +49,5 @@ class CGUView(TemplateView):
         context["image"] = "https://sehatra.com/static/images/couverture.png"
         context = super().get_context_data(**kwargs)
         return context
+
+
