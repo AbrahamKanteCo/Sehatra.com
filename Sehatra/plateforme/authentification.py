@@ -109,20 +109,19 @@ class AuthenticationUser(ModelBackend):
             email=request.POST.get('email').rstrip()
             code=request.POST.get('code')
             user__account=User.objects.get(email=email)
-            
-            activation= ConfirmationCode.objects.get(user=user__account,code=code)
-            if activation is not None:
+            try:
+                activation= ConfirmationCode.objects.get(user=user__account,code=code)
                 if activation.is_valid :
                     user__account.is_active=True
                     user__account.save()
                     refresh = RefreshToken.for_user(user__account)
                     return JsonResponse({
-                        'refresh': str(refresh),
-                        'access': str(refresh.access_token),
-                     },status=200)
+                            'refresh': str(refresh),
+                            'access': str(refresh.access_token),
+                        },status=200)
                 else:
                     return JsonResponse({"error": "Vous avez inseré un code qui a expiré"}, status=400)
-            else :
+            except Exception:
                 return JsonResponse({"error": "Code invalide"}, status=404)
         else :
             return JsonResponse({"error": "Méthode non autorisée"}, status=405)
