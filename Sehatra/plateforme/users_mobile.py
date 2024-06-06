@@ -1,0 +1,130 @@
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+
+from administration.serializers import ArtisteMobileSerializer, ArtisteSerializer, OrganisateurMobileSerializer, VideoSerializer
+from plateforme.models import Artiste, Association, Organisateur, Video
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_info(request):
+    user = request.user
+    return Response({
+        'id': user.id,
+        'username': user.username,
+        'email': user.email,
+    })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_list_concert_live(request):
+    user=request.user
+    videos = Video.objects.filter(en_ligne=True, is_film=False)
+    serializer = VideoSerializer(videos, many=True)
+    data = serializer.data
+    return JsonResponse(data, safe=False, encoder=UnicodeJSONEncoder)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_list_film(request):
+    user=request.user
+    videos = Video.objects.filter(en_ligne=True, is_film=True)
+    serializer = VideoSerializer(videos, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_list_live(request):
+    user=request.user
+    videos = Video.objects.filter(en_ligne=True, is_film=False, is_live=True)
+    serializer = VideoSerializer(videos, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_live_a_la_une(request):
+    user = request.user
+    try:
+        video_recente = Video.objects.filter(en_ligne=True, is_film=False, is_live=True).latest('date_sortie')
+        serializer = VideoSerializer(video_recente) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getArtiste(request):
+    user = request.user
+    try:
+        artistes = Artiste.objects.filter(en_ligne=True).distinct()
+        serializer = ArtisteMobileSerializer(artistes,many=True) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune artiste trouvée.'}, status=404)
+
+    return Response(serializer.data)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getOrganisateur(request):
+    user = request.user
+    try:
+        organisateurs = Organisateur.objects.filter(en_ligne=True).distinct()
+        serializer = OrganisateurMobileSerializer(organisateurs,many=True) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune organisateur trouvée.'}, status=404)
+
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getAssociation(request):
+    user = request.user
+    try:
+        associations = Association.objects.filter(en_ligne=True).distinct()
+        serializer = OrganisateurMobileSerializer(associations,many=True) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune organisateur trouvée.'}, status=404)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMesVideosFilm(request):
+    user = request.user
+    try:
+        mes_videos =Video.objects.filter(en_ligne=True, video_billet__billet_paiement__valide=True,video_billet__valide=True,video_billet__user=user,is_film=True).distinct()
+        serializer = VideoSerializer(mes_videos,many=True) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
+
+    return Response(serializer.data)
+
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
+
+class UnicodeJSONEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, str):
+            return obj.encode('utf-8').decode('utf-8')
+        return super().default(obj)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getMesVideosConcert(request):
+    user = request.user
+    try:
+        mes_videos = Video.objects.filter(en_ligne=True, video_billet__billet_paiement__valide=True,video_billet__valide=True,video_billet__user=user,is_film=False).distinct()
+        serializer = VideoSerializer(mes_videos,many=True) 
+    except Video.DoesNotExist:
+        return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
+
+    data = serializer.data
+    return JsonResponse(data, safe=False, encoder=UnicodeJSONEncoder)

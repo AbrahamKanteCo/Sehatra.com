@@ -9,15 +9,57 @@ from django.core.mail import EmailMessage
 import random
 import string
 
-
 from plateforme.models import ConfirmationCode, CustomUserCreationForm
-
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from allauth.socialaccount.models import SocialAccount
 
 
+
+class GoogleLoginView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        token = request.data.get('token')
+        try:
+            idinfo = id_token.verify_oauth2_token(token, requests.Request())
+
+            user, created = User.objects.get_or_create(email=idinfo['email'], defaults={
+                'username': idinfo.get('name'),
+                'first_name': idinfo.get('given_name'),
+                'last_name': idinfo.get('family_name'),
+            })
+
+            if not created:
+                user.first_name = idinfo.get('given_name', user.first_name)
+                user.last_name = idinfo.get('family_name', user.last_name)
+                user.save()
+
+            social_account, social_created = SocialAccount.objects.get_or_create(
+                user=user,
+                provider='google',
+                defaults={
+                    'uid': idinfo['sub'],
+                    'extra_data': idinfo,
+                }
+            )
+
+            if not social_created:
+                social_account.extra_data = idinfo
+                social_account.save()
+
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'user_identifiant':str(user.id)
+            }, status=200)
+        except ValueError:
+            return Response({'error': 'Token Google invalide'}, status=400)
 
 class LoginView(APIView):
     permission_classes = [AllowAny]

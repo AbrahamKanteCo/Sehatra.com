@@ -28,7 +28,7 @@ SECRET_KEY = '!c(gmx8p^40so%%l-4fhs^hnaza4c(!x5@3+=ip!vmrswg^#nf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS=["localhost","10.166.2.232","192.168.88.82"]
+ALLOWED_HOSTS=["localhost","10.166.2.172","192.168.88.75"]
 GOOGLE_APPLICATION_CREDENTIALS = BASE_DIR / 'sehatra-com-firebase-adminsdk-ztcjt-21cbcfa296.json'
 
 

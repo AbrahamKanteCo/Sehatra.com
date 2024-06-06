@@ -3,10 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.conf.urls.static import static
 from django.conf import settings
 
+from plateforme.users_mobile import *
 from plateforme.authentification import LoginView
 from .views import *
 from django.contrib.sitemaps.views import sitemap
 from .authentification import AuthenticationUser
+from .authentification import GoogleLoginView
 
 
 urlpatterns = [
@@ -34,6 +36,17 @@ urlpatterns = [
     path('video/<slug:video>/billet/', login_required(billet_create), name="achat-billet"),
     path("csrf/", HomeView.csrf, name="create_csrf"),
     path('register/', AuthenticationUser.register, name='register'),
+    path('registerbysocialaccount/', GoogleLoginView.as_view(), name='registerbysocialaccount'),
+    path('user_information/', get_user_info, name='user_information'),
+    path('concert_live/',get_list_concert_live,name='concert_live'),
+    path('list_film/',get_list_film,name='list_film'),
+    path('list_live/',get_list_live,name='list_live'),
+    path('live_a_la_une/',get_live_a_la_une,name='live_a_la_une'),
+    path('liste_artiste/',getArtiste,name='liste_artiste'),
+    path('liste_organisateur/',getOrganisateur,name='liste_organisateur'),
+    path('liste_association/',getAssociation,name='liste_association'),
+    path('mes_video_films/',getMesVideosFilm,name='mes_video_films'),
+    path('mes_video_concert/',getMesVideosConcert,name='mes_video_concert'),
     path('login/', LoginView.as_view(), name='login'),
     path('confirmationcode/', AuthenticationUser.activateAccount, name='confirmationcode'),
 
