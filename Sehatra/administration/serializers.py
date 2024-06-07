@@ -10,30 +10,11 @@ class VideoArtisteSerializer(serializers.ModelSerializer):
         model = Video
         fields = '__all__' 
 
-class ArtisteMobileSerializer(serializers.ModelSerializer):
-    video_user = VideoArtisteSerializer(many=True, read_only=True) 
-    class Meta:
-        model = Artiste
-        fields = ('nom', 'photo_de_profil', 'photo_de_couverture', 'youtube', 'slug', 'en_ligne', 'video_user')
-
-class OrganisateurMobileSerializer(serializers.ModelSerializer):
-    video_user = VideoArtisteSerializer(many=True, read_only=True) 
-    class Meta:
-        model = Organisateur
-        fields = ('nom', 'photo_de_profil', 'description', 'video_user')
-        
+ 
 class AssociationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Association
         fields = '__all__'
-    
-
-class AssociationMobileSerializer(serializers.ModelSerializer):
-    video_user = AssociationSerializer(many=True, read_only=True) 
-    class Meta:
-        model = Organisateur
-        fields = ('nom', 'photo_de_profil', 'description', 'video_user')
-
 
 class ArtisteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,11 +43,12 @@ class OrganisateurSerializer(serializers.ModelSerializer):
 
 class VideoSerializer(serializers.ModelSerializer):
     organisateur_detail = OrganisateurSerializer(source='organisateur', read_only=True)
+    billet_date = serializers.DateTimeField(read_only=True)
     
     class Meta:
         model = Video
         fields = '__all__'  
-        extra_fields = ['organisateur_detail']
+        extra_fields = ['organisateur_detail','billet_date']
 
     def get_field_names(self, declared_fields, info):
         expanded_fields = super(VideoSerializer, self).get_field_names(declared_fields, info)
@@ -76,10 +58,33 @@ class VideoSerializer(serializers.ModelSerializer):
         else:
             return expanded_fields
 
+class ArtisteMobileSerializer(serializers.ModelSerializer):
+    videos = VideoSerializer(many=True, read_only=True, source='artiste_video')
+    class Meta:
+        model = Artiste
+        fields = ('nom', 'photo_de_profil', 'photo_de_couverture', 'youtube', 'slug', 'en_ligne', 'videos')
+
+       
+class OrganisateurMobileSerializer(serializers.ModelSerializer):
+    videos = VideoSerializer(many=True, read_only=True, source='organisateur_video')
+
+    class Meta:
+        model = Organisateur
+        fields = ('nom', 'photo_de_profil', 'description', 'videos')
+
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Action
         fields = '__all__'
+
+class AssociationMobileSerializer(serializers.ModelSerializer):
+    actions = ActionSerializer(many=True, read_only=True, source='association_action')
+    videos = VideoSerializer(many=True, read_only=True, source='association_action__action_video')
+
+    class Meta:
+        model = Association
+        fields = ('nom', 'photo_de_profil', 'description', 'actions','videos')
+
 
 
 class PublicationSerializer(serializers.ModelSerializer):
