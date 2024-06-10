@@ -38,6 +38,7 @@ urlpatterns = [
     path('register/', AuthenticationUser.register, name='register'),
     path('forgot_password/', AuthenticationUser.forgot_password, name='forgot_password'),
     path('reinitialize_password/', AuthenticationUser.reinitialize_password, name='reinitialize_password'),
+    path('confirm_codeinitialization/',AuthenticationUser.confirm_CodeInitialization,name='confirm_codeinitialization'),
     path('registerbysocialaccount/', GoogleLoginView.as_view(), name='registerbysocialaccount'),
     path('user_information/', get_user_info, name='user_information'),
     path('concert_live/',get_list_concert_live,name='concert_live'),

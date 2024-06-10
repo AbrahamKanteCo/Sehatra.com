@@ -168,15 +168,33 @@ class AuthenticationUser(ModelBackend):
         else :
             return JsonResponse({"error": "Méthode non autorisée"}, status=405)
     
+    def confirm_CodeInitialization(request):
+        if request.method == 'POST':
+            email=request.POST.get('email').rstrip()
+            print(email)
+            code=request.POST.get('code')
+            user__account=User.objects.get(email=email)
+            try:
+                activation= ConfirmationCode.objects.get(user=user__account,code=code)
+                if activation.is_valid :
+                    user__account.is_active=True
+                    user__account.save()
+                    return JsonResponse({
+                            'message': "Code correct",
+                        },status=200)
+                else:
+                    return JsonResponse({"error": "Vous avez inseré un code qui a expiré"}, status=400)
+            except Exception:
+                return JsonResponse({"error": "Code invalide"}, status=404)
+        else :
+            return JsonResponse({"error": "Méthode non autorisée"}, status=405)
 
     def reinitialize_password(request):
         if request.method == 'POST':
             email = request.POST.get('email').rstrip()
             password1 = request.POST.get('password1')
             password2 = request.POST.get('password2')
-            code = request.POST.get('code')
 
-            # Simple password validation
             if len(password1) < 8:
                 return JsonResponse({"error": "Le mot de passe doit avoir au moins 8 caractères."}, status=400)
 
@@ -185,14 +203,10 @@ class AuthenticationUser(ModelBackend):
 
             try:
                 user = User.objects.get(email=email)
-                activation = ConfirmationCode.objects.get(user=user, code=code)
-                if activation.is_valid:
-                    user.set_password(password1)  # Use set_password for security
-                    user.save()
-                    refresh = RefreshToken.for_user(user)
-                    return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)}, status=200)
-                else:
-                    return JsonResponse({"error": "Le code de confirmation a expiré."}, status=400)
+                user.set_password(password1)  
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)}, status=200)
             except ObjectDoesNotExist:
                 if User.objects.filter(email=email).exists():
                     return JsonResponse({"error": "L'email n'est pas associé à un compte valide."}, status=404)
@@ -216,7 +230,7 @@ class AuthenticationUser(ModelBackend):
                 )
                 user_code.save()
                 try:
-                    AuthenticationUser.activateEmail(request, user, email,confirmation_code)
+                    AuthenticationUser.initialize_Password(request, user, email,confirmation_code)
                     return JsonResponse({"message": "Code de confirmation envoyé"}, status=200)
                 except Exception:
                     traceback.print_exc()
@@ -225,7 +239,17 @@ class AuthenticationUser(ModelBackend):
                 return JsonResponse({"error": "Cette email n'existe pas dans notre base de données"}, status=404)
 
         else :
-            return JsonResponse({"error": "Méthode non autorisée"}, status=405)      
+            return JsonResponse({"error": "Méthode non autorisée"}, status=405)  
+
+    def initialize_Password(request, user, to_email,code):
+        
+        mail_subject = '[sehatra.com] Réinitialisation de mot de passe'
+        message = render_to_string('reinitialize_password.html', {
+            'user': user,
+            'uid': code,
+        })
+        email = EmailMessage(mail_subject, message, to=[to_email])
+        email.send()    
 
 
 
