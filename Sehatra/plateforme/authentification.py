@@ -17,6 +17,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from allauth.socialaccount.models import SocialAccount
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -108,7 +109,6 @@ class AuthenticationUser(ModelBackend):
 
     def register(request):
         if request.method == 'POST':
-            print(request.POST)
             form = CustomUserCreationForm(request.POST)
             if form.is_valid():
                 user = form.save(commit=False)
@@ -167,6 +167,65 @@ class AuthenticationUser(ModelBackend):
                 return JsonResponse({"error": "Code invalide"}, status=404)
         else :
             return JsonResponse({"error": "Méthode non autorisée"}, status=405)
+    
+
+    def reinitialize_password(request):
+        if request.method == 'POST':
+            email = request.POST.get('email').rstrip()
+            password1 = request.POST.get('password1')
+            password2 = request.POST.get('password2')
+            code = request.POST.get('code')
+
+            # Simple password validation
+            if len(password1) < 8:
+                return JsonResponse({"error": "Le mot de passe doit avoir au moins 8 caractères."}, status=400)
+
+            if password1!= password2:
+                return JsonResponse({"error": "Les mots de passe ne sont pas identiques."}, status=400)
+
+            try:
+                user = User.objects.get(email=email)
+                activation = ConfirmationCode.objects.get(user=user, code=code)
+                if activation.is_valid:
+                    user.set_password(password1)  # Use set_password for security
+                    user.save()
+                    refresh = RefreshToken.for_user(user)
+                    return JsonResponse({'refresh': str(refresh), 'access': str(refresh.access_token)}, status=200)
+                else:
+                    return JsonResponse({"error": "Le code de confirmation a expiré."}, status=400)
+            except ObjectDoesNotExist:
+                if User.objects.filter(email=email).exists():
+                    return JsonResponse({"error": "L'email n'est pas associé à un compte valide."}, status=404)
+                else:
+                    return JsonResponse({"error": "Cet email n'existe pas dans notre base de données."}, status=404)
+        else:
+            return JsonResponse({"error": "Méthode non autorisée."}, status=405)
+
+        
+    def forgot_password(request):
+        if request.method == 'POST':  
+            email=request.POST.get('email').rstrip()
+
+            user=User.objects.get(email=email)
+            if user is not None:
+                #stocker le code 
+                confirmation_code=AuthenticationUser.generate_confirmation_code()
+                user_code=ConfirmationCode(
+                    user=user,
+                    code=confirmation_code
+                )
+                user_code.save()
+                try:
+                    AuthenticationUser.activateEmail(request, user, email,confirmation_code)
+                    return JsonResponse({"message": "Code de confirmation envoyé"}, status=200)
+                except Exception:
+                    traceback.print_exc()
+                    return JsonResponse({"error": "Problème de connexion"}, status=500)
+            else :
+                return JsonResponse({"error": "Cette email n'existe pas dans notre base de données"}, status=404)
+
+        else :
+            return JsonResponse({"error": "Méthode non autorisée"}, status=405)      
 
 
 

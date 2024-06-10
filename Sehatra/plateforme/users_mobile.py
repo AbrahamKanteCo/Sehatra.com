@@ -132,5 +132,4 @@ def getMesVideosConcert(request):
         return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
 
     data = serializer.data
-    print(data)
     return JsonResponse(data, safe=False, encoder=UnicodeJSONEncoder)

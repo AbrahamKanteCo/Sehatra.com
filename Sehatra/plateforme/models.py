@@ -328,6 +328,8 @@ class ConfirmationCode(models.Model):
 
     def is_valid(self):
         return timezone.now() < self.generation_time + datetime.timedelta(hours=1)
+
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
