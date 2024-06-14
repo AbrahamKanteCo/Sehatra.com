@@ -195,6 +195,7 @@ class AuthenticationUser(ModelBackend):
             password1 = request.POST.get('password1')
             password2 = request.POST.get('password2')
 
+            # Simple password validation
             if len(password1) < 8:
                 return JsonResponse({"error": "Le mot de passe doit avoir au moins 8 caractères."}, status=400)
 

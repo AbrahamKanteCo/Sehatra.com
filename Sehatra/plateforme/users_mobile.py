@@ -24,9 +24,8 @@ def get_user_info(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_list_concert_live(request):
-    user=request.user
     videos = Video.objects.filter(en_ligne=True, is_film=False)
-    serializer = VideoSerializer(videos, many=True)
+    serializer = VideoSerializer(videos, many=True,context={'request': request})
     data = serializer.data
     return JsonResponse(data, safe=False, encoder=UnicodeJSONEncoder)
 
@@ -35,17 +34,15 @@ def get_list_concert_live(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_list_film(request):
-    user=request.user
     videos = Video.objects.filter(en_ligne=True, is_film=True)
-    serializer = VideoSerializer(videos, many=True)
+    serializer = VideoSerializer(videos, many=True,context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_list_live(request):
-    user=request.user
     videos = Video.objects.filter(en_ligne=True, is_film=False, is_live=True)
-    serializer = VideoSerializer(videos, many=True)
+    serializer = VideoSerializer(videos, many=True,context={'request': request})
     return Response(serializer.data)
 
 @api_view(['GET'])
@@ -54,7 +51,7 @@ def get_live_a_la_une(request):
     user = request.user
     try:
         video_recente = Video.objects.filter(en_ligne=True, is_film=False, is_live=True).latest('date_sortie')
-        serializer = VideoSerializer(video_recente) 
+        serializer = VideoSerializer(video_recente,context={'request': request}) 
     except Video.DoesNotExist:
         return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
 
@@ -67,7 +64,7 @@ def getArtiste(request):
     user = request.user
     try:
         artistes = Artiste.objects.filter(en_ligne=True).prefetch_related('artiste_video') 
-        serializer = ArtisteMobileSerializer(artistes,many=True) 
+        serializer = ArtisteMobileSerializer(artistes,many=True,context={'request': request}) 
     except Video.DoesNotExist:
         return Response({'message': 'Aucune artiste trouvée.'}, status=404)
 
@@ -81,7 +78,7 @@ def getOrganisateur(request):
     user = request.user
     try:
         organisateurs = Organisateur.objects.filter(en_ligne=True).prefetch_related('organisateur_video') 
-        serializer = OrganisateurMobileSerializer(organisateurs,many=True) 
+        serializer = OrganisateurMobileSerializer(organisateurs,many=True,context={'request': request}) 
     except Video.DoesNotExist:
         return Response({'message': 'Aucune organisateur trouvée.'}, status=404)
 
@@ -92,10 +89,11 @@ def getOrganisateur(request):
 def getAssociation(request):
     user = request.user
     try:
-        associations = Association.objects.filter(en_ligne=True).prefetch_related('association_action').prefetch_related('association_action__action_video')
-        serializer = AssociationMobileSerializer(associations,many=True) 
+        associations = Association.objects.filter(en_ligne=True).prefetch_related('association_action__action_video').prefetch_related('association_action')
+        serializer = AssociationMobileSerializer(associations,many=True,context={'request': request}) 
+        print(serializer.data)
     except Video.DoesNotExist:
-        return Response({'message': 'Aucune organisateur trouvée.'}, status=404)
+        return Response({'message': 'Aucune association trouvée.'}, status=404)
 
     return Response(serializer.data)
 
@@ -106,7 +104,7 @@ def getMesVideosFilm(request):
     user = request.user
     try:
         mes_videos =Video.objects.filter(en_ligne=True, video_billet__billet_paiement__valide=True,video_billet__valide=True,video_billet__user=user,is_film=True).annotate(billet_date=F('video_billet__billet_paiement__date'))
-        serializer = VideoSerializer(mes_videos,many=True) 
+        serializer = VideoSerializer(mes_videos,many=True,context={'request': request}) 
     except Video.DoesNotExist:
         return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
 
@@ -127,7 +125,7 @@ def getMesVideosConcert(request):
     user = request.user
     try:
         mes_videos = Video.objects.filter(en_ligne=True, video_billet__billet_paiement__valide=True,video_billet__valide=True,video_billet__user=user,is_film=False).annotate(billet_date=F('video_billet__billet_paiement__date'))
-        serializer = VideoSerializer(mes_videos,many=True) 
+        serializer = VideoSerializer(mes_videos,many=True,context={'request': request}) 
     except Video.DoesNotExist:
         return Response({'message': 'Aucune vidéo trouvée.'}, status=404)
 

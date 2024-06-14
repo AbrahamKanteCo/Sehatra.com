@@ -1,5 +1,7 @@
 # serializers.py
 from rest_framework import serializers
+
+from paiement.models import Billet, Paiement
 from .models import Video_facebook
 from plateforme.models import Action, Association, Live, Organisateur, Artiste, Video
 from django.contrib.auth.models import User
@@ -39,16 +41,17 @@ class OrganisteurSerializer(serializers.ModelSerializer):
 class OrganisateurSerializer(serializers.ModelSerializer):
     class Meta:
         model = Organisateur
-        fields = ('id', 'nom') 
+        fields = ('id', 'nom','slug') 
 
 class VideoSerializer(serializers.ModelSerializer):
     organisateur_detail = OrganisateurSerializer(source='organisateur', read_only=True)
     billet_date = serializers.DateTimeField(read_only=True)
+    is_bought = serializers.SerializerMethodField()
     
     class Meta:
         model = Video
         fields = '__all__'  
-        extra_fields = ['organisateur_detail','billet_date']
+        extra_fields = ['organisateur_detail','billet_date','is_bought']
 
     def get_field_names(self, declared_fields, info):
         expanded_fields = super(VideoSerializer, self).get_field_names(declared_fields, info)
@@ -57,6 +60,18 @@ class VideoSerializer(serializers.ModelSerializer):
             return expanded_fields + self.Meta.extra_fields
         else:
             return expanded_fields
+    def get_is_bought(self, obj):
+        is_bought = False
+        user = self.context['request'].user
+        billet_query = Billet.objects.filter(user=user, video=obj, valide=True)
+        if billet_query.exists():
+            billet = billet_query.first()  
+            paiement_exists = Paiement.objects.filter(billet__id=billet.id, valide=True).exists()
+            if paiement_exists:
+                is_bought = True
+        return is_bought
+
+
 
 class ArtisteMobileSerializer(serializers.ModelSerializer):
     videos = VideoSerializer(many=True, read_only=True, source='artiste_video')
@@ -70,7 +85,7 @@ class OrganisateurMobileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Organisateur
-        fields = ('nom', 'photo_de_profil', 'description', 'videos')
+        fields = ('nom', 'photo_de_profil', 'description','slug', 'videos')
 
 class ActionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,12 +93,12 @@ class ActionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AssociationMobileSerializer(serializers.ModelSerializer):
-    actions = ActionSerializer(many=True, read_only=True, source='association_action')
+    actions = ActionSerializer(many=True, read_only=True, source='&')
     videos = VideoSerializer(many=True, read_only=True, source='association_action__action_video')
 
     class Meta:
         model = Association
-        fields = ('nom', 'photo_de_profil', 'description', 'actions','videos')
+        fields = ('nom', 'photo_de_profil', 'description','slug', 'actions','videos')
 
 
 
