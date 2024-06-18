@@ -1,7 +1,13 @@
 {
     "builds": [
-      { "src": "Sehatra/wsgi.py", "use": "@vercel/python" }
-    ],
+    {
+      "src": "Sehatra/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "installCommand": "pip install --upgrade setuptools && pip install -r requirements.txt"
+      }
+    }
+  ],
     "routes": [
       { "src": "/(.*)", "dest": "Sehatra/wsgi.py" }
     ]
