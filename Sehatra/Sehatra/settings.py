@@ -11,10 +11,52 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from datetime import timedelta
+import json
 from pathlib import Path
 import os
+from tempfile import NamedTemporaryFile
 from firebase_admin import credentials
 import firebase_admin
+from decouple import config
+from django.conf import settings
+
+# Load environment variables from .env file
+# Firebase credentials
+# settings.py
+from decouple import config
+
+FIREBASE_CONFIG = {
+    "type": config('FIREBASE_TYPE'),
+    "project_id": config('FIREBASE_PROJECT_ID'),
+    "private_key_id": config('FIREBASE_PRIVATE_KEY_ID'),
+    "private_key": config('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+    "client_email": config('FIREBASE_CLIENT_EMAIL'),
+    "client_id": config('FIREBASE_CLIENT_ID'),
+    "auth_uri": config('FIREBASE_AUTH_URI'),
+    "token_uri": config('FIREBASE_TOKEN_URI'),
+    "auth_provider_x509_cert_url": config('FIREBASE_AUTH_PROVIDER_x590_CERT_URL'),
+    "client_x509_cert_url": config('FIREBASE_CLIENT_x590_CERT_URL'),
+    "universe_domain": config('FIREBASE_UNIVERSE_DOMAIN'),
+}
+
+# Google Analytics Credentials
+GOOGLE_CREDENTIALS = {
+  "type": config('GOOGLE_TYPE'),
+  "project_id": config('PROJECT_ID'),
+  "private_key_id": config('GOOGLE_PRIVATE_KEY_ID'),
+  "private_key": config('GOOGLE_PRIVATE_KEY'),
+  "client_email": config('GOOGLE_CLIENT_EMAIL'),
+  "client_id": config('GOOGLE_CLIENT_ID'),
+  "auth_uri": config('GOOGLE_CLIENT_AUTH_URI'),
+  "token_uri": config('GOOGLE_TOKEN_URI'),
+  "auth_provider_x509_cert_url": config('GOOGLE_AUTH_PROVIDER_x590_CERT_URL'),
+  "client_x509_cert_url": config('GOOGLE_CLIENT_x590_CERT_URL'),
+  "universe_domain": config('GOOGLE_PROPERTY_ID')
+}
+
+AUTH_GOOGLE = {
+    "property_id":config('GOOGLE_PROPERTY_ID')
+}
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = os.path.join(BASE_DIR, 'static')
@@ -28,8 +70,15 @@ SECRET_KEY = '!c(gmx8p^40so%%l-4fhs^hnaza4c(!x5@3+=ip!vmrswg^#nf'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
+def create_google_credentials_temp_file(google_credentials):
+    temp_file = NamedTemporaryFile(delete=False, suffix=".json")
+    with open(temp_file.name, 'w') as f:
+        json.dump(google_credentials, f)
+    return temp_file.name
+
 ALLOWED_HOSTS=["localhost","10.166.2.172","192.168.88.75"]
-GOOGLE_APPLICATION_CREDENTIALS = BASE_DIR / 'sehatra-com-firebase-adminsdk-ztcjt-21cbcfa296.json'
+GOOGLE_APPLICATION_CREDENTIALS = create_google_credentials_temp_file(FIREBASE_CONFIG)
 
 
 # Application definition
