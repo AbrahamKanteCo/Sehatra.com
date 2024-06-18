@@ -45,7 +45,6 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'crispy_forms',
-    'crispy_bootstrap4',
     'django_user_agents',
     'allauth.account',
     'allauth.socialaccount',
@@ -64,6 +63,7 @@ INSTALLED_APPS = [
     'fcm_django',
     'background_task'
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 FCM_DJANGO_SETTINGS = {
     "DEFAULT_FIREBASE_APP": 'Sehatra.com',
     "APP_VERBOSE_NAME": "FCM Django",
@@ -97,6 +97,7 @@ MIDDLEWARE = [
     'htmlmin.middleware.MarkRequestMiddleware', 
     'corsheaders.middleware.CorsMiddleware',
     'plateforme.middleware.MyMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -127,8 +128,9 @@ TEMPLATES = [
         },
     },
 ]
-
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 WSGI_APPLICATION = 'Sehatra.wsgi.application'
+ALLOWED_HOSTS = ['*']
 
 
 # Database
